@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>neuralkg.model.KGEModel.model &mdash; NeuralKG 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/clipboard.min.js"></script>
+        <script src="../../../../_static/copybutton.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> NeuralKG
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../install.html">Install</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../neuralkg.html">NeuralKG</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">NeuralKG</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      <li>neuralkg.model.KGEModel.model</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for neuralkg.model.KGEModel.model</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+
+
+<div class="viewcode-block" id="Model"><a class="viewcode-back" href="../../../../kgemodel.html#neuralkg.model.KGEModel.model.Model">[docs]</a><span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Model</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Model.init_emb"><a class="viewcode-back" href="../../../../kgemodel.html#neuralkg.model.KGEModel.model.Model.init_emb">[docs]</a>    <span class="k">def</span> <span class="nf">init_emb</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="Model.score_func"><a class="viewcode-back" href="../../../../kgemodel.html#neuralkg.model.KGEModel.model.Model.score_func">[docs]</a>    <span class="k">def</span> <span class="nf">score_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">head_emb</span><span class="p">,</span> <span class="n">relation_emb</span><span class="p">,</span> <span class="n">tail_emb</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="Model.forward"><a class="viewcode-back" href="../../../../kgemodel.html#neuralkg.model.KGEModel.model.Model.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">triples</span><span class="p">,</span> <span class="n">negs</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="Model.tri2emb"><a class="viewcode-back" href="../../../../kgemodel.html#neuralkg.model.KGEModel.model.Model.tri2emb">[docs]</a>    <span class="k">def</span> <span class="nf">tri2emb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">triples</span><span class="p">,</span> <span class="n">negs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;single&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get embedding of triples.</span>
+<span class="sd">        </span>
+<span class="sd">        This function get the embeddings of head, relation, and tail</span>
+<span class="sd">        respectively. each embedding has three dimensions.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            triples (tensor): This tensor save triples id, which dimension is </span>
+<span class="sd">                [triples number, 3].</span>
+<span class="sd">            negs (tensor, optional): This tenosr store the id of the entity to </span>
+<span class="sd">                be replaced, which has one dimension. when negs is None, it is </span>
+<span class="sd">                in the test/eval phase. Defaults to None.</span>
+<span class="sd">            mode (str, optional): This arg indicates that the negative entity </span>
+<span class="sd">                will replace the head or tail entity. when it is &#39;single&#39;, it </span>
+<span class="sd">                means that entity will not be replaced. Defaults to &#39;single&#39;.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            head_emb: Head entity embedding.</span>
+<span class="sd">            relation_emb: Relation embedding.</span>
+<span class="sd">            tail_emb: Tail entity embedding.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;single&quot;</span><span class="p">:</span>
+            <span class="n">head_emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ent_emb</span><span class="p">(</span><span class="n">triples</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># [bs, 1, dim]</span>
+            <span class="n">relation_emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rel_emb</span><span class="p">(</span><span class="n">triples</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># [bs, 1, dim]</span>
+            <span class="n">tail_emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ent_emb</span><span class="p">(</span><span class="n">triples</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">])</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># [bs, 1, dim]</span>
+
+        <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;head-batch&quot;</span> <span class="ow">or</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;head_predict&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">negs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># 说明这个时候是在evluation，所以需要直接用所有的entity embedding</span>
+                <span class="n">head_emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ent_emb</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># [1, num_ent, dim]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">head_emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ent_emb</span><span class="p">(</span><span class="n">negs</span><span class="p">)</span>  <span class="c1"># [bs, num_neg, dim]</span>
+
+            <span class="n">relation_emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rel_emb</span><span class="p">(</span><span class="n">triples</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># [bs, 1, dim]</span>
+            <span class="n">tail_emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ent_emb</span><span class="p">(</span><span class="n">triples</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">])</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># [bs, 1, dim]</span>
+
+        <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;tail-batch&quot;</span> <span class="ow">or</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;tail_predict&quot;</span><span class="p">:</span> 
+            <span class="n">head_emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ent_emb</span><span class="p">(</span><span class="n">triples</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># [bs, 1, dim]</span>
+            <span class="n">relation_emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rel_emb</span><span class="p">(</span><span class="n">triples</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># [bs, 1, dim]</span>
+
+            <span class="k">if</span> <span class="n">negs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">tail_emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ent_emb</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># [1, num_ent, dim]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">tail_emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ent_emb</span><span class="p">(</span><span class="n">negs</span><span class="p">)</span>  <span class="c1"># [bs, num_neg, dim]</span>
+        <span class="k">return</span> <span class="n">head_emb</span><span class="p">,</span> <span class="n">relation_emb</span><span class="p">,</span> <span class="n">tail_emb</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, zjukg.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

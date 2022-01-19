@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>neuralkg.loss.RugE_Loss &mdash; NeuralKG 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/clipboard.min.js"></script>
+        <script src="../../../_static/copybutton.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> NeuralKG
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Install</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../neuralkg.html">NeuralKG</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">NeuralKG</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>neuralkg.loss.RugE_Loss</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for neuralkg.loss.RugE_Loss</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">from</span> <span class="nn">torch.autograd</span> <span class="kn">import</span> <span class="n">Variable</span>
+<span class="kn">from</span> <span class="nn">IPython</span> <span class="kn">import</span> <span class="n">embed</span>
+<div class="viewcode-block" id="RugE_Loss"><a class="viewcode-back" href="../../../neuralkg.loss.html#neuralkg.loss.RugE_Loss.RugE_Loss">[docs]</a><span class="k">class</span> <span class="nc">RugE_Loss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">args</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">RugE_Loss</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+
+<div class="viewcode-block" id="RugE_Loss.forward"><a class="viewcode-back" href="../../../neuralkg.loss.html#neuralkg.loss.RugE_Loss.RugE_Loss.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos_score</span><span class="p">,</span> <span class="n">neg_score</span><span class="p">,</span> <span class="n">rule</span><span class="p">,</span> <span class="n">confidence</span><span class="p">,</span> <span class="n">triple_num</span><span class="p">,</span> <span class="n">pos_len</span><span class="p">):</span>
+        <span class="n">entroy</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">BCELoss</span><span class="p">()</span>
+
+        <span class="c1"># 这段代码写的太简陋了 先跑通再说</span>
+        <span class="n">pos_label</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="n">pos_len</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">neg_label</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">pos_len</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_neg</span><span class="p">])</span>
+        <span class="n">one</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">zero</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">pos_label</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="n">pos_label</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">gpu</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+        <span class="n">neg_label</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="n">neg_label</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">gpu</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+        <span class="n">one</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="n">one</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">gpu</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+        <span class="n">zero</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="n">zero</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">gpu</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+
+        <span class="n">sigmoid_neg</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">neg_score</span><span class="p">)</span>
+        <span class="n">sigmoid_pos</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">pos_score</span><span class="p">)</span>
+
+        <span class="n">postive_loss</span> <span class="o">=</span> <span class="n">entroy</span><span class="p">(</span><span class="n">sigmoid_pos</span><span class="p">,</span> <span class="n">pos_label</span><span class="p">)</span>
+        <span class="n">negative_loss</span> <span class="o">=</span> <span class="n">entroy</span><span class="p">(</span><span class="n">sigmoid_neg</span><span class="p">,</span> <span class="n">neg_label</span><span class="p">)</span>
+
+        <span class="n">pi_gradient</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="c1"># 感觉应该放在这个大函数的外面，不然每次被清空也没什么用</span>
+        <span class="n">sigmoid_value</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="c1"># 在计算每个grounding rule中的unlable的三元组对应的类似gradient</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rule</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
+            <span class="k">if</span> <span class="n">triple_num</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">p1_rule</span> <span class="o">=</span> <span class="n">rule</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">unlabel_rule</span> <span class="o">=</span> <span class="n">rule</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">p1_rule</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sigmoid_value</span><span class="p">:</span>
+                    <span class="n">p1_rule_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">p1_rule</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+                    <span class="n">sigmoid_rule</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">p1_rule_score</span><span class="p">)</span>
+                    <span class="n">sigmoid_value</span><span class="p">[</span><span class="n">p1_rule</span><span class="p">]</span> <span class="o">=</span> <span class="n">sigmoid_rule</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">sigmoid_rule</span> <span class="o">=</span> <span class="n">sigmoid_value</span><span class="p">[</span><span class="n">p1_rule</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">unlabel_rule</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pi_gradient</span><span class="p">:</span>
+                    <span class="n">pi_gradient</span><span class="p">[</span><span class="n">unlabel_rule</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">slackness_penalty</span> <span class="o">*</span> <span class="n">confidence</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">sigmoid_rule</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">pi_gradient</span><span class="p">[</span><span class="n">unlabel_rule</span><span class="p">]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">slackness_penalty</span> <span class="o">*</span> <span class="n">confidence</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">sigmoid_rule</span>
+
+            <span class="k">elif</span> <span class="n">triple_num</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">p1_rule</span> <span class="o">=</span> <span class="n">rule</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">p2_rule</span> <span class="o">=</span> <span class="n">rule</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">unlabel_rule</span> <span class="o">=</span> <span class="n">rule</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">p1_rule</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sigmoid_value</span><span class="p">:</span>
+                    <span class="n">p1_rule_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">p1_rule</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+                    <span class="n">sigmoid_rule</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">p1_rule_score</span><span class="p">)</span>
+                    <span class="n">sigmoid_value</span><span class="p">[</span><span class="n">p1_rule</span><span class="p">]</span> <span class="o">=</span> <span class="n">sigmoid_rule</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">sigmoid_rule</span> <span class="o">=</span> <span class="n">sigmoid_value</span><span class="p">[</span><span class="n">p1_rule</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">p2_rule</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sigmoid_value</span><span class="p">:</span>
+                    <span class="n">p2_rule_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">p2_rule</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+                    <span class="n">sigmoid_rule2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">p2_rule_score</span><span class="p">)</span>
+                    <span class="n">sigmoid_value</span><span class="p">[</span><span class="n">p2_rule</span><span class="p">]</span> <span class="o">=</span> <span class="n">sigmoid_rule</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">sigmoid_rule2</span> <span class="o">=</span> <span class="n">sigmoid_value</span><span class="p">[</span><span class="n">p2_rule</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">unlabel_rule</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pi_gradient</span><span class="p">:</span>
+                    <span class="n">pi_gradient</span><span class="p">[</span><span class="n">unlabel_rule</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">slackness_penalty</span> <span class="o">*</span> <span class="n">confidence</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">sigmoid_rule</span> <span class="o">*</span> <span class="n">sigmoid_rule2</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">pi_gradient</span><span class="p">[</span><span class="n">unlabel_rule</span><span class="p">]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">slackness_penalty</span> <span class="o">*</span> <span class="n">confidence</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">sigmoid_rule</span> <span class="o">*</span> <span class="n">sigmoid_rule2</span>
+
+        <span class="n">unlabel_loss</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="n">unlabel_triples</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">gradient</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># 对于pi_gradient中的每个三元组（不重复）的 根据公式计算s函数</span>
+        <span class="k">for</span> <span class="n">unlabel_triple</span> <span class="ow">in</span> <span class="n">pi_gradient</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">unlabel_triples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">unlabel_triple</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+            <span class="n">gradient</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pi_gradient</span><span class="p">[</span><span class="n">unlabel_triple</span><span class="p">]</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+        <span class="n">unlabel_triples</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">unlabel_triples</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">gpu</span><span class="p">)</span>
+        <span class="n">gradient</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">gradient</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">gpu</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">unlabel_triple_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">unlabel_triples</span><span class="p">)</span>
+        <span class="n">unlabel_triple_score</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">unlabel_triple_score</span><span class="p">)</span>
+        <span class="n">unlabel_scores</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">gradient</span><span class="p">)):</span>
+            <span class="n">unlabel_score</span> <span class="o">=</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">unlabel_triple_score</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">gradient</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">zero</span><span class="p">),</span> <span class="n">one</span><span class="p">))</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+            <span class="n">unlabel_scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">unlabel_score</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">unlabel_scores</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">unlabel_scores</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">gpu</span><span class="p">)</span>
+        <span class="n">unlabel_scores</span> <span class="o">=</span> <span class="n">unlabel_scores</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">unlabel_loss</span> <span class="o">=</span> <span class="n">entroy</span><span class="p">(</span><span class="n">unlabel_triple_score</span><span class="p">,</span> <span class="n">unlabel_scores</span><span class="p">)</span>
+        <span class="c1"># for unlabel_triple in pi_gradient.keys():</span>
+        <span class="c1">#     unlabelrule_score = model(unlabel_triple.unsqueeze(0))</span>
+        <span class="c1">#     sigmoid_unlabelrule = torch.sigmoid(unlabelrule_score)</span>
+        <span class="c1">#     unlabel_score = torch.min(torch.max(sigmoid_unlabelrule + args.slackness_penalty * pi_gradient[unlabel_triple], zero), one)</span>
+        <span class="c1">#     loss_part = entroy(sigmoid_unlabelrule, unlabel_score.to(args.gpu).detach())</span>
+        <span class="c1">#     unlabel_loss = unlabel_loss + loss_part</span>
+        <span class="c1"># 所有的grounding的unlbeled的两个值sigmoid和s函数都存在list中，需要转成tensor，然后一起计算loss</span>
+
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">postive_loss</span> <span class="o">+</span> <span class="n">negative_loss</span> <span class="o">+</span> <span class="n">unlabel_loss</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">weight_decay</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="c1">#Use L2 regularization for ComplEx_NNE_AER</span>
+            <span class="n">ent_emb_all</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">ent_emb</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_ent</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">gpu</span><span class="p">))</span>
+            <span class="n">rel_emb_all</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">rel_emb</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_rel</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">gpu</span><span class="p">))</span>
+            <span class="n">regularization</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">weight_decay</span> <span class="o">*</span> <span class="p">(</span>
+                <span class="n">ent_emb_all</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">p</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">rel_emb_all</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+            <span class="p">)</span>
+
+        <span class="c1"># print(postive_loss)</span>
+        <span class="c1"># print(negative_loss)</span>
+        <span class="c1"># print(unlabel_loss)</span>
+        <span class="n">loss</span> <span class="o">+=</span> <span class="n">regularization</span>
+        <span class="k">return</span> <span class="n">loss</span></div></div>
+
+
+
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, zjukg.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
