@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Data &mdash; NeuralKG 1.0.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Eval_Task" href="neuralkg.eval_task.html" />
+    <link rel="prev" title="NeuralKG" href="neuralkg.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> NeuralKG
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="neuralkg.html">NeuralKG</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Data</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-neuralkg.data.base_data_module">base_data_module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-neuralkg.data.DataPreprocess">DataPreprocess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-neuralkg.data.Sampler">Sampler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-neuralkg.data.Grounding">Grounding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-neuralkg.data.RuleDataLoader">RuleDataLoader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-neuralkg.data.KGDataModule">KGDataModule</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="neuralkg.eval_task.html">Eval_Task</a></li>
+<li class="toctree-l2"><a class="reference internal" href="neuralkg.lit_model.html">Lit_Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="neuralkg.loss.html">loss</a></li>
+<li class="toctree-l2"><a class="reference internal" href="neuralkg.model.html">Model</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">NeuralKG</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="neuralkg.html">NeuralKG</a> &raquo;</li>
+      <li>Data</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/chenxn2020/test_doc/blob/main/docs/source/neuralkg.data.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="data">
+<h1>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h1>
+<section id="module-neuralkg.data.base_data_module">
+<span id="base-data-module"></span><h2>base_data_module<a class="headerlink" href="#module-neuralkg.data.base_data_module" title="Permalink to this headline">¶</a></h2>
+<p>Base DataModule class.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg.data.base_data_module.Config">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.base_data_module.</span></span><span class="sig-name descname"><span class="pre">Config</span></span><a class="reference internal" href="_modules/neuralkg/data/base_data_module.html#Config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.base_data_module.Config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg.data.base_data_module.BaseDataModule">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.base_data_module.</span></span><span class="sig-name descname"><span class="pre">BaseDataModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/base_data_module.html#BaseDataModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.base_data_module.BaseDataModule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pytorch_lightning.core.datamodule.LightningDataModule</span></code></p>
+<p>Base DataModule.
+Learn more at <a class="reference external" href="https://pytorch-lightning.readthedocs.io/en/stable/datamodules.html">https://pytorch-lightning.readthedocs.io/en/stable/datamodules.html</a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.base_data_module.BaseDataModule.add_to_argparse">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">add_to_argparse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parser</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/base_data_module.html#BaseDataModule.add_to_argparse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.base_data_module.BaseDataModule.add_to_argparse" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.base_data_module.BaseDataModule.prepare_data">
+<span class="sig-name descname"><span class="pre">prepare_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/base_data_module.html#BaseDataModule.prepare_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.base_data_module.BaseDataModule.prepare_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use this method to do things that might write to disk or that need to be done only from a single GPU in distributed settings (so don’t set state <cite>self.x = y</cite>).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.base_data_module.BaseDataModule.setup">
+<span class="sig-name descname"><span class="pre">setup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/base_data_module.html#BaseDataModule.setup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.base_data_module.BaseDataModule.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Split into train, val, test, and set dims.
+Should assign <cite>torch Dataset</cite> objects to self.data_train, self.data_val, and optionally self.data_test.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.base_data_module.BaseDataModule.train_dataloader">
+<span class="sig-name descname"><span class="pre">train_dataloader</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/base_data_module.html#BaseDataModule.train_dataloader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.base_data_module.BaseDataModule.train_dataloader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implement one or more PyTorch DataLoaders for training.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A collection of <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.data.DataLoader</span></code> specifying training samples.
+In the case of multiple dataloaders, please see this <span class="xref std std-ref">page</span>.</p>
+</dd>
+</dl>
+<p>The dataloader you return will not be reloaded unless you set
+<a href="#id1"><span class="problematic" id="id2">:paramref:`~pytorch_lightning.trainer.Trainer.reload_dataloaders_every_n_epochs`</span></a> to
+a positive integer.</p>
+<p>For data processing use the following pattern:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>download in <a class="reference internal" href="#neuralkg.data.base_data_module.BaseDataModule.prepare_data" title="neuralkg.data.base_data_module.BaseDataModule.prepare_data"><code class="xref py py-meth docutils literal notranslate"><span class="pre">prepare_data()</span></code></a></p></li>
+<li><p>process and split in <a class="reference internal" href="#neuralkg.data.base_data_module.BaseDataModule.setup" title="neuralkg.data.base_data_module.BaseDataModule.setup"><code class="xref py py-meth docutils literal notranslate"><span class="pre">setup()</span></code></a></p></li>
+</ul>
+</div></blockquote>
+<p>However, the above are only necessary for distributed processing.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>do not assign state in prepare_data</p>
+</div>
+<ul class="simple">
+<li><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">fit()</span></code></p></li>
+<li><p>…</p></li>
+<li><p><a class="reference internal" href="#neuralkg.data.base_data_module.BaseDataModule.prepare_data" title="neuralkg.data.base_data_module.BaseDataModule.prepare_data"><code class="xref py py-meth docutils literal notranslate"><span class="pre">prepare_data()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#neuralkg.data.base_data_module.BaseDataModule.setup" title="neuralkg.data.base_data_module.BaseDataModule.setup"><code class="xref py py-meth docutils literal notranslate"><span class="pre">setup()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#neuralkg.data.base_data_module.BaseDataModule.train_dataloader" title="neuralkg.data.base_data_module.BaseDataModule.train_dataloader"><code class="xref py py-meth docutils literal notranslate"><span class="pre">train_dataloader()</span></code></a></p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Lightning adds the correct sampler for distributed and arbitrary hardware.
+There is no need to set it yourself.</p>
+</div>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># single dataloader</span>
+<span class="k">def</span> <span class="nf">train_dataloader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">transform</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span><span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">(),</span>
+                                    <span class="n">transforms</span><span class="o">.</span><span class="n">Normalize</span><span class="p">((</span><span class="mf">0.5</span><span class="p">,),</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,))])</span>
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">MNIST</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="s1">&#39;/path/to/mnist/&#39;</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">,</span>
+                    <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">loader</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span>
+        <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+        <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">loader</span>
+
+<span class="c1"># multiple dataloaders, return as list</span>
+<span class="k">def</span> <span class="nf">train_dataloader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">mnist</span> <span class="o">=</span> <span class="n">MNIST</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+    <span class="n">cifar</span> <span class="o">=</span> <span class="n">CIFAR</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+    <span class="n">mnist_loader</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span>
+        <span class="n">dataset</span><span class="o">=</span><span class="n">mnist</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="n">cifar_loader</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span>
+        <span class="n">dataset</span><span class="o">=</span><span class="n">cifar</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="c1"># each batch will be a list of tensors: [batch_mnist, batch_cifar]</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">mnist_loader</span><span class="p">,</span> <span class="n">cifar_loader</span><span class="p">]</span>
+
+<span class="c1"># multiple dataloader, return as dict</span>
+<span class="k">def</span> <span class="nf">train_dataloader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">mnist</span> <span class="o">=</span> <span class="n">MNIST</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+    <span class="n">cifar</span> <span class="o">=</span> <span class="n">CIFAR</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+    <span class="n">mnist_loader</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span>
+        <span class="n">dataset</span><span class="o">=</span><span class="n">mnist</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="n">cifar_loader</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span>
+        <span class="n">dataset</span><span class="o">=</span><span class="n">cifar</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="c1"># each batch will be a dict of tensors: {&#39;mnist&#39;: batch_mnist, &#39;cifar&#39;: batch_cifar}</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;mnist&#39;</span><span class="p">:</span> <span class="n">mnist_loader</span><span class="p">,</span> <span class="s1">&#39;cifar&#39;</span><span class="p">:</span> <span class="n">cifar_loader</span><span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.base_data_module.BaseDataModule.val_dataloader">
+<span class="sig-name descname"><span class="pre">val_dataloader</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/base_data_module.html#BaseDataModule.val_dataloader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.base_data_module.BaseDataModule.val_dataloader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implement one or multiple PyTorch DataLoaders for validation.</p>
+<p>The dataloader you return will not be reloaded unless you set
+<a href="#id3"><span class="problematic" id="id4">:paramref:`~pytorch_lightning.trainer.Trainer.reload_dataloaders_every_n_epochs`</span></a> to
+a positive integer.</p>
+<p>It’s recommended that all data downloads and preparation happen in <a class="reference internal" href="#neuralkg.data.base_data_module.BaseDataModule.prepare_data" title="neuralkg.data.base_data_module.BaseDataModule.prepare_data"><code class="xref py py-meth docutils literal notranslate"><span class="pre">prepare_data()</span></code></a>.</p>
+<ul class="simple">
+<li><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">fit()</span></code></p></li>
+<li><p>…</p></li>
+<li><p><a class="reference internal" href="#neuralkg.data.base_data_module.BaseDataModule.prepare_data" title="neuralkg.data.base_data_module.BaseDataModule.prepare_data"><code class="xref py py-meth docutils literal notranslate"><span class="pre">prepare_data()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#neuralkg.data.base_data_module.BaseDataModule.train_dataloader" title="neuralkg.data.base_data_module.BaseDataModule.train_dataloader"><code class="xref py py-meth docutils literal notranslate"><span class="pre">train_dataloader()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#neuralkg.data.base_data_module.BaseDataModule.val_dataloader" title="neuralkg.data.base_data_module.BaseDataModule.val_dataloader"><code class="xref py py-meth docutils literal notranslate"><span class="pre">val_dataloader()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#neuralkg.data.base_data_module.BaseDataModule.test_dataloader" title="neuralkg.data.base_data_module.BaseDataModule.test_dataloader"><code class="xref py py-meth docutils literal notranslate"><span class="pre">test_dataloader()</span></code></a></p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Lightning adds the correct sampler for distributed and arbitrary hardware
+There is no need to set it yourself.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.data.DataLoader</span></code> or a sequence of them specifying validation samples.</p>
+</dd>
+</dl>
+<p>Examples:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">val_dataloader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">transform</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span><span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">(),</span>
+                                    <span class="n">transforms</span><span class="o">.</span><span class="n">Normalize</span><span class="p">((</span><span class="mf">0.5</span><span class="p">,),</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,))])</span>
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">MNIST</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="s1">&#39;/path/to/mnist/&#39;</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">loader</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span>
+        <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+        <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">loader</span>
+
+<span class="c1"># can also return multiple dataloaders</span>
+<span class="k">def</span> <span class="nf">val_dataloader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">loader_a</span><span class="p">,</span> <span class="n">loader_b</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">loader_n</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you don’t need a validation dataset and a <code class="xref py py-meth docutils literal notranslate"><span class="pre">validation_step()</span></code>, you don’t need to
+implement this method.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In the case where you return multiple validation dataloaders, the <code class="xref py py-meth docutils literal notranslate"><span class="pre">validation_step()</span></code>
+will have an argument <code class="docutils literal notranslate"><span class="pre">dataloader_idx</span></code> which matches the order here.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.base_data_module.BaseDataModule.test_dataloader">
+<span class="sig-name descname"><span class="pre">test_dataloader</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/base_data_module.html#BaseDataModule.test_dataloader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.base_data_module.BaseDataModule.test_dataloader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implement one or multiple PyTorch DataLoaders for testing.</p>
+<p>The dataloader you return will not be reloaded unless you set
+<a href="#id5"><span class="problematic" id="id6">:paramref:`~pytorch_lightning.trainer.Trainer.reload_dataloaders_every_n_epochs`</span></a> to
+a postive integer.</p>
+<p>For data processing use the following pattern:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>download in <a class="reference internal" href="#neuralkg.data.base_data_module.BaseDataModule.prepare_data" title="neuralkg.data.base_data_module.BaseDataModule.prepare_data"><code class="xref py py-meth docutils literal notranslate"><span class="pre">prepare_data()</span></code></a></p></li>
+<li><p>process and split in <a class="reference internal" href="#neuralkg.data.base_data_module.BaseDataModule.setup" title="neuralkg.data.base_data_module.BaseDataModule.setup"><code class="xref py py-meth docutils literal notranslate"><span class="pre">setup()</span></code></a></p></li>
+</ul>
+</div></blockquote>
+<p>However, the above are only necessary for distributed processing.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>do not assign state in prepare_data</p>
+</div>
+<ul class="simple">
+<li><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">fit()</span></code></p></li>
+<li><p>…</p></li>
+<li><p><a class="reference internal" href="#neuralkg.data.base_data_module.BaseDataModule.prepare_data" title="neuralkg.data.base_data_module.BaseDataModule.prepare_data"><code class="xref py py-meth docutils literal notranslate"><span class="pre">prepare_data()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#neuralkg.data.base_data_module.BaseDataModule.setup" title="neuralkg.data.base_data_module.BaseDataModule.setup"><code class="xref py py-meth docutils literal notranslate"><span class="pre">setup()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#neuralkg.data.base_data_module.BaseDataModule.train_dataloader" title="neuralkg.data.base_data_module.BaseDataModule.train_dataloader"><code class="xref py py-meth docutils literal notranslate"><span class="pre">train_dataloader()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#neuralkg.data.base_data_module.BaseDataModule.val_dataloader" title="neuralkg.data.base_data_module.BaseDataModule.val_dataloader"><code class="xref py py-meth docutils literal notranslate"><span class="pre">val_dataloader()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#neuralkg.data.base_data_module.BaseDataModule.test_dataloader" title="neuralkg.data.base_data_module.BaseDataModule.test_dataloader"><code class="xref py py-meth docutils literal notranslate"><span class="pre">test_dataloader()</span></code></a></p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Lightning adds the correct sampler for distributed and arbitrary hardware.
+There is no need to set it yourself.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.data.DataLoader</span></code> or a sequence of them specifying testing samples.</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">test_dataloader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">transform</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span><span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">(),</span>
+                                    <span class="n">transforms</span><span class="o">.</span><span class="n">Normalize</span><span class="p">((</span><span class="mf">0.5</span><span class="p">,),</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,))])</span>
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">MNIST</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="s1">&#39;/path/to/mnist/&#39;</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">,</span>
+                    <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">loader</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span>
+        <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+        <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">loader</span>
+
+<span class="c1"># can also return multiple dataloaders</span>
+<span class="k">def</span> <span class="nf">test_dataloader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">loader_a</span><span class="p">,</span> <span class="n">loader_b</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">loader_n</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you don’t need a test dataset and a <code class="xref py py-meth docutils literal notranslate"><span class="pre">test_step()</span></code>, you don’t need to implement
+this method.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In the case where you return multiple test dataloaders, the <code class="xref py py-meth docutils literal notranslate"><span class="pre">test_step()</span></code>
+will have an argument <code class="docutils literal notranslate"><span class="pre">dataloader_idx</span></code> which matches the order here.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.base_data_module.BaseDataModule.get_config">
+<span class="sig-name descname"><span class="pre">get_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/base_data_module.html#BaseDataModule.get_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.base_data_module.BaseDataModule.get_config" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-neuralkg.data.DataPreprocess">
+<span id="datapreprocess"></span><h2>DataPreprocess<a class="headerlink" href="#module-neuralkg.data.DataPreprocess" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.KGData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.DataPreprocess.</span></span><span class="sig-name descname"><span class="pre">KGData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#KGData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.KGData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Data preprocessing of kg data.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.KGData.args">
+<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#neuralkg.data.DataPreprocess.KGData.args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Some pre-set parameters, such as dataset path, etc.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.KGData.get_id">
+<span class="sig-name descname"><span class="pre">get_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#KGData.get_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.KGData.get_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get entity/relation id, and entity/relation number.</p>
+<dl class="simple">
+<dt>Update:</dt><dd><p>self.ent2id: Entity to id.
+self.rel2id: Relation to id.
+self.id2ent: id to Entity.
+self.id2rel: id to Relation.
+self.args.num_ent: Entity number.
+self.args.num_rel: Relation number.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.KGData.get_triples_id">
+<span class="sig-name descname"><span class="pre">get_triples_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#KGData.get_triples_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.KGData.get_triples_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get triples id, save in the format of (h, r, t).</p>
+<dl class="simple">
+<dt>Update:</dt><dd><p>self.train_triples: Train dataset triples id.
+self.valid_triples: Valid dataset triples id.
+self.test_triples: Test dataset triples id.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.KGData.get_hr2t_rt2h_from_train">
+<span class="sig-name descname"><span class="pre">get_hr2t_rt2h_from_train</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#KGData.get_hr2t_rt2h_from_train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.KGData.get_hr2t_rt2h_from_train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the set of hr2t and rt2h from train dataset, the data type is numpy.</p>
+<dl class="simple">
+<dt>Update:</dt><dd><p>self.hr2t_train: The set of hr2t.
+self.rt2h_train: The set of rt2h.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.KGData.count_frequency">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">count_frequency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">triples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#KGData.count_frequency"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.KGData.count_frequency" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get frequency of a partial triple like (head, relation) or (relation, tail)
+The frequency will be used for subsampling like word2vec</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.KGData.get_h2rt_t2hr_from_train">
+<span class="sig-name descname"><span class="pre">get_h2rt_t2hr_from_train</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#KGData.get_h2rt_t2hr_from_train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.KGData.get_h2rt_t2hr_from_train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the set of h2rt and t2hr from train dataset, the data type is numpy.</p>
+<dl class="simple">
+<dt>Update:</dt><dd><p>self.h2rt_train: The set of h2rt.
+self.t2rh_train: The set of t2hr.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.KGData.get_hr_trian">
+<span class="sig-name descname"><span class="pre">get_hr_trian</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#KGData.get_hr_trian"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.KGData.get_hr_trian" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.BaseSampler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.DataPreprocess.</span></span><span class="sig-name descname"><span class="pre">BaseSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#BaseSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.BaseSampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#neuralkg.data.DataPreprocess.KGData" title="neuralkg.data.DataPreprocess.KGData"><code class="xref py py-class docutils literal notranslate"><span class="pre">neuralkg.data.DataPreprocess.KGData</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.BaseSampler.corrupt_head">
+<span class="sig-name descname"><span class="pre">corrupt_head</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#BaseSampler.corrupt_head"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.BaseSampler.corrupt_head" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.BaseSampler.corrupt_tail">
+<span class="sig-name descname"><span class="pre">corrupt_tail</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#BaseSampler.corrupt_tail"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.BaseSampler.corrupt_tail" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.BaseSampler.head_batch">
+<span class="sig-name descname"><span class="pre">head_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neg_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#BaseSampler.head_batch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.BaseSampler.head_batch" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.BaseSampler.tail_batch">
+<span class="sig-name descname"><span class="pre">tail_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neg_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#BaseSampler.tail_batch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.BaseSampler.tail_batch" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.BaseSampler.get_train">
+<span class="sig-name descname"><span class="pre">get_train</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#BaseSampler.get_train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.BaseSampler.get_train" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.BaseSampler.get_valid">
+<span class="sig-name descname"><span class="pre">get_valid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#BaseSampler.get_valid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.BaseSampler.get_valid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.BaseSampler.get_test">
+<span class="sig-name descname"><span class="pre">get_test</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#BaseSampler.get_test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.BaseSampler.get_test" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.BaseSampler.get_all_true_triples">
+<span class="sig-name descname"><span class="pre">get_all_true_triples</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#BaseSampler.get_all_true_triples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.BaseSampler.get_all_true_triples" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.RevSampler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.DataPreprocess.</span></span><span class="sig-name descname"><span class="pre">RevSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#RevSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.RevSampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#neuralkg.data.DataPreprocess.KGData" title="neuralkg.data.DataPreprocess.KGData"><code class="xref py py-class docutils literal notranslate"><span class="pre">neuralkg.data.DataPreprocess.KGData</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.RevSampler.add_reverse_relation">
+<span class="sig-name descname"><span class="pre">add_reverse_relation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#RevSampler.add_reverse_relation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.RevSampler.add_reverse_relation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get entity/relation/reverse relation id, and entity/relation number.</p>
+<dl class="simple">
+<dt>Update:</dt><dd><p>self.ent2id: Entity id.
+self.rel2id: Relation id.
+self.args.num_ent: Entity number.
+self.args.num_rel: Relation number.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.RevSampler.add_reverse_triples">
+<span class="sig-name descname"><span class="pre">add_reverse_triples</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#RevSampler.add_reverse_triples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.RevSampler.add_reverse_triples" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.RevSampler.get_train">
+<span class="sig-name descname"><span class="pre">get_train</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#RevSampler.get_train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.RevSampler.get_train" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.RevSampler.get_valid">
+<span class="sig-name descname"><span class="pre">get_valid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#RevSampler.get_valid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.RevSampler.get_valid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.RevSampler.get_test">
+<span class="sig-name descname"><span class="pre">get_test</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#RevSampler.get_test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.RevSampler.get_test" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.RevSampler.get_all_true_triples">
+<span class="sig-name descname"><span class="pre">get_all_true_triples</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#RevSampler.get_all_true_triples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.RevSampler.get_all_true_triples" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.RevSampler.corrupt_head">
+<span class="sig-name descname"><span class="pre">corrupt_head</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#RevSampler.corrupt_head"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.RevSampler.corrupt_head" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.RevSampler.corrupt_tail">
+<span class="sig-name descname"><span class="pre">corrupt_tail</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#RevSampler.corrupt_tail"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.RevSampler.corrupt_tail" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.RevSampler.head_batch">
+<span class="sig-name descname"><span class="pre">head_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neg_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#RevSampler.head_batch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.RevSampler.head_batch" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.RevSampler.tail_batch">
+<span class="sig-name descname"><span class="pre">tail_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neg_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#RevSampler.tail_batch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.RevSampler.tail_batch" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-neuralkg.data.Sampler">
+<span id="sampler"></span><h2>Sampler<a class="headerlink" href="#module-neuralkg.data.Sampler" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.normal">
+<span class="sig-prename descclassname"><span class="pre">neuralkg.data.Sampler.</span></span><span class="sig-name descname"><span class="pre">normal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#neuralkg.data.Sampler.normal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw random samples from a normal (Gaussian) distribution.</p>
+<p>The probability density function of the normal distribution, first
+derived by De Moivre and 200 years later by both Gauss and Laplace
+independently <a class="footnote-reference brackets" href="#id11" id="id7">2</a>, is often called the bell curve because of
+its characteristic shape (see the example below).</p>
+<p>The normal distributions occurs often in nature.  For example, it
+describes the commonly occurring distribution of samples influenced
+by a large number of tiny, random disturbances, each with its own
+unique distribution <a class="footnote-reference brackets" href="#id11" id="id8">2</a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>New code should use the <code class="docutils literal notranslate"><span class="pre">normal</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
+instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>loc</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em> or </em><em>array_like of floats</em>) – Mean (“centre”) of the distribution.</p></li>
+<li><p><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em> or </em><em>array_like of floats</em>) – Standard deviation (spread or “width”) of the distribution. Must be
+non-negative.</p></li>
+<li><p><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> or </em><em>tuple of ints</em><em>, </em><em>optional</em>) – Output shape.  If the given shape is, e.g., <code class="docutils literal notranslate"><span class="pre">(m,</span> <span class="pre">n,</span> <span class="pre">k)</span></code>, then
+<code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">*</span> <span class="pre">n</span> <span class="pre">*</span> <span class="pre">k</span></code> samples are drawn.  If size is <code class="docutils literal notranslate"><span class="pre">None</span></code> (default),
+a single value is returned if <code class="docutils literal notranslate"><span class="pre">loc</span></code> and <code class="docutils literal notranslate"><span class="pre">scale</span></code> are both scalars.
+Otherwise, <code class="docutils literal notranslate"><span class="pre">np.broadcast(loc,</span> <span class="pre">scale).size</span></code> samples are drawn.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>out</strong> – Drawn samples from the parameterized normal distribution.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray or scalar</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.stats.norm</span></code></dt><dd><p>probability density function, distribution or cumulative density function, etc.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">Generator.normal</span></code></dt><dd><p>which should be used for new code.</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Notes</p>
+<p>The probability density for the Gaussian distribution is</p>
+<div class="math notranslate nohighlight">
+\[p(x) = \frac{1}{\sqrt{ 2 \pi \sigma^2 }}
+e^{ - \frac{ (x - \mu)^2 } {2 \sigma^2} },\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mu\)</span> is the mean and <span class="math notranslate nohighlight">\(\sigma\)</span> the standard
+deviation. The square of the standard deviation, <span class="math notranslate nohighlight">\(\sigma^2\)</span>,
+is called the variance.</p>
+<p>The function has its peak at the mean, and its “spread” increases with
+the standard deviation (the function reaches 0.607 times its maximum at
+<span class="math notranslate nohighlight">\(x + \sigma\)</span> and <span class="math notranslate nohighlight">\(x - \sigma\)</span> <a class="footnote-reference brackets" href="#id11" id="id9">2</a>).  This implies that
+normal is more likely to return samples lying close to the mean, rather
+than those far away.</p>
+<p class="rubric">References</p>
+<dl class="footnote brackets">
+<dt class="label" id="id10"><span class="brackets">1</span></dt>
+<dd><p>Wikipedia, “Normal distribution”,
+<a class="reference external" href="https://en.wikipedia.org/wiki/Normal_distribution">https://en.wikipedia.org/wiki/Normal_distribution</a></p>
+</dd>
+<dt class="label" id="id11"><span class="brackets">2</span><span class="fn-backref">(<a href="#id7">1</a>,<a href="#id8">2</a>,<a href="#id9">3</a>)</span></dt>
+<dd><p>P. R. Peebles Jr., “Central Limit Theorem” in “Probability,
+Random Variables and Random Signal Principles”, 4th ed., 2001,
+pp. 51, 51, 125.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Draw samples from the distribution:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span> <span class="c1"># mean and standard deviation</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Verify the mean and the variance:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">abs</span><span class="p">(</span><span class="n">mu</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
+<span class="go">0.0  # may vary</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">abs</span><span class="p">(</span><span class="n">sigma</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+<span class="go">0.1  # may vary</span>
+</pre></div>
+</div>
+<p>Display the histogram of the samples, along with
+the probability density function:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">count</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">ignored</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="n">sigma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span> <span class="o">*</span>
+<span class="gp">... </span>               <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span> <span class="o">-</span> <span class="p">(</span><span class="n">bins</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">sigma</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="p">),</span>
+<span class="gp">... </span>         <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Two-by-four array of samples from N(3, 6.25):</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="go">array([[-4.49401501,  4.00950034, -1.81814867,  7.29718677],   # random</span>
+<span class="go">       [ 0.39924804,  4.68456316,  4.99394529,  4.84057254]])  # random</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.UniSampler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.Sampler.</span></span><span class="sig-name descname"><span class="pre">UniSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#UniSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.UniSampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#neuralkg.data.DataPreprocess.BaseSampler" title="neuralkg.data.DataPreprocess.BaseSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">neuralkg.data.DataPreprocess.BaseSampler</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.UniSampler.sampling">
+<span class="sig-name descname"><span class="pre">sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#UniSampler.sampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.UniSampler.sampling" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.UniSampler.uni_sampling">
+<span class="sig-name descname"><span class="pre">uni_sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#UniSampler.uni_sampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.UniSampler.uni_sampling" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.UniSampler.get_sampling_keys">
+<span class="sig-name descname"><span class="pre">get_sampling_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#UniSampler.get_sampling_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.UniSampler.get_sampling_keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.BernSampler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.Sampler.</span></span><span class="sig-name descname"><span class="pre">BernSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#BernSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.BernSampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#neuralkg.data.DataPreprocess.BaseSampler" title="neuralkg.data.DataPreprocess.BaseSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">neuralkg.data.DataPreprocess.BaseSampler</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.BernSampler.sampling">
+<span class="sig-name descname"><span class="pre">sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#BernSampler.sampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.BernSampler.sampling" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.BernSampler.calc_bern">
+<span class="sig-name descname"><span class="pre">calc_bern</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#BernSampler.calc_bern"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.BernSampler.calc_bern" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.BernSampler.sampling_keys">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sampling_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#BernSampler.sampling_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.BernSampler.sampling_keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.AdvSampler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.Sampler.</span></span><span class="sig-name descname"><span class="pre">AdvSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#AdvSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.AdvSampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#neuralkg.data.DataPreprocess.BaseSampler" title="neuralkg.data.DataPreprocess.BaseSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">neuralkg.data.DataPreprocess.BaseSampler</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.AdvSampler.sampling">
+<span class="sig-name descname"><span class="pre">sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos_sample</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#AdvSampler.sampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.AdvSampler.sampling" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.AdvSampler.calc_freq">
+<span class="sig-name descname"><span class="pre">calc_freq</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#AdvSampler.calc_freq"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.AdvSampler.calc_freq" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.AllSampler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.Sampler.</span></span><span class="sig-name descname"><span class="pre">AllSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#AllSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.AllSampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#neuralkg.data.DataPreprocess.RevSampler" title="neuralkg.data.DataPreprocess.RevSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">neuralkg.data.DataPreprocess.RevSampler</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.AllSampler.sampling">
+<span class="sig-name descname"><span class="pre">sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#AllSampler.sampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.AllSampler.sampling" title="Permalink to this definition">¶</a></dt>
+<dd><p>全部做tail_prediction</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.AllSampler.sampling_keys">
+<span class="sig-name descname"><span class="pre">sampling_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#AllSampler.sampling_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.AllSampler.sampling_keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.CrossESampler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.Sampler.</span></span><span class="sig-name descname"><span class="pre">CrossESampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#CrossESampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.CrossESampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#neuralkg.data.DataPreprocess.BaseSampler" title="neuralkg.data.DataPreprocess.BaseSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">neuralkg.data.DataPreprocess.BaseSampler</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.CrossESampler.sampling">
+<span class="sig-name descname"><span class="pre">sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#CrossESampler.sampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.CrossESampler.sampling" title="Permalink to this definition">¶</a></dt>
+<dd><p>一个样本同时做head/tail prediction</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.CrossESampler.init_label">
+<span class="sig-name descname"><span class="pre">init_label</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">row</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#CrossESampler.init_label"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.CrossESampler.init_label" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.CrossESampler.sampling_keys">
+<span class="sig-name descname"><span class="pre">sampling_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#CrossESampler.sampling_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.CrossESampler.sampling_keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.ConvSampler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.Sampler.</span></span><span class="sig-name descname"><span class="pre">ConvSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#ConvSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.ConvSampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#neuralkg.data.DataPreprocess.RevSampler" title="neuralkg.data.DataPreprocess.RevSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">neuralkg.data.DataPreprocess.RevSampler</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.ConvSampler.sampling">
+<span class="sig-name descname"><span class="pre">sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos_hr_t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#ConvSampler.sampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.ConvSampler.sampling" title="Permalink to this definition">¶</a></dt>
+<dd><p>全部做tail_prediction</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.ConvSampler.sampling_keys">
+<span class="sig-name descname"><span class="pre">sampling_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#ConvSampler.sampling_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.ConvSampler.sampling_keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.XTransESampler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.Sampler.</span></span><span class="sig-name descname"><span class="pre">XTransESampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#XTransESampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.XTransESampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#neuralkg.data.DataPreprocess.RevSampler" title="neuralkg.data.DataPreprocess.RevSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">neuralkg.data.DataPreprocess.RevSampler</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.XTransESampler.sampling">
+<span class="sig-name descname"><span class="pre">sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#XTransESampler.sampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.XTransESampler.sampling" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.XTransESampler.get_sampling_keys">
+<span class="sig-name descname"><span class="pre">get_sampling_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#XTransESampler.get_sampling_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.XTransESampler.get_sampling_keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.GraphSampler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.Sampler.</span></span><span class="sig-name descname"><span class="pre">GraphSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#GraphSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.GraphSampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#neuralkg.data.DataPreprocess.RevSampler" title="neuralkg.data.DataPreprocess.RevSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">neuralkg.data.DataPreprocess.RevSampler</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.GraphSampler.sampling">
+<span class="sig-name descname"><span class="pre">sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos_triples</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#GraphSampler.sampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.GraphSampler.sampling" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.GraphSampler.get_sampling_keys">
+<span class="sig-name descname"><span class="pre">get_sampling_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#GraphSampler.get_sampling_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.GraphSampler.get_sampling_keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.GraphSampler.sampling_negative">
+<span class="sig-name descname"><span class="pre">sampling_negative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_triples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_neg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#GraphSampler.sampling_negative"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.GraphSampler.sampling_negative" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.GraphSampler.build_graph">
+<span class="sig-name descname"><span class="pre">build_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_ent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">triples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#GraphSampler.build_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.GraphSampler.build_graph" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.GraphSampler.comp_deg_norm">
+<span class="sig-name descname"><span class="pre">comp_deg_norm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#GraphSampler.comp_deg_norm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.GraphSampler.comp_deg_norm" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.GraphSampler.node_norm_to_edge_norm">
+<span class="sig-name descname"><span class="pre">node_norm_to_edge_norm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_norm</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#GraphSampler.node_norm_to_edge_norm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.GraphSampler.node_norm_to_edge_norm" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.GraphSampler.sampling_postive">
+<span class="sig-name descname"><span class="pre">sampling_postive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">postive_triples</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#GraphSampler.sampling_postive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.GraphSampler.sampling_postive" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.KBATSampler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.Sampler.</span></span><span class="sig-name descname"><span class="pre">KBATSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#KBATSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.KBATSampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#neuralkg.data.DataPreprocess.BaseSampler" title="neuralkg.data.DataPreprocess.BaseSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">neuralkg.data.DataPreprocess.BaseSampler</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.KBATSampler.sampling">
+<span class="sig-name descname"><span class="pre">sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos_triples</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#KBATSampler.sampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.KBATSampler.sampling" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.KBATSampler.get_sampling_keys">
+<span class="sig-name descname"><span class="pre">get_sampling_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#KBATSampler.get_sampling_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.KBATSampler.get_sampling_keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.KBATSampler.bfs">
+<span class="sig-name descname"><span class="pre">bfs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nbd_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#KBATSampler.bfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.KBATSampler.bfs" title="Permalink to this definition">¶</a></dt>
+<dd><p>返回neigbors 记录source的前两跳关系和实体</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.KBATSampler.get_neighbors">
+<span class="sig-name descname"><span class="pre">get_neighbors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nbd_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#KBATSampler.get_neighbors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.KBATSampler.get_neighbors" title="Permalink to this definition">¶</a></dt>
+<dd><p>返回neighors记录source在两跳邻域内的关系和实体</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.KBATSampler.get_unique_entity">
+<span class="sig-name descname"><span class="pre">get_unique_entity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">triples</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#KBATSampler.get_unique_entity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.KBATSampler.get_unique_entity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.KBATSampler.get_batch_nhop_neighbors_all">
+<span class="sig-name descname"><span class="pre">get_batch_nhop_neighbors_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nbd_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#KBATSampler.get_batch_nhop_neighbors_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.KBATSampler.get_batch_nhop_neighbors_all" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.KBATSampler.sampling_negative">
+<span class="sig-name descname"><span class="pre">sampling_negative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_triples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_neg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#KBATSampler.sampling_negative"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.KBATSampler.sampling_negative" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.KBATSampler.sam_negative">
+<span class="sig-name descname"><span class="pre">sam_negative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_triples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_neg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#KBATSampler.sam_negative"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.KBATSampler.sam_negative" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.CompGCNSampler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.Sampler.</span></span><span class="sig-name descname"><span class="pre">CompGCNSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#CompGCNSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.CompGCNSampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#neuralkg.data.Sampler.GraphSampler" title="neuralkg.data.Sampler.GraphSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">neuralkg.data.Sampler.GraphSampler</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.CompGCNSampler.sampling">
+<span class="sig-name descname"><span class="pre">sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos_hr_t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#CompGCNSampler.sampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.CompGCNSampler.sampling" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.CompGCNSampler.get_sampling_keys">
+<span class="sig-name descname"><span class="pre">get_sampling_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#CompGCNSampler.get_sampling_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.CompGCNSampler.get_sampling_keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.CompGCNSampler.node_norm_to_edge_norm">
+<span class="sig-name descname"><span class="pre">node_norm_to_edge_norm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_norm</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#CompGCNSampler.node_norm_to_edge_norm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.CompGCNSampler.node_norm_to_edge_norm" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.TestSampler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.Sampler.</span></span><span class="sig-name descname"><span class="pre">TestSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampler</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#TestSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.TestSampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.TestSampler.get_hr2t_rt2h_from_all">
+<span class="sig-name descname"><span class="pre">get_hr2t_rt2h_from_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#TestSampler.get_hr2t_rt2h_from_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.TestSampler.get_hr2t_rt2h_from_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the set of hr2t and rt2h from all datasets(train, valid, and test), the data type is tensor.</p>
+<dl class="simple">
+<dt>Update:</dt><dd><p>self.hr2t_all: The set of hr2t.
+self.rt2h_all: The set of rt2h.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.TestSampler.sampling">
+<span class="sig-name descname"><span class="pre">sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#TestSampler.sampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.TestSampler.sampling" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.TestSampler.get_sampling_keys">
+<span class="sig-name descname"><span class="pre">get_sampling_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#TestSampler.get_sampling_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.TestSampler.get_sampling_keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.GraphTestSampler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.Sampler.</span></span><span class="sig-name descname"><span class="pre">GraphTestSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampler</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#GraphTestSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.GraphTestSampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.GraphTestSampler.get_hr2t_rt2h_from_all">
+<span class="sig-name descname"><span class="pre">get_hr2t_rt2h_from_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#GraphTestSampler.get_hr2t_rt2h_from_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.GraphTestSampler.get_hr2t_rt2h_from_all" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.GraphTestSampler.sampling">
+<span class="sig-name descname"><span class="pre">sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#GraphTestSampler.sampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.GraphTestSampler.sampling" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.GraphTestSampler.get_sampling_keys">
+<span class="sig-name descname"><span class="pre">get_sampling_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#GraphTestSampler.get_sampling_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.GraphTestSampler.get_sampling_keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.CompGCNTestSampler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.Sampler.</span></span><span class="sig-name descname"><span class="pre">CompGCNTestSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampler</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#CompGCNTestSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.CompGCNTestSampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.CompGCNTestSampler.get_hr2t_rt2h_from_all">
+<span class="sig-name descname"><span class="pre">get_hr2t_rt2h_from_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#CompGCNTestSampler.get_hr2t_rt2h_from_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.CompGCNTestSampler.get_hr2t_rt2h_from_all" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.CompGCNTestSampler.sampling">
+<span class="sig-name descname"><span class="pre">sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#CompGCNTestSampler.sampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.CompGCNTestSampler.sampling" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.CompGCNTestSampler.get_sampling_keys">
+<span class="sig-name descname"><span class="pre">get_sampling_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#CompGCNTestSampler.get_sampling_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.CompGCNTestSampler.get_sampling_keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.XTransETestSampler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.Sampler.</span></span><span class="sig-name descname"><span class="pre">XTransETestSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampler</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#XTransETestSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.XTransETestSampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#neuralkg.data.Sampler.TestSampler" title="neuralkg.data.Sampler.TestSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">neuralkg.data.Sampler.TestSampler</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.XTransETestSampler.sampling">
+<span class="sig-name descname"><span class="pre">sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#XTransETestSampler.sampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.XTransETestSampler.sampling" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.XTransETestSampler.get_sampling_keys">
+<span class="sig-name descname"><span class="pre">get_sampling_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#XTransETestSampler.get_sampling_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.XTransETestSampler.get_sampling_keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.KGDataset">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.Sampler.</span></span><span class="sig-name descname"><span class="pre">KGDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">triples</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#KGDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.KGDataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.data.dataset.Dataset</span></code></p>
+</dd></dl>
+
+</section>
+<section id="module-neuralkg.data.Grounding">
+<span id="grounding"></span><h2>Grounding<a class="headerlink" href="#module-neuralkg.data.Grounding" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg.data.Grounding.GroundAllRules">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.Grounding.</span></span><span class="sig-name descname"><span class="pre">GroundAllRules</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Grounding.html#GroundAllRules"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Grounding.GroundAllRules" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Grounding.GroundAllRules.PropositionalizeRule">
+<span class="sig-name descname"><span class="pre">PropositionalizeRule</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Grounding.html#GroundAllRules.PropositionalizeRule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Grounding.GroundAllRules.PropositionalizeRule" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Grounding.GroundAllRules.readData">
+<span class="sig-name descname"><span class="pre">readData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fnEntityIDMap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fnRelationIDMap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fnTrainingTriples</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Grounding.html#GroundAllRules.readData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Grounding.GroundAllRules.readData" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.Grounding.GroundAllRules.groundRule">
+<span class="sig-name descname"><span class="pre">groundRule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fnRuleType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fnOutput</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Grounding.html#GroundAllRules.groundRule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Grounding.GroundAllRules.groundRule" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-neuralkg.data.RuleDataLoader">
+<span id="ruledataloader"></span><h2>RuleDataLoader<a class="headerlink" href="#module-neuralkg.data.RuleDataLoader" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg.data.RuleDataLoader.RuleDataset">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.RuleDataLoader.</span></span><span class="sig-name descname"><span class="pre">RuleDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/RuleDataLoader.html#RuleDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.RuleDataLoader.RuleDataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.data.dataset.Dataset</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg.data.RuleDataLoader.RuleDataLoader">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.RuleDataLoader.</span></span><span class="sig-name descname"><span class="pre">RuleDataLoader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/RuleDataLoader.html#RuleDataLoader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.RuleDataLoader.RuleDataLoader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.data.dataloader.DataLoader</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.RuleDataLoader.RuleDataLoader.dataset">
+<span class="sig-name descname"><span class="pre">dataset</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">torch.utils.data.dataset.Dataset</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.utils.data.dataloader.T_co</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#neuralkg.data.RuleDataLoader.RuleDataLoader.dataset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.RuleDataLoader.RuleDataLoader.batch_size">
+<span class="sig-name descname"><span class="pre">batch_size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#neuralkg.data.RuleDataLoader.RuleDataLoader.batch_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.RuleDataLoader.RuleDataLoader.num_workers">
+<span class="sig-name descname"><span class="pre">num_workers</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><span class="pre">int</span></a></em><a class="headerlink" href="#neuralkg.data.RuleDataLoader.RuleDataLoader.num_workers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.RuleDataLoader.RuleDataLoader.pin_memory">
+<span class="sig-name descname"><span class="pre">pin_memory</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><span class="pre">bool</span></a></em><a class="headerlink" href="#neuralkg.data.RuleDataLoader.RuleDataLoader.pin_memory" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.RuleDataLoader.RuleDataLoader.drop_last">
+<span class="sig-name descname"><span class="pre">drop_last</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><span class="pre">bool</span></a></em><a class="headerlink" href="#neuralkg.data.RuleDataLoader.RuleDataLoader.drop_last" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.RuleDataLoader.RuleDataLoader.timeout">
+<span class="sig-name descname"><span class="pre">timeout</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><span class="pre">float</span></a></em><a class="headerlink" href="#neuralkg.data.RuleDataLoader.RuleDataLoader.timeout" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.RuleDataLoader.RuleDataLoader.sampler">
+<span class="sig-name descname"><span class="pre">sampler</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">torch.utils.data.sampler.Sampler</span></em><a class="headerlink" href="#neuralkg.data.RuleDataLoader.RuleDataLoader.sampler" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.RuleDataLoader.RuleDataLoader.prefetch_factor">
+<span class="sig-name descname"><span class="pre">prefetch_factor</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><span class="pre">int</span></a></em><a class="headerlink" href="#neuralkg.data.RuleDataLoader.RuleDataLoader.prefetch_factor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-neuralkg.data.KGDataModule">
+<span id="kgdatamodule"></span><h2>KGDataModule<a class="headerlink" href="#module-neuralkg.data.KGDataModule" title="Permalink to this headline">¶</a></h2>
+<p>Base DataModule class.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg.data.KGDataModule.KGDataModule">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.KGDataModule.</span></span><span class="sig-name descname"><span class="pre">KGDataModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/KGDataModule.html#KGDataModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.KGDataModule.KGDataModule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#neuralkg.data.base_data_module.BaseDataModule" title="neuralkg.data.base_data_module.BaseDataModule"><code class="xref py py-class docutils literal notranslate"><span class="pre">neuralkg.data.base_data_module.BaseDataModule</span></code></a></p>
+<p>Base DataModule.
+Learn more at <a class="reference external" href="https://pytorch-lightning.readthedocs.io/en/stable/datamodules.html">https://pytorch-lightning.readthedocs.io/en/stable/datamodules.html</a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.KGDataModule.KGDataModule.get_data_config">
+<span class="sig-name descname"><span class="pre">get_data_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/KGDataModule.html#KGDataModule.get_data_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.KGDataModule.KGDataModule.get_data_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return important settings of the dataset, which will be passed to instantiate models.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.KGDataModule.KGDataModule.prepare_data">
+<span class="sig-name descname"><span class="pre">prepare_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/KGDataModule.html#KGDataModule.prepare_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.KGDataModule.KGDataModule.prepare_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use this method to do things that might write to disk or that need to be done only from a single GPU in distributed settings (so don’t set state <cite>self.x = y</cite>).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.KGDataModule.KGDataModule.setup">
+<span class="sig-name descname"><span class="pre">setup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/KGDataModule.html#KGDataModule.setup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.KGDataModule.KGDataModule.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Split into train, val, test, and set dims.
+Should assign <cite>torch Dataset</cite> objects to self.data_train, self.data_val, and optionally self.data_test.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.KGDataModule.KGDataModule.get_train_bs">
+<span class="sig-name descname"><span class="pre">get_train_bs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/KGDataModule.html#KGDataModule.get_train_bs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.KGDataModule.KGDataModule.get_train_bs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.KGDataModule.KGDataModule.train_dataloader">
+<span class="sig-name descname"><span class="pre">train_dataloader</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/KGDataModule.html#KGDataModule.train_dataloader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.KGDataModule.KGDataModule.train_dataloader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implement one or more PyTorch DataLoaders for training.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A collection of <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.data.DataLoader</span></code> specifying training samples.
+In the case of multiple dataloaders, please see this <span class="xref std std-ref">page</span>.</p>
+</dd>
+</dl>
+<p>The dataloader you return will not be reloaded unless you set
+<a href="#id12"><span class="problematic" id="id13">:paramref:`~pytorch_lightning.trainer.Trainer.reload_dataloaders_every_n_epochs`</span></a> to
+a positive integer.</p>
+<p>For data processing use the following pattern:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>download in <a class="reference internal" href="#neuralkg.data.KGDataModule.KGDataModule.prepare_data" title="neuralkg.data.KGDataModule.KGDataModule.prepare_data"><code class="xref py py-meth docutils literal notranslate"><span class="pre">prepare_data()</span></code></a></p></li>
+<li><p>process and split in <a class="reference internal" href="#neuralkg.data.KGDataModule.KGDataModule.setup" title="neuralkg.data.KGDataModule.KGDataModule.setup"><code class="xref py py-meth docutils literal notranslate"><span class="pre">setup()</span></code></a></p></li>
+</ul>
+</div></blockquote>
+<p>However, the above are only necessary for distributed processing.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>do not assign state in prepare_data</p>
+</div>
+<ul class="simple">
+<li><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">fit()</span></code></p></li>
+<li><p>…</p></li>
+<li><p><a class="reference internal" href="#neuralkg.data.KGDataModule.KGDataModule.prepare_data" title="neuralkg.data.KGDataModule.KGDataModule.prepare_data"><code class="xref py py-meth docutils literal notranslate"><span class="pre">prepare_data()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#neuralkg.data.KGDataModule.KGDataModule.setup" title="neuralkg.data.KGDataModule.KGDataModule.setup"><code class="xref py py-meth docutils literal notranslate"><span class="pre">setup()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#neuralkg.data.KGDataModule.KGDataModule.train_dataloader" title="neuralkg.data.KGDataModule.KGDataModule.train_dataloader"><code class="xref py py-meth docutils literal notranslate"><span class="pre">train_dataloader()</span></code></a></p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Lightning adds the correct sampler for distributed and arbitrary hardware.
+There is no need to set it yourself.</p>
+</div>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># single dataloader</span>
+<span class="k">def</span> <span class="nf">train_dataloader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">transform</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span><span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">(),</span>
+                                    <span class="n">transforms</span><span class="o">.</span><span class="n">Normalize</span><span class="p">((</span><span class="mf">0.5</span><span class="p">,),</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,))])</span>
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">MNIST</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="s1">&#39;/path/to/mnist/&#39;</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">,</span>
+                    <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">loader</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span>
+        <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+        <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">loader</span>
+
+<span class="c1"># multiple dataloaders, return as list</span>
+<span class="k">def</span> <span class="nf">train_dataloader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">mnist</span> <span class="o">=</span> <span class="n">MNIST</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+    <span class="n">cifar</span> <span class="o">=</span> <span class="n">CIFAR</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+    <span class="n">mnist_loader</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span>
+        <span class="n">dataset</span><span class="o">=</span><span class="n">mnist</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="n">cifar_loader</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span>
+        <span class="n">dataset</span><span class="o">=</span><span class="n">cifar</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="c1"># each batch will be a list of tensors: [batch_mnist, batch_cifar]</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">mnist_loader</span><span class="p">,</span> <span class="n">cifar_loader</span><span class="p">]</span>
+
+<span class="c1"># multiple dataloader, return as dict</span>
+<span class="k">def</span> <span class="nf">train_dataloader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">mnist</span> <span class="o">=</span> <span class="n">MNIST</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+    <span class="n">cifar</span> <span class="o">=</span> <span class="n">CIFAR</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+    <span class="n">mnist_loader</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span>
+        <span class="n">dataset</span><span class="o">=</span><span class="n">mnist</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="n">cifar_loader</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span>
+        <span class="n">dataset</span><span class="o">=</span><span class="n">cifar</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="c1"># each batch will be a dict of tensors: {&#39;mnist&#39;: batch_mnist, &#39;cifar&#39;: batch_cifar}</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;mnist&#39;</span><span class="p">:</span> <span class="n">mnist_loader</span><span class="p">,</span> <span class="s1">&#39;cifar&#39;</span><span class="p">:</span> <span class="n">cifar_loader</span><span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.KGDataModule.KGDataModule.val_dataloader">
+<span class="sig-name descname"><span class="pre">val_dataloader</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/KGDataModule.html#KGDataModule.val_dataloader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.KGDataModule.KGDataModule.val_dataloader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implement one or multiple PyTorch DataLoaders for validation.</p>
+<p>The dataloader you return will not be reloaded unless you set
+<a href="#id14"><span class="problematic" id="id15">:paramref:`~pytorch_lightning.trainer.Trainer.reload_dataloaders_every_n_epochs`</span></a> to
+a positive integer.</p>
+<p>It’s recommended that all data downloads and preparation happen in <a class="reference internal" href="#neuralkg.data.KGDataModule.KGDataModule.prepare_data" title="neuralkg.data.KGDataModule.KGDataModule.prepare_data"><code class="xref py py-meth docutils literal notranslate"><span class="pre">prepare_data()</span></code></a>.</p>
+<ul class="simple">
+<li><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">fit()</span></code></p></li>
+<li><p>…</p></li>
+<li><p><a class="reference internal" href="#neuralkg.data.KGDataModule.KGDataModule.prepare_data" title="neuralkg.data.KGDataModule.KGDataModule.prepare_data"><code class="xref py py-meth docutils literal notranslate"><span class="pre">prepare_data()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#neuralkg.data.KGDataModule.KGDataModule.train_dataloader" title="neuralkg.data.KGDataModule.KGDataModule.train_dataloader"><code class="xref py py-meth docutils literal notranslate"><span class="pre">train_dataloader()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#neuralkg.data.KGDataModule.KGDataModule.val_dataloader" title="neuralkg.data.KGDataModule.KGDataModule.val_dataloader"><code class="xref py py-meth docutils literal notranslate"><span class="pre">val_dataloader()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#neuralkg.data.KGDataModule.KGDataModule.test_dataloader" title="neuralkg.data.KGDataModule.KGDataModule.test_dataloader"><code class="xref py py-meth docutils literal notranslate"><span class="pre">test_dataloader()</span></code></a></p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Lightning adds the correct sampler for distributed and arbitrary hardware
+There is no need to set it yourself.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.data.DataLoader</span></code> or a sequence of them specifying validation samples.</p>
+</dd>
+</dl>
+<p>Examples:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">val_dataloader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">transform</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span><span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">(),</span>
+                                    <span class="n">transforms</span><span class="o">.</span><span class="n">Normalize</span><span class="p">((</span><span class="mf">0.5</span><span class="p">,),</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,))])</span>
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">MNIST</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="s1">&#39;/path/to/mnist/&#39;</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">loader</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span>
+        <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+        <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">loader</span>
+
+<span class="c1"># can also return multiple dataloaders</span>
+<span class="k">def</span> <span class="nf">val_dataloader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">loader_a</span><span class="p">,</span> <span class="n">loader_b</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">loader_n</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you don’t need a validation dataset and a <code class="xref py py-meth docutils literal notranslate"><span class="pre">validation_step()</span></code>, you don’t need to
+implement this method.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In the case where you return multiple validation dataloaders, the <code class="xref py py-meth docutils literal notranslate"><span class="pre">validation_step()</span></code>
+will have an argument <code class="docutils literal notranslate"><span class="pre">dataloader_idx</span></code> which matches the order here.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.data.KGDataModule.KGDataModule.test_dataloader">
+<span class="sig-name descname"><span class="pre">test_dataloader</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/KGDataModule.html#KGDataModule.test_dataloader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.KGDataModule.KGDataModule.test_dataloader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implement one or multiple PyTorch DataLoaders for testing.</p>
+<p>The dataloader you return will not be reloaded unless you set
+<a href="#id16"><span class="problematic" id="id17">:paramref:`~pytorch_lightning.trainer.Trainer.reload_dataloaders_every_n_epochs`</span></a> to
+a postive integer.</p>
+<p>For data processing use the following pattern:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>download in <a class="reference internal" href="#neuralkg.data.KGDataModule.KGDataModule.prepare_data" title="neuralkg.data.KGDataModule.KGDataModule.prepare_data"><code class="xref py py-meth docutils literal notranslate"><span class="pre">prepare_data()</span></code></a></p></li>
+<li><p>process and split in <a class="reference internal" href="#neuralkg.data.KGDataModule.KGDataModule.setup" title="neuralkg.data.KGDataModule.KGDataModule.setup"><code class="xref py py-meth docutils literal notranslate"><span class="pre">setup()</span></code></a></p></li>
+</ul>
+</div></blockquote>
+<p>However, the above are only necessary for distributed processing.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>do not assign state in prepare_data</p>
+</div>
+<ul class="simple">
+<li><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">fit()</span></code></p></li>
+<li><p>…</p></li>
+<li><p><a class="reference internal" href="#neuralkg.data.KGDataModule.KGDataModule.prepare_data" title="neuralkg.data.KGDataModule.KGDataModule.prepare_data"><code class="xref py py-meth docutils literal notranslate"><span class="pre">prepare_data()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#neuralkg.data.KGDataModule.KGDataModule.setup" title="neuralkg.data.KGDataModule.KGDataModule.setup"><code class="xref py py-meth docutils literal notranslate"><span class="pre">setup()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#neuralkg.data.KGDataModule.KGDataModule.train_dataloader" title="neuralkg.data.KGDataModule.KGDataModule.train_dataloader"><code class="xref py py-meth docutils literal notranslate"><span class="pre">train_dataloader()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#neuralkg.data.KGDataModule.KGDataModule.val_dataloader" title="neuralkg.data.KGDataModule.KGDataModule.val_dataloader"><code class="xref py py-meth docutils literal notranslate"><span class="pre">val_dataloader()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#neuralkg.data.KGDataModule.KGDataModule.test_dataloader" title="neuralkg.data.KGDataModule.KGDataModule.test_dataloader"><code class="xref py py-meth docutils literal notranslate"><span class="pre">test_dataloader()</span></code></a></p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Lightning adds the correct sampler for distributed and arbitrary hardware.
+There is no need to set it yourself.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.data.DataLoader</span></code> or a sequence of them specifying testing samples.</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">test_dataloader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">transform</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span><span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">(),</span>
+                                    <span class="n">transforms</span><span class="o">.</span><span class="n">Normalize</span><span class="p">((</span><span class="mf">0.5</span><span class="p">,),</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,))])</span>
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">MNIST</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="s1">&#39;/path/to/mnist/&#39;</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">,</span>
+                    <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">loader</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span>
+        <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+        <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">loader</span>
+
+<span class="c1"># can also return multiple dataloaders</span>
+<span class="k">def</span> <span class="nf">test_dataloader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">loader_a</span><span class="p">,</span> <span class="n">loader_b</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">loader_n</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you don’t need a test dataset and a <code class="xref py py-meth docutils literal notranslate"><span class="pre">test_step()</span></code>, you don’t need to implement
+this method.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In the case where you return multiple test dataloaders, the <code class="xref py py-meth docutils literal notranslate"><span class="pre">test_step()</span></code>
+will have an argument <code class="docutils literal notranslate"><span class="pre">dataloader_idx</span></code> which matches the order here.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="neuralkg.html" class="btn btn-neutral float-left" title="NeuralKG" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="neuralkg.eval_task.html" class="btn btn-neutral float-right" title="Eval_Task" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, zjukg.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

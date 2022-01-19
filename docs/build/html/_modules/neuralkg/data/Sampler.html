@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>neuralkg.data.Sampler &mdash; NeuralKG 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/clipboard.min.js"></script>
+        <script src="../../../_static/copybutton.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> NeuralKG
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Install</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../neuralkg.html">NeuralKG</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">NeuralKG</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>neuralkg.data.Sampler</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for neuralkg.data.Sampler</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">numpy.random.mtrand</span> <span class="kn">import</span> <span class="n">normal</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">Dataset</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span> <span class="k">as</span> <span class="n">ddict</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">from</span> <span class="nn">.DataPreprocess</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">IPython</span> <span class="kn">import</span> <span class="n">embed</span>
+<span class="kn">import</span> <span class="nn">dgl</span> 
+<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">queue</span>
+
+<span class="sd">&#39;&#39;&#39;TransE提出的随机负采样&#39;&#39;&#39;</span>
+<div class="viewcode-block" id="UniSampler"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.UniSampler">[docs]</a><span class="k">class</span> <span class="nc">UniSampler</span><span class="p">(</span><span class="n">BaseSampler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cross_sampling_flag</span> <span class="o">=</span> <span class="mi">0</span>
+
+<div class="viewcode-block" id="UniSampler.sampling"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.UniSampler.sampling">[docs]</a>    <span class="k">def</span> <span class="nf">sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="n">batch_data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">neg_ent_sample</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">subsampling_weight</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cross_sampling_flag</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">cross_sampling_flag</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cross_sampling_flag</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">batch_data</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;head-batch&quot;</span>
+            <span class="k">for</span> <span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                <span class="n">neg_head</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">head_batch</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_neg</span><span class="p">)</span>
+                <span class="n">neg_ent_sample</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">neg_head</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">use_weight</span><span class="p">:</span>
+                    <span class="n">weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">[(</span><span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">)]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">[(</span><span class="n">t</span><span class="p">,</span> <span class="o">-</span><span class="n">r</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+                    <span class="n">subsampling_weight</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">weight</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">batch_data</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;tail-batch&quot;</span>
+            <span class="k">for</span> <span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                <span class="n">neg_tail</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tail_batch</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_neg</span><span class="p">)</span>
+                <span class="n">neg_ent_sample</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">neg_tail</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">use_weight</span><span class="p">:</span>
+                    <span class="n">weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">[(</span><span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">)]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">[(</span><span class="n">t</span><span class="p">,</span> <span class="o">-</span><span class="n">r</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+                    <span class="n">subsampling_weight</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">weight</span><span class="p">)</span>
+
+        <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;positive_sample&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s1">&#39;negative_sample&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">neg_ent_sample</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">use_weight</span><span class="p">:</span>
+            <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;subsampling_weight&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">subsampling_weight</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">batch_data</span></div>
+    
+<div class="viewcode-block" id="UniSampler.uni_sampling"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.UniSampler.uni_sampling">[docs]</a>    <span class="k">def</span> <span class="nf">uni_sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="n">batch_data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">neg_head_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">neg_tail_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">neg_head</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">head_batch</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_neg</span><span class="p">)</span>
+            <span class="n">neg_head_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">neg_head</span><span class="p">)</span>
+            <span class="n">neg_tail</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tail_batch</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_neg</span><span class="p">)</span>
+            <span class="n">neg_tail_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">neg_tail</span><span class="p">)</span>
+
+        <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;positive_sample&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s1">&#39;negative_head&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">neg_head_list</span><span class="p">)</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s1">&#39;negative_tail&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">neg_tail_list</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">batch_data</span></div>
+
+<div class="viewcode-block" id="UniSampler.get_sampling_keys"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.UniSampler.get_sampling_keys">[docs]</a>    <span class="k">def</span> <span class="nf">get_sampling_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;positive_sample&#39;</span><span class="p">,</span> <span class="s1">&#39;negative_sample&#39;</span><span class="p">,</span> <span class="s1">&#39;mode&#39;</span><span class="p">]</span></div></div>
+
+<span class="sd">&#39;&#39;&#39;TransH提出的随机负采样&#39;&#39;&#39;</span>
+<div class="viewcode-block" id="BernSampler"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.BernSampler">[docs]</a><span class="k">class</span> <span class="nc">BernSampler</span><span class="p">(</span><span class="n">BaseSampler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lef_mean</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rig_mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_bern</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">__normal_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">neg_size</span><span class="p">):</span>
+        <span class="n">neg_size_h</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">neg_size_t</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="sd">&#39;&#39;&#39;使用伯努利分布来选择是替换头实体还是尾实体</span>
+<span class="sd">		原理是prob表示的是关系r组成的三元组中不同尾实体个数的占比,</span>
+<span class="sd">		prob越大表示关系是one-to-many的可能性越高，越应该替换头实体&#39;&#39;&#39;</span>
+        <span class="n">prob</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rig_mean</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rig_mean</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">lef_mean</span><span class="p">[</span><span class="n">r</span><span class="p">])</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">bern_flag</span> <span class="k">else</span> <span class="mf">0.5</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">neg_size</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">prob</span><span class="p">:</span>
+                <span class="n">neg_size_h</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">neg_size_t</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">neg_list_h</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">neg_cur_size</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">neg_cur_size</span> <span class="o">&lt;</span> <span class="n">neg_size_h</span><span class="p">:</span>
+            <span class="n">neg_tmp_h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrupt_head</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">num_max</span><span class="o">=</span><span class="p">(</span><span class="n">neg_size_h</span> <span class="o">-</span> <span class="n">neg_cur_size</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">neg_list_h</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">neg_tmp_h</span><span class="p">)</span>
+            <span class="n">neg_cur_size</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">neg_tmp_h</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">neg_list_h</span> <span class="o">!=</span> <span class="p">[]:</span>
+            <span class="n">neg_list_h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">neg_list_h</span><span class="p">)</span>
+
+        <span class="n">neg_list_t</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">neg_cur_size</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">neg_cur_size</span> <span class="o">&lt;</span> <span class="n">neg_size_t</span><span class="p">:</span>
+            <span class="n">neg_tmp_t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrupt_tail</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">num_max</span><span class="o">=</span><span class="p">(</span><span class="n">neg_size_t</span> <span class="o">-</span> <span class="n">neg_cur_size</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">neg_list_t</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">neg_tmp_t</span><span class="p">)</span>
+            <span class="n">neg_cur_size</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">neg_tmp_t</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">neg_list_t</span> <span class="o">!=</span> <span class="p">[]:</span>
+            <span class="n">neg_list_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">neg_list_t</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">neg_list_h</span><span class="p">[:</span><span class="n">neg_size_h</span><span class="p">],</span> <span class="n">neg_list_t</span><span class="p">[:</span><span class="n">neg_size_t</span><span class="p">]))</span>
+<div class="viewcode-block" id="BernSampler.sampling"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.BernSampler.sampling">[docs]</a>    <span class="k">def</span> <span class="nf">sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="n">batch_data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">neg_ent_sample</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;bern&#39;</span>
+        <span class="k">for</span> <span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">neg_ent_sample</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__normal_batch</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_neg</span><span class="p">)</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;positive_sample&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s1">&#39;negative_sample&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">neg_ent_sample</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">batch_data</span></div>
+    
+<div class="viewcode-block" id="BernSampler.calc_bern"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.BernSampler.calc_bern">[docs]</a>    <span class="k">def</span> <span class="nf">calc_bern</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">h_of_r</span> <span class="o">=</span> <span class="n">ddict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
+        <span class="n">t_of_r</span> <span class="o">=</span> <span class="n">ddict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
+        <span class="n">freqRel</span> <span class="o">=</span> <span class="n">ddict</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">lef_mean</span> <span class="o">=</span> <span class="n">ddict</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">rig_mean</span> <span class="o">=</span> <span class="n">ddict</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_triples</span><span class="p">:</span>
+            <span class="n">freqRel</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">1.0</span>
+            <span class="n">h_of_r</span><span class="p">[</span><span class="n">r</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+            <span class="n">t_of_r</span><span class="p">[</span><span class="n">r</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">h_of_r</span><span class="p">:</span>
+            <span class="n">lef_mean</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">=</span> <span class="n">freqRel</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">h_of_r</span><span class="p">[</span><span class="n">r</span><span class="p">])</span>
+            <span class="n">rig_mean</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">=</span> <span class="n">freqRel</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">t_of_r</span><span class="p">[</span><span class="n">r</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">lef_mean</span><span class="p">,</span> <span class="n">rig_mean</span></div>
+
+<div class="viewcode-block" id="BernSampler.sampling_keys"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.BernSampler.sampling_keys">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">sampling_keys</span><span class="p">():</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;positive_sample&#39;</span><span class="p">,</span> <span class="s1">&#39;negative_sample&#39;</span><span class="p">,</span> <span class="s1">&#39;mode&#39;</span><span class="p">]</span></div></div>
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">RotatE提出的自对抗负采样,</span>
+<span class="sd">这个类似于一个插件，可以结合uni/bern一起使用</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<div class="viewcode-block" id="AdvSampler"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.AdvSampler">[docs]</a><span class="k">class</span> <span class="nc">AdvSampler</span><span class="p">(</span><span class="n">BaseSampler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">freq_hr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">freq_tr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_freq</span><span class="p">()</span>
+<div class="viewcode-block" id="AdvSampler.sampling"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.AdvSampler.sampling">[docs]</a>    <span class="k">def</span> <span class="nf">sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos_sample</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">pos_sample</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">adv_sampling</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">freq_hr</span><span class="p">[(</span><span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">)]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">freq_tr</span><span class="p">[(</span><span class="n">t</span><span class="p">,</span> <span class="n">r</span><span class="p">)]</span>
+            <span class="n">adv_sampling</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">weight</span><span class="p">)</span>
+        <span class="n">adv_sampling</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">adv_sampling</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
+        <span class="n">adv_sampling</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">adv_sampling</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">adv_sampling</span></div>
+<div class="viewcode-block" id="AdvSampler.calc_freq"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.AdvSampler.calc_freq">[docs]</a>    <span class="k">def</span> <span class="nf">calc_freq</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">freq_hr</span><span class="p">,</span> <span class="n">freq_tr</span> <span class="o">=</span> <span class="p">{},</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_triples</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">freq_hr</span><span class="p">:</span>
+                <span class="n">freq_hr</span><span class="p">[(</span><span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">)]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">freq_init</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">freq_hr</span><span class="p">[(</span><span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">)]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">freq_tr</span><span class="p">:</span>
+                <span class="n">freq_tr</span><span class="p">[(</span><span class="n">t</span><span class="p">,</span> <span class="n">r</span><span class="p">)]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">freq_init</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">freq_tr</span><span class="p">[(</span><span class="n">t</span><span class="p">,</span> <span class="n">r</span><span class="p">)]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">freq_hr</span><span class="p">,</span> <span class="n">freq_tr</span></div></div>
+
+<span class="sd">&quot;&quot;&quot;ConvE提出的1vsall负采样&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AllSampler"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.AllSampler">[docs]</a><span class="k">class</span> <span class="nc">AllSampler</span><span class="p">(</span><span class="n">RevSampler</span><span class="p">):</span>
+    <span class="c1"># TODO:类名还需要商榷下</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="c1"># self.num_rel_without_rev = self.args.num_rel // 2</span>
+        
+<div class="viewcode-block" id="AllSampler.sampling"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.AllSampler.sampling">[docs]</a>    <span class="k">def</span> <span class="nf">sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;全部做tail_prediction&#39;&#39;&#39;</span>
+        <span class="c1"># sample_id = [] #确定triple里的relation是否是reverse的。reverse为1，不是为0</span>
+        <span class="n">batch_data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_ent</span><span class="p">)</span>
+        <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+            <span class="n">hr_sample</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hr2t_train</span><span class="p">[(</span><span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">)]</span>
+            <span class="n">table</span><span class="p">[</span><span class="nb">id</span><span class="p">][</span><span class="n">hr_sample</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="c1"># if r &gt; self.num_rel_without_rev:</span>
+            <span class="c1">#     sample_id.append(1)</span>
+            <span class="c1"># else:</span>
+            <span class="c1">#     sample_id.append(0)</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;sample&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+        <span class="c1"># batch_data[&quot;sample_id&quot;] = torch.LongTensor(sample_id)</span>
+        <span class="k">return</span> <span class="n">batch_data</span></div>
+
+<div class="viewcode-block" id="AllSampler.sampling_keys"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.AllSampler.sampling_keys">[docs]</a>    <span class="k">def</span> <span class="nf">sampling_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">]</span></div></div>
+    
+<div class="viewcode-block" id="CrossESampler"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.CrossESampler">[docs]</a><span class="k">class</span> <span class="nc">CrossESampler</span><span class="p">(</span><span class="n">BaseSampler</span><span class="p">):</span>
+    <span class="c1"># TODO:类名还需要商榷下</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">neg_weight</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">neg_weight</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_ent</span><span class="p">)</span>
+<div class="viewcode-block" id="CrossESampler.sampling"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.CrossESampler.sampling">[docs]</a>    <span class="k">def</span> <span class="nf">sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;一个样本同时做head/tail prediction&#39;&#39;&#39;</span>
+        <span class="n">batch_data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">hr_label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_label</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="n">tr_label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_label</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+            <span class="n">hr_sample</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hr2t_train</span><span class="p">[(</span><span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">)]</span>
+            <span class="n">hr_label</span><span class="p">[</span><span class="nb">id</span><span class="p">][</span><span class="n">hr_sample</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="n">tr_sample</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rt2h_train</span><span class="p">[(</span><span class="n">r</span><span class="p">,</span> <span class="n">t</span><span class="p">)]</span>
+            <span class="n">tr_label</span><span class="p">[</span><span class="nb">id</span><span class="p">][</span><span class="n">tr_sample</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;sample&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;hr_label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hr_label</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;tr_label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tr_label</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">batch_data</span></div>
+
+<div class="viewcode-block" id="CrossESampler.init_label"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.CrossESampler.init_label">[docs]</a>    <span class="k">def</span> <span class="nf">init_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_ent</span><span class="p">)</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="p">(</span><span class="n">label</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">neg_weight</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+        <span class="n">label</span> <span class="o">-=</span> <span class="mf">1.0</span>
+        <span class="k">return</span> <span class="n">label</span></div>
+
+<div class="viewcode-block" id="CrossESampler.sampling_keys"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.CrossESampler.sampling_keys">[docs]</a>    <span class="k">def</span> <span class="nf">sampling_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">]</span></div></div>
+
+<div class="viewcode-block" id="ConvSampler"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.ConvSampler">[docs]</a><span class="k">class</span> <span class="nc">ConvSampler</span><span class="p">(</span><span class="n">RevSampler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">triples</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_hr_trian</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ConvSampler.sampling"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.ConvSampler.sampling">[docs]</a>    <span class="k">def</span> <span class="nf">sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos_hr_t</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;全部做tail_prediction&#39;&#39;&#39;</span>
+        <span class="n">batch_data</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">train_bs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_ent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">triples</span>  <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">([</span><span class="n">hr</span> <span class="k">for</span> <span class="n">hr</span> <span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">pos_hr_t</span><span class="p">])</span>
+        <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">hr_sample</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="n">t</span> <span class="k">for</span> <span class="n">_</span> <span class="p">,</span><span class="n">t</span> <span class="ow">in</span> <span class="n">pos_hr_t</span><span class="p">]):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">[</span><span class="nb">id</span><span class="p">][</span><span class="n">hr_sample</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    
+        <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;sample&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">triples</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span>
+        
+        <span class="k">return</span> <span class="n">batch_data</span></div>
+
+<div class="viewcode-block" id="ConvSampler.sampling_keys"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.ConvSampler.sampling_keys">[docs]</a>    <span class="k">def</span> <span class="nf">sampling_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">]</span></div></div>
+
+<span class="sd">&quot;&quot;&quot;XTransE使用的注意力采样&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="XTransESampler"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.XTransESampler">[docs]</a><span class="k">class</span> <span class="nc">XTransESampler</span><span class="p">(</span><span class="n">RevSampler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_h2rt_t2hr_from_train</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">triples</span>    <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">neg_sample</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h_neighbor</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h_mask</span>     <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_neighbor</span> <span class="o">=</span> <span class="mi">200</span>
+
+<div class="viewcode-block" id="XTransESampler.sampling"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.XTransESampler.sampling">[docs]</a>    <span class="k">def</span> <span class="nf">sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="n">batch_data</span> <span class="o">=</span> <span class="p">{}</span>
+        
+        <span class="n">neg_ent_sample</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">train_bs</span><span class="p">,</span> <span class="mi">20000</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>    
+        <span class="n">h_neighbor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">train_bs</span><span class="p">,</span> <span class="mi">20000</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>   <span class="c1">#分别记录关系和尾实体</span>
+        
+        <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">triples</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+            <span class="n">h</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="n">t</span> <span class="o">=</span> <span class="n">triples</span>
+            <span class="n">num_h_neighbor</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">h2rt_train</span><span class="p">[</span><span class="n">h</span><span class="p">])</span> <span class="c1">#记录 以h为头实体的三元组数量</span>
+            <span class="n">h_neighbor</span><span class="p">[</span><span class="nb">id</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">num_h_neighbor</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">h2rt_train</span><span class="p">[</span><span class="n">h</span><span class="p">])</span>
+            
+            <span class="n">mask</span><span class="p">[</span><span class="nb">id</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">num_h_neighbor</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="n">num_h_neighbor</span><span class="p">])</span>
+            
+            <span class="n">neg_tail</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tail_batch</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_neg</span><span class="p">)</span>
+            <span class="n">neg_ent_sample</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">neg_tail</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">triples</span>    <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">neg_sample</span> <span class="o">=</span> <span class="n">neg_ent_sample</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h_neighbor</span> <span class="o">=</span> <span class="n">h_neighbor</span><span class="p">[:,</span> <span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">max_neighbor</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h_mask</span>     <span class="o">=</span> <span class="n">mask</span><span class="p">[:,</span> <span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">max_neighbor</span><span class="p">]</span>
+
+        <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;positive_sample&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">triples</span><span class="p">)</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s1">&#39;negative_sample&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">neg_sample</span><span class="p">)</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s1">&#39;neighbor&#39;</span><span class="p">]</span>        <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">h_neighbor</span><span class="p">)</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s1">&#39;mask&#39;</span><span class="p">]</span>            <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">h_mask</span><span class="p">)</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span>            <span class="o">=</span> <span class="s2">&quot;tail-batch&quot;</span>
+        <span class="k">return</span> <span class="n">batch_data</span></div>
+
+<div class="viewcode-block" id="XTransESampler.get_sampling_keys"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.XTransESampler.get_sampling_keys">[docs]</a>    <span class="k">def</span> <span class="nf">get_sampling_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;positive_sample&#39;</span><span class="p">,</span> <span class="s1">&#39;negative_sample&#39;</span><span class="p">,</span> <span class="s1">&#39;neighbor&#39;</span><span class="p">,</span> <span class="s1">&#39;mask&#39;</span><span class="p">,</span> <span class="s1">&#39;mode&#39;</span><span class="p">]</span></div></div>
+
+<span class="sd">&#39;&#39;&#39;图神经网络中以图为单位采样&#39;&#39;&#39;</span>
+<div class="viewcode-block" id="GraphSampler"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.GraphSampler">[docs]</a><span class="k">class</span> <span class="nc">GraphSampler</span><span class="p">(</span><span class="n">RevSampler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entity</span>   <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">relation</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">triples</span>  <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph</span>    <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">norm</span>     <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label</span>    <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="GraphSampler.sampling"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.GraphSampler.sampling">[docs]</a>    <span class="k">def</span> <span class="nf">sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos_triples</span><span class="p">):</span>
+        <span class="n">batch_data</span> <span class="o">=</span> <span class="p">{}</span>
+        
+        <span class="n">pos_triples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pos_triples</span><span class="p">)</span>
+        <span class="n">pos_triples</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">entity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_postive</span><span class="p">(</span><span class="n">pos_triples</span><span class="p">)</span>
+        <span class="n">head_triples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_negative</span><span class="p">(</span><span class="s1">&#39;head&#39;</span><span class="p">,</span> <span class="n">pos_triples</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_neg</span><span class="p">)</span>
+        <span class="n">tail_triples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_negative</span><span class="p">(</span><span class="s1">&#39;tail&#39;</span><span class="p">,</span> <span class="n">pos_triples</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_neg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">triples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">pos_triples</span><span class="p">,</span><span class="n">head_triples</span><span class="p">,</span><span class="n">tail_triples</span><span class="p">))</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s1">&#39;entity&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">entity</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s1">&#39;triples&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">triples</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">triples</span><span class="p">),</span><span class="mi">1</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">[</span><span class="mi">0</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">train_bs</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span>
+        
+        <span class="n">split_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">train_bs</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">)</span> 
+        <span class="n">graph_split_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">train_bs</span><span class="p">,</span>
+            <span class="n">size</span><span class="o">=</span><span class="n">split_size</span><span class="p">,</span> 
+            <span class="n">replace</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="n">head</span><span class="p">,</span><span class="n">rela</span><span class="p">,</span><span class="n">tail</span> <span class="o">=</span> <span class="n">pos_triples</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+        <span class="n">head</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">head</span><span class="p">[</span><span class="n">graph_split_ids</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span>
+        <span class="n">rela</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">rela</span><span class="p">[</span><span class="n">graph_split_ids</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span>
+        <span class="n">tail</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">tail</span><span class="p">[</span><span class="n">graph_split_ids</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">relation</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_graph</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entity</span><span class="p">),</span> <span class="p">(</span><span class="n">head</span><span class="p">,</span><span class="n">rela</span><span class="p">,</span><span class="n">tail</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s1">&#39;graph&#39;</span><span class="p">]</span>    <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s1">&#39;relation&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">relation</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s1">&#39;norm&#39;</span><span class="p">]</span>     <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm</span>
+
+        <span class="k">return</span> <span class="n">batch_data</span></div>
+
+<div class="viewcode-block" id="GraphSampler.get_sampling_keys"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.GraphSampler.get_sampling_keys">[docs]</a>    <span class="k">def</span> <span class="nf">get_sampling_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;graph&#39;</span><span class="p">,</span><span class="s1">&#39;triples&#39;</span><span class="p">,</span><span class="s1">&#39;label&#39;</span><span class="p">,</span><span class="s1">&#39;entity&#39;</span><span class="p">,</span><span class="s1">&#39;relation&#39;</span><span class="p">,</span><span class="s1">&#39;norm&#39;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="GraphSampler.sampling_negative"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.GraphSampler.sampling_negative">[docs]</a>    <span class="k">def</span> <span class="nf">sampling_negative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">pos_triples</span><span class="p">,</span> <span class="n">num_neg</span><span class="p">):</span>
+        
+        <span class="n">neg_random</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entity</span><span class="p">),</span> 
+            <span class="n">size</span> <span class="o">=</span> <span class="n">num_neg</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">pos_triples</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">neg_samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">pos_triples</span><span class="p">,</span> <span class="p">(</span><span class="n">num_neg</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;head&#39;</span><span class="p">:</span>
+            <span class="n">neg_samples</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">neg_random</span>
+        <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;tail&#39;</span><span class="p">:</span>
+            <span class="n">neg_samples</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">neg_random</span>
+        <span class="k">return</span> <span class="n">neg_samples</span></div>
+
+<div class="viewcode-block" id="GraphSampler.build_graph"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.GraphSampler.build_graph">[docs]</a>    <span class="k">def</span> <span class="nf">build_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_ent</span><span class="p">,</span> <span class="n">triples</span><span class="p">,</span> <span class="n">power</span><span class="p">):</span>
+        <span class="n">head</span><span class="p">,</span> <span class="n">rela</span><span class="p">,</span> <span class="n">tail</span> <span class="o">=</span> <span class="n">triples</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">triples</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">triples</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">graph</span> <span class="o">=</span> <span class="n">dgl</span><span class="o">.</span><span class="n">graph</span><span class="p">(([],</span> <span class="p">[]))</span>
+        <span class="n">graph</span><span class="o">.</span><span class="n">add_nodes</span><span class="p">(</span><span class="n">num_ent</span><span class="p">)</span>
+        <span class="n">graph</span><span class="o">.</span><span class="n">add_edges</span><span class="p">(</span><span class="n">head</span><span class="p">,</span> <span class="n">tail</span><span class="p">)</span>
+        <span class="n">node_norm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">comp_deg_norm</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">power</span><span class="p">)</span>
+        <span class="n">edge_norm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_norm_to_edge_norm</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span><span class="n">node_norm</span><span class="p">)</span>
+        <span class="n">rela</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">rela</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">graph</span><span class="p">,</span> <span class="n">rela</span><span class="p">,</span> <span class="n">edge_norm</span></div>
+
+<div class="viewcode-block" id="GraphSampler.comp_deg_norm"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.GraphSampler.comp_deg_norm">[docs]</a>    <span class="k">def</span> <span class="nf">comp_deg_norm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">power</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">graph</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">local_var</span><span class="p">()</span>
+        <span class="n">in_deg</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">in_degrees</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()))</span><span class="o">.</span><span class="n">float</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="n">norm</span> <span class="o">=</span> <span class="n">in_deg</span><span class="o">.</span><span class="fm">__pow__</span><span class="p">(</span><span class="n">power</span><span class="p">)</span>
+        <span class="n">norm</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">norm</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">norm</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GraphSampler.node_norm_to_edge_norm"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.GraphSampler.node_norm_to_edge_norm">[docs]</a>    <span class="k">def</span> <span class="nf">node_norm_to_edge_norm</span><span class="p">(</span><span class="n">slef</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">node_norm</span><span class="p">):</span>
+        <span class="n">graph</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">local_var</span><span class="p">()</span>
+        <span class="c1"># convert to edge norm</span>
+        <span class="n">graph</span><span class="o">.</span><span class="n">ndata</span><span class="p">[</span><span class="s1">&#39;norm&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node_norm</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">graph</span><span class="o">.</span><span class="n">apply_edges</span><span class="p">(</span><span class="k">lambda</span> <span class="n">edges</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;norm&#39;</span> <span class="p">:</span> <span class="n">edges</span><span class="o">.</span><span class="n">dst</span><span class="p">[</span><span class="s1">&#39;norm&#39;</span><span class="p">]})</span>
+        <span class="k">return</span> <span class="n">graph</span><span class="o">.</span><span class="n">edata</span><span class="p">[</span><span class="s1">&#39;norm&#39;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="GraphSampler.sampling_postive"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.GraphSampler.sampling_postive">[docs]</a>    <span class="k">def</span> <span class="nf">sampling_postive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">postive_triples</span><span class="p">):</span>
+
+        <span class="n">edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">postive_triples</span><span class="p">)),</span>
+            <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">train_bs</span><span class="p">,</span>
+            <span class="n">replace</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="n">edges</span> <span class="o">=</span> <span class="n">postive_triples</span><span class="p">[</span><span class="n">edges</span><span class="p">]</span>
+        <span class="n">head</span><span class="p">,</span> <span class="n">rela</span><span class="p">,</span> <span class="n">tail</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+        <span class="n">entity</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">((</span><span class="n">head</span><span class="p">,</span> <span class="n">tail</span><span class="p">),</span> <span class="n">return_inverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> 
+        <span class="n">head</span><span class="p">,</span> <span class="n">tail</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="n">head</span><span class="p">,</span><span class="n">rela</span><span class="p">,</span><span class="n">tail</span><span class="p">))</span><span class="o">.</span><span class="n">transpose</span><span class="p">(),</span> \
+                <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">entity</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">long</span><span class="p">()</span></div></div>
+
+<div class="viewcode-block" id="KBATSampler"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.KBATSampler">[docs]</a><span class="k">class</span> <span class="nc">KBATSampler</span><span class="p">(</span><span class="n">BaseSampler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span> 
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_hop</span>           <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph</span>           <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">neighbours</span>      <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">adj_matrix</span>      <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entity</span>          <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">triples_GAT_pos</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">triples_GAT_neg</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">triples_Con</span>     <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label</span>           <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_neighbors</span><span class="p">()</span>
+
+<div class="viewcode-block" id="KBATSampler.sampling"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.KBATSampler.sampling">[docs]</a>    <span class="k">def</span> <span class="nf">sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos_triples</span><span class="p">):</span>
+        <span class="n">batch_data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1">#--------------------KBAT-Sampler------------------------------------------</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_unique_entity</span><span class="p">(</span><span class="n">pos_triples</span><span class="p">)</span>
+        <span class="n">head_triples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sam_negative</span><span class="p">(</span><span class="s1">&#39;head&#39;</span><span class="p">,</span> <span class="n">pos_triples</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_neg</span><span class="p">)</span>
+        <span class="n">tail_triples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sam_negative</span><span class="p">(</span><span class="s1">&#39;tail&#39;</span><span class="p">,</span> <span class="n">pos_triples</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_neg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">triples_GAT_neg</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">head_triples</span><span class="p">,</span> <span class="n">tail_triples</span><span class="p">)))</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s1">&#39;triples_GAT_pos&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">pos_triples</span><span class="p">)</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s1">&#39;triples_GAT_neg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">triples_GAT_neg</span>
+
+        <span class="n">head</span><span class="p">,</span> <span class="n">rela</span><span class="p">,</span> <span class="n">tail</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_triples</span><span class="p">)</span><span class="o">.</span><span class="n">t</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">adj_matrix</span>  <span class="o">=</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="n">tail</span><span class="p">,</span> <span class="n">head</span><span class="p">)),</span> <span class="n">rela</span><span class="p">)</span> <span class="c1"># note: 源代码就是先尾后头</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s1">&#39;adj_matrix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adj_matrix</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_hop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_batch_nhop_neighbors_all</span><span class="p">()</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s1">&#39;n_hop&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_hop</span>
+        <span class="c1">#--------------------ConvKB-Sampler------------------------------------------</span>
+        <span class="n">head_triples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_negative</span><span class="p">(</span><span class="s1">&#39;head&#39;</span><span class="p">,</span> <span class="n">pos_triples</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_neg</span><span class="p">)</span>
+        <span class="n">tail_triples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_negative</span><span class="p">(</span><span class="s1">&#39;tail&#39;</span><span class="p">,</span> <span class="n">pos_triples</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_neg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">triples_Con</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">pos_triples</span><span class="p">,</span> <span class="n">head_triples</span><span class="p">,</span> <span class="n">tail_triples</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="o">-</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">triples_Con</span><span class="p">),</span><span class="mi">1</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">[</span><span class="mi">0</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">train_bs</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s1">&#39;triples_Con&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">triples_Con</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span>
+
+        <span class="k">return</span> <span class="n">batch_data</span></div>
+
+<div class="viewcode-block" id="KBATSampler.get_sampling_keys"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.KBATSampler.get_sampling_keys">[docs]</a>    <span class="k">def</span> <span class="nf">get_sampling_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;adj_matrix&#39;</span><span class="p">,</span> <span class="s1">&#39;n_hop&#39;</span><span class="p">,</span> <span class="s1">&#39;triples_GAT_pos&#39;</span><span class="p">,</span> 
+        <span class="s1">&#39;triples_GAT_neg&#39;</span><span class="p">,</span> <span class="s1">&#39;triples_Con&#39;</span> <span class="p">,</span> <span class="s1">&#39;label&#39;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="KBATSampler.bfs"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.KBATSampler.bfs">[docs]</a>    <span class="k">def</span> <span class="nf">bfs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">nbd_size</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span> <span class="c1"># todo: 这个完全运行需要20分钟，能否优化？</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        返回neigbors 记录source的前两跳关系和实体</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">visit</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">distance</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">parent</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">distance_lengths</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">visit</span><span class="p">[</span><span class="n">source</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">distance</span><span class="p">[</span><span class="n">source</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">parent</span><span class="p">[</span><span class="n">source</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">q</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>
+        <span class="n">q</span><span class="o">.</span><span class="n">put</span><span class="p">((</span><span class="n">source</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+
+        <span class="k">while</span><span class="p">(</span><span class="ow">not</span> <span class="n">q</span><span class="o">.</span><span class="n">empty</span><span class="p">()):</span>
+            <span class="n">top</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">top</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">graph</span><span class="p">[</span><span class="n">top</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="k">if</span><span class="p">(</span><span class="n">target</span> <span class="ow">in</span> <span class="n">visit</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                        <span class="k">continue</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">q</span><span class="o">.</span><span class="n">put</span><span class="p">((</span><span class="n">target</span><span class="p">,</span> <span class="n">graph</span><span class="p">[</span><span class="n">top</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="n">target</span><span class="p">]))</span>
+
+                        <span class="n">distance</span><span class="p">[</span><span class="n">target</span><span class="p">]</span> <span class="o">=</span> <span class="n">distance</span><span class="p">[</span><span class="n">top</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span> <span class="mi">1</span>
+
+                        <span class="n">visit</span><span class="p">[</span><span class="n">target</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                        <span class="k">if</span> <span class="n">distance</span><span class="p">[</span><span class="n">target</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+                            <span class="k">continue</span>
+                        <span class="n">parent</span><span class="p">[</span><span class="n">target</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">top</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">graph</span><span class="p">[</span><span class="n">top</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="n">target</span><span class="p">])</span> <span class="c1"># 记录父亲节点id和关系id</span>
+
+                        <span class="k">if</span> <span class="n">distance</span><span class="p">[</span><span class="n">target</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">distance_lengths</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                            <span class="n">distance_lengths</span><span class="p">[</span><span class="n">distance</span><span class="p">[</span><span class="n">target</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="n">neighbors</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">visit</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">distance</span><span class="p">[</span><span class="n">target</span><span class="p">]</span> <span class="o">!=</span> <span class="n">nbd_size</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">edges</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">parent</span><span class="p">[</span><span class="n">target</span><span class="p">][</span><span class="mi">1</span><span class="p">]]</span>
+            <span class="n">relations</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">entities</span> <span class="o">=</span> <span class="p">[</span><span class="n">target</span><span class="p">]</span>
+            <span class="n">temp</span> <span class="o">=</span> <span class="n">target</span>
+            <span class="k">while</span><span class="p">(</span><span class="n">parent</span><span class="p">[</span><span class="n">temp</span><span class="p">]</span> <span class="o">!=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)):</span>
+                <span class="n">relations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parent</span><span class="p">[</span><span class="n">temp</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">entities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parent</span><span class="p">[</span><span class="n">temp</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">temp</span> <span class="o">=</span> <span class="n">parent</span><span class="p">[</span><span class="n">temp</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="k">if</span><span class="p">(</span><span class="n">distance</span><span class="p">[</span><span class="n">target</span><span class="p">]</span> <span class="ow">in</span> <span class="n">neighbors</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="n">neighbors</span><span class="p">[</span><span class="n">distance</span><span class="p">[</span><span class="n">target</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">relations</span><span class="p">),</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">entities</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])))</span> <span class="c1">#删除已知的source 记录前两跳实体及关系</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">neighbors</span><span class="p">[</span><span class="n">distance</span><span class="p">[</span><span class="n">target</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">relations</span><span class="p">),</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">entities</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))]</span>
+
+        <span class="k">return</span> <span class="n">neighbors</span></div>
+
+<div class="viewcode-block" id="KBATSampler.get_neighbors"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.KBATSampler.get_neighbors">[docs]</a>    <span class="k">def</span> <span class="nf">get_neighbors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nbd_size</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;返回neighors记录source在两跳邻域内的关系和实体&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">triple</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_triples</span><span class="p">:</span>
+            <span class="n">head</span> <span class="o">=</span> <span class="n">triple</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">rela</span> <span class="o">=</span> <span class="n">triple</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">tail</span> <span class="o">=</span> <span class="n">triple</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+            <span class="k">if</span><span class="p">(</span><span class="n">head</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">[</span><span class="n">head</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">[</span><span class="n">head</span><span class="p">][</span><span class="n">tail</span><span class="p">]</span> <span class="o">=</span> <span class="n">rela</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">[</span><span class="n">head</span><span class="p">][</span><span class="n">tail</span><span class="p">]</span> <span class="o">=</span> <span class="n">rela</span>
+
+        <span class="n">neighbors</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        import pickle</span>
+<span class="sd">        print(&quot;Opening node_neighbors pickle object&quot;)</span>
+<span class="sd">        file = self.args.data_path + &quot;/2hop.pickle&quot;</span>
+<span class="sd">        with open(file, &#39;rb&#39;) as handle:</span>
+<span class="sd">            self.neighbours = pickle.load(handle)  </span>
+<span class="sd">        return</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Start Graph BFS&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">head</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">temp_neighbors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bfs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span> <span class="n">head</span><span class="p">,</span> <span class="n">nbd_size</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">distance</span> <span class="ow">in</span> <span class="n">temp_neighbors</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">head</span> <span class="ow">in</span> <span class="n">neighbors</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                    <span class="k">if</span><span class="p">(</span><span class="n">distance</span> <span class="ow">in</span> <span class="n">neighbors</span><span class="p">[</span><span class="n">head</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                        <span class="n">neighbors</span><span class="p">[</span><span class="n">head</span><span class="p">][</span><span class="n">distance</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="n">temp_neighbors</span><span class="p">[</span><span class="n">distance</span><span class="p">])</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">neighbors</span><span class="p">[</span><span class="n">head</span><span class="p">][</span><span class="n">distance</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp_neighbors</span><span class="p">[</span><span class="n">distance</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">neighbors</span><span class="p">[</span><span class="n">head</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                    <span class="n">neighbors</span><span class="p">[</span><span class="n">head</span><span class="p">][</span><span class="n">distance</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp_neighbors</span><span class="p">[</span><span class="n">distance</span><span class="p">]</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Finish BFS, time taken &quot;</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">neighbours</span> <span class="o">=</span> <span class="n">neighbors</span></div>
+
+
+<div class="viewcode-block" id="KBATSampler.get_unique_entity"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.KBATSampler.get_unique_entity">[docs]</a>    <span class="k">def</span> <span class="nf">get_unique_entity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">triples</span><span class="p">):</span>
+        <span class="n">train_triples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">triples</span><span class="p">)</span>
+        <span class="n">train_entities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">train_triples</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">train_triples</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]))</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">train_entities</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="KBATSampler.get_batch_nhop_neighbors_all"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.KBATSampler.get_batch_nhop_neighbors_all">[docs]</a>    <span class="k">def</span> <span class="nf">get_batch_nhop_neighbors_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nbd_size</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        
+        <span class="n">batch_source_triples</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">entity</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">source</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">neighbours</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">nhop_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">neighbours</span><span class="p">[</span><span class="n">source</span><span class="p">][</span><span class="n">nbd_size</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">tup</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">nhop_list</span><span class="p">):</span>
+                    <span class="k">if</span><span class="p">(</span><span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">):</span>  <span class="c1"># note: 这里如果是FB则仅使用一个2跳邻居 如果是WN则使用全部</span>
+                        <span class="k">break</span>
+                    <span class="n">batch_source_triples</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">source</span><span class="p">,</span> 
+                                                <span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> 
+                                                <span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                                                <span class="n">tup</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]])</span>
+
+        <span class="n">n_hop</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">batch_source_triples</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">n_hop</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="KBATSampler.sampling_negative"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.KBATSampler.sampling_negative">[docs]</a>    <span class="k">def</span> <span class="nf">sampling_negative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">pos_triples</span><span class="p">,</span> <span class="n">num_neg</span><span class="p">):</span>
+        <span class="n">neg_samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">pos_triples</span><span class="p">,</span> <span class="p">(</span><span class="n">num_neg</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;head&#39;</span><span class="p">:</span>
+            <span class="n">neg_head</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">pos_triples</span><span class="p">:</span>
+                <span class="n">neg_head</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">head_batch</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">num_neg</span><span class="p">))</span>
+            <span class="n">neg_samples</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">neg_head</span><span class="p">)</span><span class="o">.</span><span class="n">t</span><span class="p">()</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;tail&#39;</span><span class="p">:</span>
+            <span class="n">neg_tail</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">pos_triples</span><span class="p">:</span>
+                <span class="n">neg_tail</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tail_batch</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">num_neg</span><span class="p">))</span>
+            <span class="n">neg_samples</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">neg_tail</span><span class="p">)</span><span class="o">.</span><span class="n">t</span><span class="p">()</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">neg_samples</span></div>
+
+<div class="viewcode-block" id="KBATSampler.sam_negative"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.KBATSampler.sam_negative">[docs]</a>    <span class="k">def</span> <span class="nf">sam_negative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">pos_triples</span><span class="p">,</span> <span class="n">num_neg</span><span class="p">):</span>
+        
+        <span class="n">neg_random</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entity</span><span class="p">),</span> 
+            <span class="n">size</span> <span class="o">=</span> <span class="n">num_neg</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">pos_triples</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">neg_samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">pos_triples</span><span class="p">,</span> <span class="p">(</span><span class="n">num_neg</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;head&#39;</span><span class="p">:</span>
+            <span class="n">neg_samples</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">neg_random</span>
+        <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;tail&#39;</span><span class="p">:</span>
+            <span class="n">neg_samples</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">neg_random</span>
+        <span class="k">return</span> <span class="n">neg_samples</span></div></div>
+
+<div class="viewcode-block" id="CompGCNSampler"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.CompGCNSampler">[docs]</a><span class="k">class</span> <span class="nc">CompGCNSampler</span><span class="p">(</span><span class="n">GraphSampler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">relation</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">triples</span>  <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph</span>    <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">norm</span>     <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label</span>    <span class="o">=</span> <span class="kc">None</span>
+        
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_hr_trian</span><span class="p">()</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">relation</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm</span> <span class="o">=</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">build_graph</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_ent</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t_triples</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">(),</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CompGCNSampler.sampling"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.CompGCNSampler.sampling">[docs]</a>    <span class="k">def</span> <span class="nf">sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos_hr_t</span><span class="p">):</span>
+        <span class="n">batch_data</span> <span class="o">=</span> <span class="p">{}</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">train_bs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_ent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">triples</span>  <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">([</span><span class="n">hr</span> <span class="k">for</span> <span class="n">hr</span> <span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">pos_hr_t</span><span class="p">])</span>
+        <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">hr_sample</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="n">t</span> <span class="k">for</span> <span class="n">_</span> <span class="p">,</span><span class="n">t</span> <span class="ow">in</span> <span class="n">pos_hr_t</span><span class="p">]):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">[</span><span class="nb">id</span><span class="p">][</span><span class="n">hr_sample</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="n">batch_data</span><span class="p">[</span><span class="s1">&#39;sample&#39;</span><span class="p">]</span>   <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">triples</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span>    <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s1">&#39;graph&#39;</span><span class="p">]</span>    <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s1">&#39;relation&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">relation</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s1">&#39;norm&#39;</span><span class="p">]</span>     <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm</span>
+
+        <span class="k">return</span> <span class="n">batch_data</span></div>
+
+<div class="viewcode-block" id="CompGCNSampler.get_sampling_keys"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.CompGCNSampler.get_sampling_keys">[docs]</a>    <span class="k">def</span> <span class="nf">get_sampling_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;sample&#39;</span><span class="p">,</span><span class="s1">&#39;label&#39;</span><span class="p">,</span><span class="s1">&#39;graph&#39;</span><span class="p">,</span><span class="s1">&#39;relation&#39;</span><span class="p">,</span><span class="s1">&#39;norm&#39;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="CompGCNSampler.node_norm_to_edge_norm"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.CompGCNSampler.node_norm_to_edge_norm">[docs]</a>    <span class="k">def</span> <span class="nf">node_norm_to_edge_norm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">node_norm</span><span class="p">):</span>
+        <span class="n">graph</span><span class="o">.</span><span class="n">ndata</span><span class="p">[</span><span class="s1">&#39;norm&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node_norm</span>
+        <span class="n">graph</span><span class="o">.</span><span class="n">apply_edges</span><span class="p">(</span><span class="k">lambda</span> <span class="n">edges</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;norm&#39;</span><span class="p">:</span> <span class="n">edges</span><span class="o">.</span><span class="n">dst</span><span class="p">[</span><span class="s1">&#39;norm&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">edges</span><span class="o">.</span><span class="n">src</span><span class="p">[</span><span class="s1">&#39;norm&#39;</span><span class="p">]})</span>
+        <span class="n">norm</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">edata</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;norm&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">norm</span>  <span class="c1">#返回边的id（包括负边） 和 边的norm值</span></div></div>
+
+
+<span class="sd">&#39;&#39;&#39;测试/验证的时候使用&#39;&#39;&#39;</span>
+<div class="viewcode-block" id="TestSampler"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.TestSampler">[docs]</a><span class="k">class</span> <span class="nc">TestSampler</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">sampler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hr2t_all</span> <span class="o">=</span> <span class="n">ddict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rt2h_all</span> <span class="o">=</span> <span class="n">ddict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_hr2t_rt2h_from_all</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_ent</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_ent</span>
+
+<div class="viewcode-block" id="TestSampler.get_hr2t_rt2h_from_all"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.TestSampler.get_hr2t_rt2h_from_all">[docs]</a>    <span class="k">def</span> <span class="nf">get_hr2t_rt2h_from_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the set of hr2t and rt2h from all datasets(train, valid, and test), the data type is tensor.</span>
+
+<span class="sd">        Update:</span>
+<span class="sd">            self.hr2t_all: The set of hr2t.</span>
+<span class="sd">            self.rt2h_all: The set of rt2h.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;与之前从训练集得到numpy字典不一样，这次得到tensor&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_true_triples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">get_all_true_triples</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_true_triples</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hr2t_all</span><span class="p">[(</span><span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">)]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rt2h_all</span><span class="p">[(</span><span class="n">r</span><span class="p">,</span> <span class="n">t</span><span class="p">)]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">h</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">hr2t_all</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hr2t_all</span><span class="p">[(</span><span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">)]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hr2t_all</span><span class="p">[(</span><span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">)]))</span>
+        <span class="k">for</span> <span class="n">r</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rt2h_all</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rt2h_all</span><span class="p">[(</span><span class="n">r</span><span class="p">,</span> <span class="n">t</span><span class="p">)]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rt2h_all</span><span class="p">[(</span><span class="n">r</span><span class="p">,</span> <span class="n">t</span><span class="p">)]))</span></div>
+
+<div class="viewcode-block" id="TestSampler.sampling"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.TestSampler.sampling">[docs]</a>    <span class="k">def</span> <span class="nf">sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="c1"># sample_id = []</span>
+        <span class="n">batch_data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">head_label</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_ent</span><span class="p">)</span>
+        <span class="n">tail_label</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_ent</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">triple</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+            <span class="n">head</span><span class="p">,</span> <span class="n">rel</span><span class="p">,</span> <span class="n">tail</span> <span class="o">=</span> <span class="n">triple</span>            
+            <span class="n">head_label</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">rt2h_all</span><span class="p">[(</span><span class="n">rel</span><span class="p">,</span> <span class="n">tail</span><span class="p">)]]</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="n">tail_label</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">hr2t_all</span><span class="p">[(</span><span class="n">head</span><span class="p">,</span> <span class="n">rel</span><span class="p">)]]</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;positive_sample&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;head_label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">head_label</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;tail_label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tail_label</span>
+        <span class="k">return</span> <span class="n">batch_data</span></div>
+
+<div class="viewcode-block" id="TestSampler.get_sampling_keys"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.TestSampler.get_sampling_keys">[docs]</a>    <span class="k">def</span> <span class="nf">get_sampling_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;positive_sample&quot;</span><span class="p">,</span> <span class="s2">&quot;head_label&quot;</span><span class="p">,</span> <span class="s2">&quot;tail_label&quot;</span><span class="p">]</span></div></div>
+
+<div class="viewcode-block" id="GraphTestSampler"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.GraphTestSampler">[docs]</a><span class="k">class</span> <span class="nc">GraphTestSampler</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">sampler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hr2t_all</span> <span class="o">=</span> <span class="n">ddict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rt2h_all</span> <span class="o">=</span> <span class="n">ddict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_hr2t_rt2h_from_all</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_ent</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_ent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">triples</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">train_triples</span>
+
+<div class="viewcode-block" id="GraphTestSampler.get_hr2t_rt2h_from_all"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.GraphTestSampler.get_hr2t_rt2h_from_all">[docs]</a>    <span class="k">def</span> <span class="nf">get_hr2t_rt2h_from_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_true_triples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">get_all_true_triples</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_true_triples</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hr2t_all</span><span class="p">[(</span><span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">)]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rt2h_all</span><span class="p">[(</span><span class="n">r</span><span class="p">,</span> <span class="n">t</span><span class="p">)]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">h</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">hr2t_all</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hr2t_all</span><span class="p">[(</span><span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">)]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hr2t_all</span><span class="p">[(</span><span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">)]))</span>
+        <span class="k">for</span> <span class="n">r</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rt2h_all</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rt2h_all</span><span class="p">[(</span><span class="n">r</span><span class="p">,</span> <span class="n">t</span><span class="p">)]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rt2h_all</span><span class="p">[(</span><span class="n">r</span><span class="p">,</span> <span class="n">t</span><span class="p">)]))</span></div>
+
+<div class="viewcode-block" id="GraphTestSampler.sampling"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.GraphTestSampler.sampling">[docs]</a>    <span class="k">def</span> <span class="nf">sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="n">batch_data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">head_label</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_ent</span><span class="p">)</span>
+        <span class="n">tail_label</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_ent</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">triple</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+            <span class="c1"># from IPython import embed;embed();exit()</span>
+            <span class="n">head</span><span class="p">,</span> <span class="n">rel</span><span class="p">,</span> <span class="n">tail</span> <span class="o">=</span> <span class="n">triple</span>
+            <span class="n">head_label</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">rt2h_all</span><span class="p">[(</span><span class="n">rel</span><span class="p">,</span> <span class="n">tail</span><span class="p">)]]</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="n">tail_label</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">hr2t_all</span><span class="p">[(</span><span class="n">head</span><span class="p">,</span> <span class="n">rel</span><span class="p">)]]</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;positive_sample&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;head_label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">head_label</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;tail_label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tail_label</span>
+        
+        <span class="n">head</span><span class="p">,</span> <span class="n">rela</span><span class="p">,</span> <span class="n">tail</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">triples</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+        <span class="n">graph</span><span class="p">,</span> <span class="n">rela</span><span class="p">,</span> <span class="n">norm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">build_graph</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ent</span><span class="p">,</span> <span class="p">(</span><span class="n">head</span><span class="p">,</span> <span class="n">rela</span><span class="p">,</span> <span class="n">tail</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;graph&quot;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">graph</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;rela&quot;</span><span class="p">]</span>   <span class="o">=</span> <span class="n">rela</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;norm&quot;</span><span class="p">]</span>   <span class="o">=</span> <span class="n">norm</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;entity&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_ent</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">batch_data</span></div>
+
+<div class="viewcode-block" id="GraphTestSampler.get_sampling_keys"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.GraphTestSampler.get_sampling_keys">[docs]</a>    <span class="k">def</span> <span class="nf">get_sampling_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;positive_sample&quot;</span><span class="p">,</span> <span class="s2">&quot;head_label&quot;</span><span class="p">,</span> <span class="s2">&quot;tail_label&quot;</span><span class="p">,</span>\
+             <span class="s2">&quot;graph&quot;</span><span class="p">,</span> <span class="s2">&quot;rela&quot;</span><span class="p">,</span> <span class="s2">&quot;norm&quot;</span><span class="p">,</span> <span class="s2">&quot;entity&quot;</span><span class="p">]</span></div></div>
+
+<div class="viewcode-block" id="CompGCNTestSampler"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.CompGCNTestSampler">[docs]</a><span class="k">class</span> <span class="nc">CompGCNTestSampler</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>  <span class="c1">#TODO: 争取和GraphTestSampler兼容</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">sampler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hr2t_all</span> <span class="o">=</span> <span class="n">ddict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rt2h_all</span> <span class="o">=</span> <span class="n">ddict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_hr2t_rt2h_from_all</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_ent</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_ent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">triples</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">t_triples</span>
+
+<div class="viewcode-block" id="CompGCNTestSampler.get_hr2t_rt2h_from_all"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.CompGCNTestSampler.get_hr2t_rt2h_from_all">[docs]</a>    <span class="k">def</span> <span class="nf">get_hr2t_rt2h_from_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_true_triples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">get_all_true_triples</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_true_triples</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hr2t_all</span><span class="p">[(</span><span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">)]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rt2h_all</span><span class="p">[(</span><span class="n">r</span><span class="p">,</span> <span class="n">t</span><span class="p">)]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">h</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">hr2t_all</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hr2t_all</span><span class="p">[(</span><span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">)]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hr2t_all</span><span class="p">[(</span><span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">)]))</span>
+        <span class="k">for</span> <span class="n">r</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rt2h_all</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rt2h_all</span><span class="p">[(</span><span class="n">r</span><span class="p">,</span> <span class="n">t</span><span class="p">)]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rt2h_all</span><span class="p">[(</span><span class="n">r</span><span class="p">,</span> <span class="n">t</span><span class="p">)]))</span></div>
+
+<div class="viewcode-block" id="CompGCNTestSampler.sampling"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.CompGCNTestSampler.sampling">[docs]</a>    <span class="k">def</span> <span class="nf">sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="n">batch_data</span> <span class="o">=</span> <span class="p">{}</span>
+        
+        <span class="n">head_label</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_ent</span><span class="p">)</span>
+        <span class="n">tail_label</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_ent</span><span class="p">)</span>
+        
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">triple</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+            <span class="c1"># from IPython import embed;embed();exit()</span>
+            <span class="n">head</span><span class="p">,</span> <span class="n">rel</span><span class="p">,</span> <span class="n">tail</span> <span class="o">=</span> <span class="n">triple</span>
+            <span class="n">head_label</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">rt2h_all</span><span class="p">[(</span><span class="n">rel</span><span class="p">,</span> <span class="n">tail</span><span class="p">)]]</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="n">tail_label</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">hr2t_all</span><span class="p">[(</span><span class="n">head</span><span class="p">,</span> <span class="n">rel</span><span class="p">)]]</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;positive_sample&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;head_label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">head_label</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;tail_label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tail_label</span>
+        
+        <span class="n">graph</span><span class="p">,</span> <span class="n">relation</span><span class="p">,</span> <span class="n">norm</span> <span class="o">=</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">build_graph</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ent</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">triples</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">(),</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">)</span>
+    
+        <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;graph&quot;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">graph</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;rela&quot;</span><span class="p">]</span>   <span class="o">=</span> <span class="n">relation</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;norm&quot;</span><span class="p">]</span>   <span class="o">=</span> <span class="n">norm</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;entity&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_ent</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">batch_data</span></div>
+
+<div class="viewcode-block" id="CompGCNTestSampler.get_sampling_keys"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.CompGCNTestSampler.get_sampling_keys">[docs]</a>    <span class="k">def</span> <span class="nf">get_sampling_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;positive_sample&quot;</span><span class="p">,</span> <span class="s2">&quot;head_label&quot;</span><span class="p">,</span> <span class="s2">&quot;tail_label&quot;</span><span class="p">,</span>\
+             <span class="s2">&quot;graph&quot;</span><span class="p">,</span> <span class="s2">&quot;rela&quot;</span><span class="p">,</span> <span class="s2">&quot;norm&quot;</span><span class="p">,</span> <span class="s2">&quot;entity&quot;</span><span class="p">]</span></div></div>
+
+<div class="viewcode-block" id="XTransETestSampler"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.XTransETestSampler">[docs]</a><span class="k">class</span> <span class="nc">XTransETestSampler</span><span class="p">(</span><span class="n">TestSampler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">sampler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hr2t_all</span> <span class="o">=</span> <span class="n">ddict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rt2h_all</span> <span class="o">=</span> <span class="n">ddict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_hr2t_rt2h_from_all</span><span class="p">()</span>
+    
+<div class="viewcode-block" id="XTransETestSampler.sampling"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.XTransETestSampler.sampling">[docs]</a>    <span class="k">def</span> <span class="nf">sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+
+        <span class="n">batch_data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">tail_label</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_ent</span><span class="p">)</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">train_bs</span><span class="p">,</span> <span class="mi">20000</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>    
+        <span class="n">h_neighbor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">train_bs</span><span class="p">,</span> <span class="mi">20000</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>   <span class="c1">#分别记录关系和尾实体</span>
+        
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">triple</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+            <span class="n">head</span><span class="p">,</span> <span class="n">rel</span><span class="p">,</span> <span class="n">tail</span> <span class="o">=</span> <span class="n">triple</span>
+            <span class="n">num_h_neighbor</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">h2rt_train</span><span class="p">[</span><span class="n">head</span><span class="p">])</span>
+            <span class="n">h_neighbor</span><span class="p">[</span><span class="nb">id</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">num_h_neighbor</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">h2rt_train</span><span class="p">[</span><span class="n">head</span><span class="p">])</span>
+            <span class="n">mask</span><span class="p">[</span><span class="nb">id</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">num_h_neighbor</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="n">num_h_neighbor</span><span class="p">])</span>
+            <span class="n">tail_label</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">hr2t_all</span><span class="p">[(</span><span class="n">head</span><span class="p">,</span> <span class="n">rel</span><span class="p">)]]</span> <span class="o">=</span> <span class="mf">1.0</span>
+        
+        <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;positive_sample&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;tail_label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tail_label</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s1">&#39;neighbor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">h_neighbor</span><span class="p">[:,:</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">max_neighbor</span><span class="p">]</span>
+        <span class="n">batch_data</span><span class="p">[</span><span class="s1">&#39;mask&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mask</span><span class="p">[:,:</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">max_neighbor</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">batch_data</span></div>
+
+<div class="viewcode-block" id="XTransETestSampler.get_sampling_keys"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.XTransETestSampler.get_sampling_keys">[docs]</a>    <span class="k">def</span> <span class="nf">get_sampling_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;positive_sample&quot;</span><span class="p">,</span> <span class="s2">&quot;tail_label&quot;</span><span class="p">,</span> <span class="s2">&quot;neighbor&quot;</span><span class="p">,</span> <span class="s2">&quot;mask&quot;</span><span class="p">]</span></div></div>
+    
+
+             
+<span class="sd">&#39;&#39;&#39;继承torch.Dataset&#39;&#39;&#39;</span>
+<div class="viewcode-block" id="KGDataset"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.KGDataset">[docs]</a><span class="k">class</span> <span class="nc">KGDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">triples</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">triples</span> <span class="o">=</span> <span class="n">triples</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">triples</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">triples</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, zjukg.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
