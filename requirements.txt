@@ -1,7 +1,0 @@
-dgl==0.6.1
-dgl-cu111==0.6.1
-ipython==7.29.0
-numpy==1.18.5
-pytorch_lightning==1.5.0
-PyYAML==6.0
-torch==1.9.0+cu111
