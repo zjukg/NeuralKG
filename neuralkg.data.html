@@ -7,7 +7,6 @@
   <title>Data &mdash; NeuralKG 1.0.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
@@ -17,8 +16,6 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/clipboard.min.js"></script>
-        <script src="_static/copybutton.js"></script>
         <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -45,6 +42,10 @@
               <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Experiment Result</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="result.html">Results</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Package</span></p>
 <ul class="current">
@@ -104,7 +105,7 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="neuralkg.data.base_data_module.BaseDataModule">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.base_data_module.</span></span><span class="sig-name descname"><span class="pre">BaseDataModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/base_data_module.html#BaseDataModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.base_data_module.BaseDataModule" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.base_data_module.</span></span><span class="sig-name descname"><span class="pre">BaseDataModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><span class="pre">Any</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/base_data_module.html#BaseDataModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.base_data_module.BaseDataModule" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pytorch_lightning.core.datamodule.LightningDataModule</span></code></p>
 <p>Base DataModule.
 Learn more at <a class="reference external" href="https://pytorch-lightning.readthedocs.io/en/stable/datamodules.html">https://pytorch-lightning.readthedocs.io/en/stable/datamodules.html</a></p>
@@ -1048,7 +1049,7 @@ self.rt2h_all: The set of rt2h.</p>
 <p>Base DataModule class.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="neuralkg.data.KGDataModule.KGDataModule">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.KGDataModule.</span></span><span class="sig-name descname"><span class="pre">KGDataModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/KGDataModule.html#KGDataModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.KGDataModule.KGDataModule" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.KGDataModule.</span></span><span class="sig-name descname"><span class="pre">KGDataModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><span class="pre">Any</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/KGDataModule.html#KGDataModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.KGDataModule.KGDataModule" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#neuralkg.data.base_data_module.BaseDataModule" title="neuralkg.data.base_data_module.BaseDataModule"><code class="xref py py-class docutils literal notranslate"><span class="pre">neuralkg.data.base_data_module.BaseDataModule</span></code></a></p>
 <p>Base DataModule.
 Learn more at <a class="reference external" href="https://pytorch-lightning.readthedocs.io/en/stable/datamodules.html">https://pytorch-lightning.readthedocs.io/en/stable/datamodules.html</a></p>

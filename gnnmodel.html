@@ -7,7 +7,6 @@
   <title>GNNModel &mdash; NeuralKG 1.0.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
@@ -17,8 +16,6 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/clipboard.min.js"></script>
-        <script src="_static/copybutton.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -43,6 +40,10 @@
               <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Experiment Result</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="result.html">Results</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Package</span></p>
 <ul class="current">
@@ -365,7 +366,7 @@ registered hooks while the latter silently ignores them.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="neuralkg.model.GNNModel.KBAT.SpecialSpmmFunctionFinal">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.model.GNNModel.KBAT.</span></span><span class="sig-name descname"><span class="pre">SpecialSpmmFunctionFinal</span></span><a class="reference internal" href="_modules/neuralkg/model/GNNModel/KBAT.html#SpecialSpmmFunctionFinal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.model.GNNModel.KBAT.SpecialSpmmFunctionFinal" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.model.GNNModel.KBAT.</span></span><span class="sig-name descname"><span class="pre">SpecialSpmmFunctionFinal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/model/GNNModel/KBAT.html#SpecialSpmmFunctionFinal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.model.GNNModel.KBAT.SpecialSpmmFunctionFinal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.autograd.function.Function</span></code></p>
 <p>Special function for only sparse region backpropataion layer, similar to <a class="reference external" href="https://arxiv.org/abs/1710.10903">https://arxiv.org/abs/1710.10903</a></p>
 <dl class="py method">
@@ -375,20 +376,24 @@ registered hooks while the latter silently ignores them.</p>
 <p>This function is to be overridden by all subclasses.</p>
 <p>It must accept a context ctx as the first argument, followed by any
 number of arguments (tensors or other types).</p>
-<p>The context can be used to store tensors that can be then retrieved
-during the backward pass.</p>
+<p>The context can be used to store arbitrary data that can be then
+retrieved during the backward pass.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.model.GNNModel.KBAT.SpecialSpmmFunctionFinal.backward">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">backward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grad_output</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/model/GNNModel/KBAT.html#SpecialSpmmFunctionFinal.backward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.model.GNNModel.KBAT.SpecialSpmmFunctionFinal.backward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Defines a formula for differentiating the operation.</p>
+<dd><p>Defines a formula for differentiating the operation with backward mode
+automatic differentiation.</p>
 <p>This function is to be overridden by all subclasses.</p>
 <p>It must accept a context <code class="xref py py-attr docutils literal notranslate"><span class="pre">ctx</span></code> as the first argument, followed by
-as many outputs did <a class="reference internal" href="#neuralkg.model.GNNModel.KBAT.SpecialSpmmFunctionFinal.forward" title="neuralkg.model.GNNModel.KBAT.SpecialSpmmFunctionFinal.forward"><code class="xref py py-func docutils literal notranslate"><span class="pre">forward()</span></code></a> return, and it should return as many
-tensors, as there were inputs to <a class="reference internal" href="#neuralkg.model.GNNModel.KBAT.SpecialSpmmFunctionFinal.forward" title="neuralkg.model.GNNModel.KBAT.SpecialSpmmFunctionFinal.forward"><code class="xref py py-func docutils literal notranslate"><span class="pre">forward()</span></code></a>. Each argument is the
-gradient w.r.t the given output, and each returned value should be the
-gradient w.r.t. the corresponding input.</p>
+as many outputs as the <a class="reference internal" href="#neuralkg.model.GNNModel.KBAT.SpecialSpmmFunctionFinal.forward" title="neuralkg.model.GNNModel.KBAT.SpecialSpmmFunctionFinal.forward"><code class="xref py py-func docutils literal notranslate"><span class="pre">forward()</span></code></a> returned (None will be passed in
+for non tensor outputs of the forward function),
+and it should return as many tensors, as there were inputs to
+<a class="reference internal" href="#neuralkg.model.GNNModel.KBAT.SpecialSpmmFunctionFinal.forward" title="neuralkg.model.GNNModel.KBAT.SpecialSpmmFunctionFinal.forward"><code class="xref py py-func docutils literal notranslate"><span class="pre">forward()</span></code></a>. Each argument is the gradient w.r.t the given output,
+and each returned value should be the gradient w.r.t. the
+corresponding input. If an input is not a Tensor or is a Tensor not
+requiring grads, you can just pass None as a gradient for that input.</p>
 <p>The context can be used to retrieve tensors saved during the forward
 pass. It also has an attribute <code class="xref py py-attr docutils literal notranslate"><span class="pre">ctx.needs_input_grad</span></code> as a tuple
 of booleans representing whether each input needs gradient. E.g.,
