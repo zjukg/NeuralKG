@@ -42,7 +42,7 @@ There are some reproduced model results using NeuralKG
 
 |Method | MRR | Hit@1 | Hit@3 | Hit@10 |
 |:------:|:---:|:-----:|:-----:|:------:|
-|RugE|0.71|0.63|0.78|0.82|
+|RugE|0.76|0.70|0.81|0.85|
 
 
 *:There is a label leakage error in KBAT, so the corrected result is poor compared with the paper result. Details in https://github.com/deepakn97/relationPrediction/issues/28
