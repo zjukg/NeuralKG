@@ -48,9 +48,12 @@ Learning of Knowledge Graphs]()
 
 # Overview
 
-<p align="center">
-    <a href=""> <img src="pics/overview.png" width="500"/></a>
-<p>
+<h3 align="center">
+    <img src="pics/overview.png", width="600">
+</h3>
+<!-- <p align="center">
+    <a href=""> <img src="pics/overview.png" width="400"/></a>
+<p> -->
 
 
 
