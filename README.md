@@ -1,6 +1,6 @@
 
 <p align="center">
-    <a href=""> <img src="" width="400"/></a>
+    <a href=""> <img src="pics/logo.png" width="400"/></a>
 <p>
 <p align="center">  
     <a href="http://neuralkg.zjukg.cn/">
@@ -9,9 +9,9 @@
     <a href="">
         <img alt="Pypi" src="https://img.shields.io/badge/release-v0.1.85-red">
     </a>
-    <a href="">
+    <!-- <a href="">
         <img alt="LICENSE" src="https://img.shields.io/badge/license-MIT-brightgreen">
-    </a>
+    </a> -->
     <a href="https://zjukg.github.io/NeuralKG/index.html">
         <img alt="Documentation" src="https://img.shields.io/badge/Doc-online-blue">
     </a>
