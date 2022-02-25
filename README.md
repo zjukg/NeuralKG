@@ -37,8 +37,8 @@ KGEs**. We provide [comprehensive documents](https://zjukg.github.io/NeuralKG/in
    * [Evaluation](#Evaluation)
    * [Hyperparameter Tuning](#Hyperparameter-Tuning)
 * [Reproduced Results](#Reproduced-Results)
-* [To do](#to-do)
 * [Citation](#citation)
+<!-- * [To do](#to-do) -->
 
 
 <br>
@@ -176,9 +176,9 @@ There are some reproduced model results on FB15K-237 dataset using NeuralKG as b
 
 *:There is a label leakage error in KBAT, so the corrected result is poor compared with the paper result. Details in https://github.com/deepakn97/relationPrediction/issues/28
 
-<br>
+<!-- <br> -->
 
-# To do
+<!-- # To do -->
 
 <br>
 
