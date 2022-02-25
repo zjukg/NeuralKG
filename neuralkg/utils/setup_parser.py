@@ -17,7 +17,7 @@ def setup_parser():
     # Basic arguments
     parser.add_argument('--name', default='ComplEX_FB15K', type=str)
     parser.add_argument('--num_epoch', default=1000, type=int)
-    parser.add_argument("--use_wandb", default=False, action='store_true')
+    parser.add_argument("--use_wandb", default=True, action='store_false')
     parser.add_argument('--norm_flag', default=False, action='store_true')
     parser.add_argument('--test_only', default=False, action='store_true')
     parser.add_argument('--filter_flag', default=True, action='store_false')
@@ -63,6 +63,8 @@ def setup_parser():
     parser.add_argument('--gpu', default='cuda:0', type=str)
     parser.add_argument('--shuffle', default=True, action='store_false')
     parser.add_argument('--bern_flag', default=False, action='store_true')
+    parser.add_argument('--config_path', default="", type=str)
+
     
     # parser only for IterE
     parser.add_argument("--max_entialments", default=2000, type=int, help="in IterE.py")

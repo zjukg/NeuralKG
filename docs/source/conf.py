@@ -46,7 +46,9 @@ extensions = [
     'sphinx.ext.githubpages',
     'sphinx.ext.todo',
     'sphinx.ext.coverage',
-    'sphinx_copybutton',
+    # 'sphinx_copybutton',
+    'recommonmark',
+    'sphinx_markdown_tables',
 ]
 
 # Add any paths that contain templates here, relative to this directory.

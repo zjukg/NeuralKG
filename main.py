@@ -14,8 +14,7 @@ from neuralkg.data.Grounding import GroundAllRules
 def main():
     args = setup_parser() #设置参数
     if args.load_config:
-        config_path = ""
-        args = load_config(args, config_path)
+        args = load_config(args, args.config_path)
     seed_everything(args.seed) 
     """set up sampler to datapreprocess""" #设置数据处理的采样过程
     train_sampler_class = import_class(f"neuralkg.data.{args.train_sampler_class}")
@@ -47,7 +46,7 @@ def main():
     logger = pl.loggers.TensorBoardLogger("training/logs")
     if args.use_wandb:
         log_name = "_".join([args.model_name, args.dataset_name, str(args.lr)])
-        logger = pl.loggers.WandbLogger(name=log_name, project="NeuroKR")
+        logger = pl.loggers.WandbLogger(name=log_name, project="NeuralKG")
         logger.log_hyperparams(vars(args))
     """early stopping"""
     early_callback = pl.callbacks.EarlyStopping(
