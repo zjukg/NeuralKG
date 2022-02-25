@@ -184,7 +184,7 @@ There are some reproduced model results on FB15K-237 dataset using NeuralKG as b
 
 # Citation
 
-Please cite our paper if you use DeepKE in your work
+Please cite our paper if you use NeuralKG in your work
 
 ```bibtex
 
