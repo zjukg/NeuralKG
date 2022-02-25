@@ -23,13 +23,9 @@
 
 NeuralKG is a python-based library for diverse representation learning of knowledge graphs implementing **Conventional KGEs**, **GNN-based KGEs**, and **Rule-based
 KGEs**. We provide [comprehensive documents](https://zjukg.github.io/NeuralKG/index.html) for beginners and an [online website](http://neuralkg.zjukg.cn/) to organize an open and shared KG representation learning community.
+
 <br>
-<style>
-table
-{
-    margin: auto;
-}
-</style>
+
 # Table of Contents
 
 * [What's New](#whats-new)
