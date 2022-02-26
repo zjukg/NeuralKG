@@ -47,6 +47,14 @@ class KGDataModule(BaseDataModule):
         self.data_test  = self.train_sampler.get_test()
 
     def get_train_bs(self):
+        """Get batch size for training.
+
+        If the num_batches isn`t zero, it will divide data_train by num_batches to get batch size.
+        And if user don`t give batch size and num_batches=0, it will raise ValueError.
+
+        Returns:
+            self.args.train_bs: The batch size for training.
+        """
         if self.args.num_batches != 0:
             self.args.train_bs = len(self.data_train) // self.args.num_batches
         elif self.args.train_bs == 0:

@@ -10,7 +10,22 @@ class KGData(object):
     """Data preprocessing of kg data.
 
     Attributes:
-        args: Some pre-set parameters, such as dataset path, etc.
+        args: Some pre-set parameters, such as dataset path, etc. 
+        ent2id: Encoding the entity in triples, type: dict.
+        rel2id: Encoding the relation in triples, type: dict.
+        id2ent: Decoding the entity in triples, type: dict.
+        id2rel: Decoding the realtion in triples, type: dict.
+        train_triples: Record the triples for training, type: list.
+        valid_triples: Record the triples for validation, type: list.
+        test_triples: Record the triples for testing, type: list.
+        all_true_triples: Record all triples including train,valid and test, type: list.
+        TrainTriples
+        Relation2Tuple
+        RelSub2Obj
+        hr2t_train: Record the tail corresponding to the same head and relation, type: defaultdict(class:set).
+        rt2h_train: Record the head corresponding to the same tail and relation, type: defaultdict(class:set).
+        h2rt_train: Record the tail, relation corresponding to the same head, type: defaultdict(class:set).
+        t2rh_train: Record the head, realtion corresponding to the same tail, type: defaultdict(class:set).
     """
 
     # TODO:把里面的函数再分一分，最基础的部分再初始化的使用调用，其他函数具体情况再调用
@@ -155,9 +170,16 @@ class KGData(object):
 
     @staticmethod
     def count_frequency(triples, start=4):
-        '''
-        Get frequency of a partial triple like (head, relation) or (relation, tail)
-        The frequency will be used for subsampling like word2vec
+        '''Get frequency of a partial triple like (head, relation) or (relation, tail).
+        
+        The frequency will be used for subsampling like word2vec.
+        
+        Args:
+            triples: Sampled triples.
+            start: Initial count number.
+
+        Returns:
+            count: Record the number of (head, relation).
         '''
         count = {}
         for head, relation, tail in triples:
@@ -189,16 +211,33 @@ class KGData(object):
             self.t2rh_train[t] = np.array(list(self.t2rh_train[t]))
         
     def get_hr_trian(self):
+        '''Change the generation mode of batch.
+        Merging triples which have same head and relation for 1vsN training mode.
+
+        Returns:
+            self.train_triples: The tuple(hr, t) list for training
+        '''
         self.t_triples = self.train_triples 
         self.train_triples = [ (hr, list(t)) for (hr,t) in self.hr2t_train.items()]
 
 class BaseSampler(KGData):
+    """Traditional random sampling mode.
+    """
     def __init__(self, args):
         super().__init__(args)
         self.get_hr2t_rt2h_from_train()
 
-    # 突然发现numpy这种corrupt的方式挺好的，时间复杂度和空间复杂度都挺小的。本来还打算在实体池里先filter再rand sample
     def corrupt_head(self, t, r, num_max=1):
+        """Negative sampling of head entities.
+
+        Args:
+            t: Tail entity in triple.
+            r: Relation in triple.
+            num_max: The maximum of negative samples generated 
+
+        Returns:
+            neg: The negative sample of head entity filtering out the positive head entity.
+        """
         tmp = torch.randint(low=0, high=self.args.num_ent, size=(num_max,)).numpy()
         if not self.args.filter_flag:
             return tmp
@@ -207,6 +246,16 @@ class BaseSampler(KGData):
         return neg
 
     def corrupt_tail(self, h, r, num_max=1):
+        """Negative sampling of tail entities.
+
+        Args:
+            h: Head entity in triple.
+            r: Relation in triple.
+            num_max: The maximum of negative samples generated 
+
+        Returns:
+            neg: The negative sample of tail entity filtering out the positive tail entity.
+        """
         tmp = torch.randint(low=0, high=self.args.num_ent, size=(num_max,)).numpy()
         if not self.args.filter_flag:
             return tmp
@@ -215,7 +264,17 @@ class BaseSampler(KGData):
         return neg
 
     def head_batch(self, h, r, t, neg_size=None):
-        # return torch.randint(low = 0, high = self.ent_total, size = (neg_size, )).numpy()
+        """Negative sampling of head entities.
+
+        Args:
+            h: Head entity in triple
+            t: Tail entity in triple.
+            r: Relation in triple.
+            neg_size: The size of negative samples.
+
+        Returns:
+            The negative sample of head entity. [neg_size]
+        """
         neg_list = []
         neg_cur_size = 0
         while neg_cur_size < neg_size:
@@ -225,7 +284,17 @@ class BaseSampler(KGData):
         return np.concatenate(neg_list)[:neg_size]
 
     def tail_batch(self, h, r, t, neg_size=None):
-        # return torch.randint(low = 0, high = self.ent_total, size = (neg_size, )).numpy()
+        """Negative sampling of tail entities.
+
+        Args:
+            h: Head entity in triple
+            t: Tail entity in triple.
+            r: Relation in triple.
+            neg_size: The size of negative samples.
+
+        Returns:
+            The negative sample of tail entity. [neg_size]
+        """
         neg_list = []
         neg_cur_size = 0
         while neg_cur_size < neg_size:
@@ -248,6 +317,15 @@ class BaseSampler(KGData):
 
 
 class RevSampler(KGData):
+    """Adding reverse triples in traditional random sampling mode.
+
+    For each triple (h, r, t), generate the reverse triple (t, r`, h).
+    r` = r + num_rel.
+
+    Attributes:
+        hr2t_train: Record the tail corresponding to the same head and relation, type: defaultdict(class:set).
+        rt2h_train: Record the head corresponding to the same tail and relation, type: defaultdict(class:set).
+    """
     def __init__(self, args):
         super().__init__(args)
         self.hr2t_train = ddict(set)
@@ -275,6 +353,14 @@ class RevSampler(KGData):
         self.args.num_rel = len(self.rel2id)
 
     def add_reverse_triples(self):
+        """Generate reverse triples (t, r`, h).
+
+        Update:
+            self.train_triples: Triples for training.
+            self.valid_triples: Triples for validation.
+            self.test_triples: Triples for testing.
+            self.all_ture_triples: All triples including train, valid and test.
+        """
 
         with open(os.path.join(self.args.data_path, "train.txt")) as f:
             for line in f.readlines():
@@ -314,6 +400,16 @@ class RevSampler(KGData):
         return self.all_true_triples    
     
     def corrupt_head(self, t, r, num_max=1):
+        """Negative sampling of head entities.
+
+        Args:
+            t: Tail entity in triple.
+            r: Relation in triple.
+            num_max: The maximum of negative samples generated 
+
+        Returns:
+            neg: The negative sample of head entity filtering out the positive head entity.
+        """
         tmp = torch.randint(low=0, high=self.args.num_ent, size=(num_max,)).numpy()
         if not self.args.filter_flag:
             return tmp
@@ -322,6 +418,16 @@ class RevSampler(KGData):
         return neg
 
     def corrupt_tail(self, h, r, num_max=1):
+        """Negative sampling of tail entities.
+
+        Args:
+            h: Head entity in triple.
+            r: Relation in triple.
+            num_max: The maximum of negative samples generated 
+
+        Returns:
+            neg: The negative sample of tail entity filtering out the positive tail entity.
+        """
         tmp = torch.randint(low=0, high=self.args.num_ent, size=(num_max,)).numpy()
         if not self.args.filter_flag:
             return tmp
@@ -330,7 +436,17 @@ class RevSampler(KGData):
         return neg
 
     def head_batch(self, h, r, t, neg_size=None):
-        # return torch.randint(low = 0, high = self.ent_total, size = (neg_size, )).numpy()
+        """Negative sampling of head entities.
+
+        Args:
+            h: Head entity in triple
+            t: Tail entity in triple.
+            r: Relation in triple.
+            neg_size: The size of negative samples.
+
+        Returns:
+            The negative sample of head entity. [neg_size]
+        """
         neg_list = []
         neg_cur_size = 0
         while neg_cur_size < neg_size:
@@ -340,7 +456,17 @@ class RevSampler(KGData):
         return np.concatenate(neg_list)[:neg_size]
 
     def tail_batch(self, h, r, t, neg_size=None):
-        # return torch.randint(low = 0, high = self.ent_total, size = (neg_size, )).numpy()
+        """Negative sampling of tail entities.
+
+        Args:
+            h: Head entity in triple
+            t: Tail entity in triple.
+            r: Relation in triple.
+            neg_size: The size of negative samples.
+
+        Returns:
+            The negative sample of tail entity. [neg_size]
+        """
         neg_list = []
         neg_cur_size = 0
         while neg_cur_size < neg_size:

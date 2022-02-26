@@ -11,13 +11,26 @@ import torch.nn.functional as F
 import time
 import queue
 
-'''TransE提出的随机负采样'''
 class UniSampler(BaseSampler):
+    """Random negative sampling 
+    Filtering out positive samples and selecting some samples randomly as negative samples.
+
+    Attributes:
+        cross_sampling_flag: The flag of cross sampling head and tail negative samples.
+    """
     def __init__(self, args):
         super().__init__(args)
         self.cross_sampling_flag = 0
 
     def sampling(self, data):
+        """Filtering out positive samples and selecting some samples randomly as negative samples.
+        
+        Args:
+            data: The triples used to be sampled.
+
+        Returns:
+            batch_data: The training data.
+        """
         batch_data = {}
         neg_ent_sample = []
         subsampling_weight = []
@@ -63,17 +76,30 @@ class UniSampler(BaseSampler):
     def get_sampling_keys(self):
         return ['positive_sample', 'negative_sample', 'mode']
 
-'''TransH提出的随机负采样'''
 class BernSampler(BaseSampler):
+    """Using bernoulli distribution to select whether to replace the head entity or tail entity.
+    
+    Attributes:
+        lef_mean: Record the mean of head entity
+        rig_mean: Record the mean of tail entity
+    """
     def __init__(self, args):
         super().__init__(args)
         self.lef_mean, self.rig_mean = self.calc_bern()
     def __normal_batch(self, h, r, t, neg_size):
+        """Generate replace head/tail list according to Bernoulli distribution.
+        
+        Args:
+            h: The head of triples.
+            r: The relation of triples.
+            t: The tail of triples.
+            neg_size: The number of negative samples corresponding to each triple
+
+        Returns:
+             numpy.array: replace head list and replace tail list.
+        """
         neg_size_h = 0
         neg_size_t = 0
-        '''使用伯努利分布来选择是替换头实体还是尾实体
-		原理是prob表示的是关系r组成的三元组中不同尾实体个数的占比,
-		prob越大表示关系是one-to-many的可能性越高，越应该替换头实体'''
         prob = self.rig_mean[r] / (self.rig_mean[r] + self.lef_mean[r]) if self.args.bern_flag else 0.5
         for i in range(neg_size):
             if random.random() < prob:
@@ -100,7 +126,16 @@ class BernSampler(BaseSampler):
             neg_list_t = np.concatenate(neg_list_t)
 
         return np.hstack((neg_list_h[:neg_size_h], neg_list_t[:neg_size_t]))
+
     def sampling(self, data):
+        """Using bernoulli distribution to select whether to replace the head entity or tail entity.
+    
+        Args:
+            data: The triples used to be sampled.
+
+        Returns:
+            batch_data: The training data.
+        """
         batch_data = {}
         neg_ent_sample = []
         batch_data['mode'] = 'bern'
@@ -111,6 +146,12 @@ class BernSampler(BaseSampler):
         return batch_data
     
     def calc_bern(self):
+        """Calculating the lef_mean and rig_mean.
+        
+        Returns:
+            lef_mean: Record the mean of head entity.
+            rig_mean: Record the mean of tail entity.
+        """
         h_of_r = ddict(set)
         t_of_r = ddict(set)
         freqRel = ddict(float)
@@ -129,15 +170,27 @@ class BernSampler(BaseSampler):
     def sampling_keys():
         return ['positive_sample', 'negative_sample', 'mode']
 
-'''
-RotatE提出的自对抗负采样,
-这个类似于一个插件，可以结合uni/bern一起使用
-'''
 class AdvSampler(BaseSampler):
+    """Self-adversarial negative sampling, in math:
+    
+    p\left(h_{j}^{\prime}, r, t_{j}^{\prime} \mid\left\{\left(h_{i}, r_{i}, t_{i}\right)\right\}\right)=\frac{\exp \alpha f_{r}\left(\mathbf{h}_{j}^{\prime}, \mathbf{t}_{j}^{\prime}\right)}{\sum_{i} \exp \alpha f_{r}\left(\mathbf{h}_{i}^{\prime}, \mathbf{t}_{i}^{\prime}\right)}
+    
+    Attributes:
+        freq_hr: The count of (h, r) pairs.
+        freq_tr: The count of (t, r) pairs.
+    """
     def __init__(self, args):
         super().__init__(args)
         self.freq_hr, self.freq_tr = self.calc_freq()
     def sampling(self, pos_sample):
+        """Self-adversarial negative sampling.
+    
+        Args:
+            data: The triples used to be sampled.
+
+        Returns:
+            batch_data: The training data.
+        """
         data = pos_sample.numpy().tolist()
         adv_sampling = []
         for h, r, t in data:
@@ -147,6 +200,12 @@ class AdvSampler(BaseSampler):
         adv_sampling = torch.sqrt(1 / adv_sampling)
         return adv_sampling
     def calc_freq(self):
+        """Calculating the freq_hr and freq_tr.
+        
+        Returns:
+            freq_hr: The count of (h, r) pairs.
+            freq_tr: The count of (t, r) pairs.
+        """
         freq_hr, freq_tr = {}, {}
         for h, r, t in self.train_triples:
             if (h, r) not in freq_hr:
@@ -159,16 +218,22 @@ class AdvSampler(BaseSampler):
                 freq_tr[(t, r)] += 1
         return freq_hr, freq_tr
 
-"""ConvE提出的1vsall负采样"""
-
 class AllSampler(RevSampler):
-    # TODO:类名还需要商榷下
+    """Merging triples which have same head and relation, all false tail entities are taken as negative samples.    
+    """
     def __init__(self, args):
         super().__init__(args)
         # self.num_rel_without_rev = self.args.num_rel // 2
         
     def sampling(self, data):
-        '''全部做tail_prediction'''
+        """Randomly sampling from the merged triples.
+    
+        Args:
+            data: The triples used to be sampled.
+
+        Returns:
+            batch_data: The training data.
+        """
         # sample_id = [] #确定triple里的relation是否是reverse的。reverse为1，不是为0
         batch_data = {}
         table = torch.zeros(len(data), self.args.num_ent)
@@ -217,6 +282,14 @@ class CrossESampler(BaseSampler):
         return ["sample", "label"]
 
 class ConvSampler(RevSampler):
+    """Merging triples which have same head and relation, all false tail entities are taken as negative samples.      
+    
+    The triples which have same head and relation are treated as one triple.
+
+    Attributes:
+        label: Mask the false tail as negative samples.
+        triples: The triples used to be sampled.
+    """
     def __init__(self, args):
         self.label = None
         self.triples = None
@@ -224,7 +297,14 @@ class ConvSampler(RevSampler):
         super().get_hr_trian()
 
     def sampling(self, pos_hr_t):
-        '''全部做tail_prediction'''
+        """Randomly sampling from the merged triples.
+    
+        Args:
+            pos_hr_t: The triples ((head,relation) pairs) used to be sampled.
+
+        Returns:
+            batch_data: The training data.
+        """
         batch_data = {}
 
         self.label = torch.zeros(self.args.train_bs, self.args.num_ent)
@@ -240,10 +320,18 @@ class ConvSampler(RevSampler):
     def sampling_keys(self):
         return ["sample", "label"]
 
-"""XTransE使用的注意力采样"""
 class XTransESampler(RevSampler):
+    """Random negative sampling and recording neighbor entities.
+
+    Attributes:
+        triples: The triples used to be sampled.
+        neg_sample: The negative samples.
+        h_neighbor: The neighbor of sampled entites.
+        h_mask: The tag of effecitve neighbor.
+        max_neighbor: The maximum of the neighbor entities.
+    """
+
     def __init__(self, args):
-        
         super().__init__(args)
         super().get_h2rt_t2hr_from_train()
         self.triples    = None
@@ -253,15 +341,23 @@ class XTransESampler(RevSampler):
         self.max_neighbor = 200
 
     def sampling(self, data):
+        """Random negative sampling and recording neighbor entities.
+    
+        Args:
+            data: The triples used to be sampled.
+
+        Returns:
+            batch_data: The training data.
+        """
         batch_data = {}
         
         neg_ent_sample = []
-        mask = np.zeros([self.args.train_bs, 20000], dtype=float)    
-        h_neighbor = np.zeros([self.args.train_bs, 20000, 2])   #分别记录关系和尾实体
+        mask = np.zeros([self.args.train_bs, 20000], dtype=float)
+        h_neighbor = np.zeros([self.args.train_bs, 20000, 2])
         
         for id, triples in enumerate(data):
             h,r,t = triples
-            num_h_neighbor = len(self.h2rt_train[h]) #记录 以h为头实体的三元组数量
+            num_h_neighbor = len(self.h2rt_train[h]) 
             h_neighbor[id][0:num_h_neighbor] = np.array(self.h2rt_train[h])
             
             mask[id][0:num_h_neighbor] = np.ones([num_h_neighbor])
@@ -284,8 +380,17 @@ class XTransESampler(RevSampler):
     def get_sampling_keys(self):
         return ['positive_sample', 'negative_sample', 'neighbor', 'mask', 'mode']
 
-'''图神经网络中以图为单位采样'''
 class GraphSampler(RevSampler):
+    """Graph based sampling in neural network.
+
+    Attributes:
+        entity: The entities of sampled triples. 
+        relation: The relation of sampled triples.
+        triples: The sampled triples.
+        graph: The graph structured sampled triples by dgl.graph in DGL.
+        norm: The edge norm in graph.
+        label: Mask the false tail as negative samples.
+    """
     def __init__(self, args):
         super().__init__(args)
         self.entity   = None
@@ -296,10 +401,18 @@ class GraphSampler(RevSampler):
         self.label    = None
 
     def sampling(self, pos_triples):
+        """Graph based sampling in neural network.
+
+        Args:
+            pos_triples: The triples used to be sampled.
+
+        Returns:
+            batch_data: The training data.
+        """
         batch_data = {}
         
         pos_triples = np.array(pos_triples)
-        pos_triples, self.entity = self.sampling_postive(pos_triples)
+        pos_triples, self.entity = self.sampling_positive(pos_triples)
         head_triples = self.sampling_negative('head', pos_triples, self.args.num_neg)
         tail_triples = self.sampling_negative('tail', pos_triples, self.args.num_neg)
         self.triples = np.concatenate((pos_triples,head_triples,tail_triples))
@@ -331,7 +444,16 @@ class GraphSampler(RevSampler):
         return ['graph','triples','label','entity','relation','norm']
 
     def sampling_negative(self, mode, pos_triples, num_neg):
-        
+        """Random negative sampling without filtering
+
+        Args:
+            mode: The mode of negtive sampling.
+            pos_triples: The positive triples.
+            num_neg: The number of negative samples corresponding to each triple.
+
+        Results:
+            neg_samples: The negative triples.
+        """
         neg_random = np.random.choice(
             len(self.entity), 
             size = num_neg * len(pos_triples)
@@ -344,6 +466,18 @@ class GraphSampler(RevSampler):
         return neg_samples
 
     def build_graph(self, num_ent, triples, power):
+        """Using sampled triples to build a graph by dgl.graph in DGL.
+
+        Args:
+            num_ent: The number of entities.
+            triples: The positive sampled triples.
+            power: The power index for normalization.
+
+        Returns:
+            rela: The relation of sampled triples.
+            graph: The graph structured sampled triples by dgl.graph in DGL.
+            edge_norm: The edge norm in graph.
+        """
         head, rela, tail = triples[0], triples[1], triples[2]
         graph = dgl.graph(([], []))
         graph.add_nodes(num_ent)
@@ -354,6 +488,15 @@ class GraphSampler(RevSampler):
         return graph, rela, edge_norm
 
     def comp_deg_norm(self, graph, power=-1):
+        """Calculating the normalization node weight.
+
+        Args:
+            graph: The graph structured sampled triples by dgl.graph in DGL.
+            power: The power index for normalization.
+
+        Returns:
+            tensor: The node weight of normalization.
+        """
         graph = graph.local_var()
         in_deg = graph.in_degrees(range(graph.number_of_nodes())).float().numpy()
         norm = in_deg.__pow__(power)
@@ -361,20 +504,37 @@ class GraphSampler(RevSampler):
         return torch.from_numpy(norm)
 
     def node_norm_to_edge_norm(slef, graph, node_norm):
+        """Calculating the normalization edge weight.
+
+        Args:
+            graph: The graph structured sampled triples by dgl.graph in DGL.
+            node_norm: The node weight of normalization.
+
+        Returns:
+            tensor: The edge weight of normalization.
+        """
         graph = graph.local_var()
         # convert to edge norm
         graph.ndata['norm'] = node_norm.view(-1,1)
         graph.apply_edges(lambda edges : {'norm' : edges.dst['norm']})
         return graph.edata['norm']
 
-    def sampling_postive(self,postive_triples):
+    def sampling_positive(self,positive_triples):
+        """Regenerate positive sampling.
+
+        Args:
+            positive_triples: The positive sampled triples.
+
+        Results:
+            The regenerate triples and entities filter invisible entities.
+        """
 
         edges = np.random.choice(
-            np.arange(len(postive_triples)),
+            np.arange(len(positive_triples)),
             size = self.args.train_bs,
             replace=False
         )
-        edges = postive_triples[edges]
+        edges = positive_triples[edges]
         head, rela, tail = np.array(edges).transpose()
         entity, index = np.unique((head, tail), return_inverse=True) 
         head, tail = np.reshape(index, (2, -1))
@@ -383,6 +543,19 @@ class GraphSampler(RevSampler):
                 torch.from_numpy(entity).view(-1,1).long()
 
 class KBATSampler(BaseSampler):
+    """Graph based n_hop neighbours in neural network.
+
+    Attributes:
+        n_hop: The graph of n_hop neighbours.
+        graph: The adjacency graph.
+        neighbours: The neighbours of sampled triples.
+        adj_matrix:The triples of sampled.
+        triples: The sampled triples.
+        triples_GAT_pos: Positive triples.
+        triples_GAT_neg: Negative triples.
+        triples_Con: All triples including positive triples and negative triples. 
+        label: Mask the false tail as negative samples.
+    """
     def __init__(self, args): 
         super().__init__(args)
         self.n_hop           = None
@@ -398,6 +571,14 @@ class KBATSampler(BaseSampler):
         self.get_neighbors()
 
     def sampling(self, pos_triples):
+        """Graph based n_hop neighbours in neural network.
+
+        Args:
+            pos_triples: The triples used to be sampled.
+
+        Returns:
+            batch_data: The training data.
+        """
         batch_data = {}
         #--------------------KBAT-Sampler------------------------------------------
         self.entity = self.get_unique_entity(pos_triples)
@@ -408,7 +589,7 @@ class KBATSampler(BaseSampler):
         batch_data['triples_GAT_neg'] = self.triples_GAT_neg
 
         head, rela, tail = torch.tensor(self.train_triples).t()
-        self.adj_matrix  = (torch.stack((tail, head)), rela) # note: 源代码就是先尾后头
+        self.adj_matrix  = (torch.stack((tail, head)), rela)
         batch_data['adj_matrix'] = self.adj_matrix
 
         self.n_hop = self.get_batch_nhop_neighbors_all()
@@ -428,9 +609,16 @@ class KBATSampler(BaseSampler):
         return ['adj_matrix', 'n_hop', 'triples_GAT_pos', 
         'triples_GAT_neg', 'triples_Con' , 'label']
 
-    def bfs(self, graph, source, nbd_size=2): # todo: 这个完全运行需要20分钟，能否优化？
-        """
-        返回neigbors 记录source的前两跳关系和实体
+    def bfs(self, graph, source, nbd_size=2):
+        """Using depth first search algorithm to generate n_hop neighbor graph.
+        
+        Args:
+            graph: The adjacency graph.
+            source: Head node.
+            nbd_size: The number of hops.
+
+        Returns:
+            neighbors: N_hop neighbor graph.
         """
         visit = {}
         distance = {}
@@ -486,7 +674,14 @@ class KBATSampler(BaseSampler):
         return neighbors
 
     def get_neighbors(self, nbd_size=2):
-        """返回neighors记录source在两跳邻域内的关系和实体"""
+        """Getting the relation and entity of the source in the n_hop neighborhood.
+        
+        Args:
+            nbd_size: The number of hops.
+
+        Returns:
+            self.neighbours: Record the relation and entity of the source in the n_hop neighborhood.
+        """
         self.graph = {}
 
         for triple in self.train_triples:
@@ -527,21 +722,35 @@ class KBATSampler(BaseSampler):
         print("Finish BFS, time taken ", time.time() - start_time)
         self.neighbours = neighbors
 
-
     def get_unique_entity(self, triples):
+        """Getting the set of entity.
+        
+        Args:
+            triples: The sampled triples.
+
+        Returns:
+            numpy.array: The set of entity
+        """
         train_triples = np.array(triples)
         train_entities = np.concatenate((train_triples[:,0], train_triples[:,2]))
         return np.unique(train_entities)
 
     def get_batch_nhop_neighbors_all(self, nbd_size=2):
+        """Getting n_hop neighbors of all entities in batch.
         
+        Args:
+            nbd_size: The number of hops.
+
+        Returns:
+            The set of n_hop neighbors.
+        """
         batch_source_triples = []
         
         for source in self.entity:
             if source in self.neighbours.keys():
                 nhop_list = self.neighbours[source][nbd_size]
                 for i, tup in enumerate(nhop_list):
-                    if(i >= 2):  # note: 这里如果是FB则仅使用一个2跳邻居 如果是WN则使用全部
+                    if(i >= 2): 
                         break
                     batch_source_triples.append([source, 
                                                 tup[0][-1], 
@@ -553,6 +762,16 @@ class KBATSampler(BaseSampler):
         return torch.autograd.Variable(torch.LongTensor(n_hop))
 
     def sampling_negative(self, mode, pos_triples, num_neg):
+        """Random negative sampling.
+
+        Args:
+            mode: The mode of negtive sampling.
+            pos_triples: The positive triples.
+            num_neg: The number of negative samples corresponding to each triple.
+
+        Results:
+            neg_samples: The negative triples.
+        """
         neg_samples = np.tile(pos_triples, (num_neg, 1))
         if mode == 'head':
             neg_head = []
@@ -567,7 +786,16 @@ class KBATSampler(BaseSampler):
         return neg_samples
 
     def sam_negative(self, mode, pos_triples, num_neg):
-        
+        """Random negative sampling without filter.
+
+        Args:
+            mode: The mode of negtive sampling.
+            pos_triples: The positive triples.
+            num_neg: The number of negative samples corresponding to each triple.
+
+        Results:
+            neg_samples: The negative triples.
+        """ 
         neg_random = np.random.choice(
             len(self.entity), 
             size = num_neg * len(pos_triples)
@@ -580,6 +808,15 @@ class KBATSampler(BaseSampler):
         return neg_samples
 
 class CompGCNSampler(GraphSampler):
+    """Graph based sampling in neural network.
+
+    Attributes:
+        relation: The relation of sampled triples.
+        triples: The sampled triples.
+        graph: The graph structured sampled triples by dgl.graph in DGL.
+        norm: The edge norm in graph.
+        label: Mask the false tail as negative samples.
+    """
     def __init__(self, args):
         super().__init__(args)
         self.relation = None
@@ -594,6 +831,14 @@ class CompGCNSampler(GraphSampler):
             self.build_graph(self.args.num_ent, np.array(self.t_triples).transpose(), -0.5)
 
     def sampling(self, pos_hr_t):
+        """Graph based n_hop neighbours in neural network.
+
+        Args:
+            pos_hr_t: The triples(hr, t) used to be sampled.
+
+        Returns:
+            batch_data: The training data.
+        """
         batch_data = {}
         
         self.label = torch.zeros(self.args.train_bs, self.args.num_ent)
@@ -613,14 +858,29 @@ class CompGCNSampler(GraphSampler):
         return ['sample','label','graph','relation','norm']
 
     def node_norm_to_edge_norm(self, graph, node_norm):
+        """Calculating the normalization edge weight.
+
+        Args:
+            graph: The graph structured sampled triples by dgl.graph in DGL.
+            node_norm: The node weight of normalization.
+
+        Returns:
+            norm: The edge weight of normalization.
+        """
         graph.ndata['norm'] = node_norm
         graph.apply_edges(lambda edges: {'norm': edges.dst['norm'] * edges.src['norm']})
         norm = graph.edata.pop('norm').squeeze()
-        return norm  #返回边的id（包括负边） 和 边的norm值
+        return norm
 
-
-'''测试/验证的时候使用'''
 class TestSampler(object):
+    """Sampling triples and recording positive triples for testing.
+
+    Attributes:
+        sampler: The function of training sampler.
+        hr2t_all: Record the tail corresponding to the same head and relation.
+        rt2h_all: Record the head corresponding to the same tail and relation.
+        num_ent: The count of entities.
+    """
     def __init__(self, sampler):
         self.sampler = sampler
         self.hr2t_all = ddict(set)
@@ -635,7 +895,6 @@ class TestSampler(object):
             self.hr2t_all: The set of hr2t.
             self.rt2h_all: The set of rt2h.
         """
-        """与之前从训练集得到numpy字典不一样，这次得到tensor"""
         self.all_true_triples = self.sampler.get_all_true_triples()
         for h, r, t in self.all_true_triples:
             self.hr2t_all[(h, r)].add(t)
@@ -646,12 +905,19 @@ class TestSampler(object):
             self.rt2h_all[(r, t)] = torch.tensor(list(self.rt2h_all[(r, t)]))
 
     def sampling(self, data):
-        # sample_id = []
+        """Sampling triples and recording positive triples for testing.
+
+        Args:
+            data: The triples used to be sampled.
+
+        Returns:
+            batch_data: The data used to be evaluated.
+        """
         batch_data = {}
         head_label = torch.zeros(len(data), self.num_ent)
         tail_label = torch.zeros(len(data), self.num_ent)
         for idx, triple in enumerate(data):
-            head, rel, tail = triple            
+            head, rel, tail = triple
             head_label[idx][self.rt2h_all[(rel, tail)]] = 1.0
             tail_label[idx][self.hr2t_all[(head, rel)]] = 1.0
         batch_data["positive_sample"] = torch.tensor(data)
@@ -663,6 +929,15 @@ class TestSampler(object):
         return ["positive_sample", "head_label", "tail_label"]
 
 class GraphTestSampler(object):
+    """Sampling graph for testing.
+
+    Attributes:
+        sampler: The function of training sampler.
+        hr2t_all: Record the tail corresponding to the same head and relation.
+        rt2h_all: Record the head corresponding to the same tail and relation.
+        num_ent: The count of entities.
+        triples: The training triples.
+    """
     def __init__(self, sampler):
         self.sampler = sampler
         self.hr2t_all = ddict(set)
@@ -672,6 +947,12 @@ class GraphTestSampler(object):
         self.triples = sampler.train_triples
 
     def get_hr2t_rt2h_from_all(self):
+        """Get the set of hr2t and rt2h from all datasets(train, valid, and test), the data type is tensor.
+
+        Update:
+            self.hr2t_all: The set of hr2t.
+            self.rt2h_all: The set of rt2h.
+        """
         self.all_true_triples = self.sampler.get_all_true_triples()
         for h, r, t in self.all_true_triples:
             self.hr2t_all[(h, r)].add(t)
@@ -682,6 +963,14 @@ class GraphTestSampler(object):
             self.rt2h_all[(r, t)] = torch.tensor(list(self.rt2h_all[(r, t)]))
 
     def sampling(self, data):
+        """Sampling graph for testing.
+
+        Args:
+            data: The triples used to be sampled.
+
+        Returns:
+            batch_data: The data used to be evaluated.
+        """
         batch_data = {}
         head_label = torch.zeros(len(data), self.num_ent)
         tail_label = torch.zeros(len(data), self.num_ent)
@@ -708,6 +997,15 @@ class GraphTestSampler(object):
              "graph", "rela", "norm", "entity"]
 
 class CompGCNTestSampler(object):  #TODO: 争取和GraphTestSampler兼容
+    """Sampling graph for testing.
+
+    Attributes:
+        sampler: The function of training sampler.
+        hr2t_all: Record the tail corresponding to the same head and relation.
+        rt2h_all: Record the head corresponding to the same tail and relation.
+        num_ent: The count of entities.
+        triples: The training triples.
+    """
     def __init__(self, sampler):
         self.sampler = sampler
         self.hr2t_all = ddict(set)
@@ -717,6 +1015,12 @@ class CompGCNTestSampler(object):  #TODO: 争取和GraphTestSampler兼容
         self.triples = sampler.t_triples
 
     def get_hr2t_rt2h_from_all(self):
+        """Get the set of hr2t and rt2h from all datasets(train, valid, and test), the data type is tensor.
+
+        Update:
+            self.hr2t_all: The set of hr2t.
+            self.rt2h_all: The set of rt2h.
+        """
         self.all_true_triples = self.sampler.get_all_true_triples()
         for h, r, t in self.all_true_triples:
             self.hr2t_all[(h, r)].add(t)
@@ -727,6 +1031,14 @@ class CompGCNTestSampler(object):  #TODO: 争取和GraphTestSampler兼容
             self.rt2h_all[(r, t)] = torch.tensor(list(self.rt2h_all[(r, t)]))
 
     def sampling(self, data):
+        """Sampling graph for testing.
+
+        Args:
+            data: The triples used to be sampled.
+
+        Returns:
+            batch_data: The data used to be evaluated.
+        """
         batch_data = {}
         
         head_label = torch.zeros(len(data), self.num_ent)
@@ -756,6 +1068,13 @@ class CompGCNTestSampler(object):  #TODO: 争取和GraphTestSampler兼容
              "graph", "rela", "norm", "entity"]
 
 class XTransETestSampler(TestSampler):
+    """Sampling triples and recording positive triples for testing.
+
+    Attributes:
+        sampler: The function of training sampler.
+        hr2t_all: Record the tail corresponding to the same head and relation.
+        rt2h_all: Record the head corresponding to the same tail and relation.
+    """
     def __init__(self, sampler):
         self.sampler = sampler
         self.hr2t_all = ddict(set)
@@ -763,7 +1082,14 @@ class XTransETestSampler(TestSampler):
         super().get_hr2t_rt2h_from_all()
     
     def sampling(self, data):
+        """Sampling triples and recording positive triples for testing.
 
+        Args:
+            data: The triples used to be sampled.
+
+        Returns:
+            batch_data: The data used to be evaluated.
+        """
         batch_data = {}
         tail_label = torch.zeros(len(data), self.sampler.args.num_ent)
         mask = np.zeros([self.sampler.args.train_bs, 20000], dtype=float)    
@@ -786,8 +1112,6 @@ class XTransETestSampler(TestSampler):
     def get_sampling_keys(self):
         return ["positive_sample", "tail_label", "neighbor", "mask"]
     
-
-             
 '''继承torch.Dataset'''
 class KGDataset(Dataset):
 

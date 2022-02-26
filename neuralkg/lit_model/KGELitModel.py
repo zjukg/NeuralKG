@@ -15,15 +15,25 @@ from IPython import embed
 from functools import partial
 
 class KGELitModel(BaseLitModel):
+    """Processing of training, evaluation and testing.
+    """
+
     def __init__(self, model, args):
         super().__init__(model, args)
-        
-    
 
     def forward(self, x):
         return self.model(x)
     
     def training_step(self, batch, batch_idx):
+        """Getting samples and training in KG model.
+        
+        Args:
+            batch: The training data.
+            batch_idx: The dict_key in batch, type: list.
+
+        Returns:
+            loss: The training loss for back propagation.
+        """
         pos_sample = batch["positive_sample"]
         neg_sample = batch["negative_sample"]
         mode = batch["mode"]
@@ -38,7 +48,15 @@ class KGELitModel(BaseLitModel):
         return loss
     
     def validation_step(self, batch, batch_idx):
-        # pos_triple, tail_label, head_label = batch
+        """Getting samples and validation in KG model.
+        
+        Args:
+            batch: The evalutaion data.
+            batch_idx: The dict_key in batch, type: list.
+
+        Returns:
+            results: mrr and hits@1,3,10.
+        """
         results = dict()
         ranks = link_predict(batch, self.model)
         results["count"] = torch.numel(ranks)
@@ -53,6 +71,15 @@ class KGELitModel(BaseLitModel):
         self.log_dict(outputs, prog_bar=True, on_epoch=True)
 
     def test_step(self, batch, batch_idx):
+        """Getting samples and test in KG model.
+        
+        Args:
+            batch: The evaluation data.
+            batch_idx: The dict_key in batch, type: list.
+
+        Returns:
+            results: mrr and hits@1,3,10.
+        """
         results = dict()
         ranks = link_predict(batch, self.model)
         results["count"] = torch.numel(ranks)
@@ -66,6 +93,8 @@ class KGELitModel(BaseLitModel):
         self.log_dict(outputs, prog_bar=True, on_epoch=True)
     
     def get_results(self, results, mode):
+        """Recording the result of validation or test.
+        """
         outputs = ddict(float)
         count = np.array([o["count"] for o in results]).sum().item()
         metrics = ["mrr", "hits@1", "hits@3", "hits@10"]
@@ -76,8 +105,12 @@ class KGELitModel(BaseLitModel):
             outputs[metric] = round(number, 2)
         return outputs
 
-    '''这里设置优化器和lr_scheduler'''
     def configure_optimizers(self):
+        """Setting optimizer and lr_scheduler.
+
+        Returns:
+            optim_dict: Record the optimizer and lr_scheduler, type: dict.   
+        """
         milestones = int(self.args.max_epochs / 2)
         optimizer = self.optimizer_class(self.model.parameters(), lr=self.args.lr)
         StepLR = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[milestones], gamma=0.1)
