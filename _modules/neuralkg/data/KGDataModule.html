@@ -122,6 +122,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">data_test</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_sampler</span><span class="o">.</span><span class="n">get_test</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="KGDataModule.get_train_bs"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.KGDataModule.KGDataModule.get_train_bs">[docs]</a>    <span class="k">def</span> <span class="nf">get_train_bs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get batch size for training.</span>
+
+<span class="sd">        If the num_batches isn`t zero, it will divide data_train by num_batches to get batch size.</span>
+<span class="sd">        And if user don`t give batch size and num_batches=0, it will raise ValueError.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            self.args.train_bs: The batch size for training.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_batches</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">train_bs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_train</span><span class="p">)</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_batches</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">train_bs</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>

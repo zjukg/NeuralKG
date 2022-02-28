@@ -90,15 +90,25 @@
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 
 <div class="viewcode-block" id="KGELitModel"><a class="viewcode-back" href="../../../neuralkg.lit_model.html#neuralkg.lit_model.KGELitModel.KGELitModel">[docs]</a><span class="k">class</span> <span class="nc">KGELitModel</span><span class="p">(</span><span class="n">BaseLitModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Processing of training, evaluation and testing.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
-        
-    
 
 <div class="viewcode-block" id="KGELitModel.forward"><a class="viewcode-back" href="../../../neuralkg.lit_model.html#neuralkg.lit_model.KGELitModel.KGELitModel.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
     
 <div class="viewcode-block" id="KGELitModel.training_step"><a class="viewcode-back" href="../../../neuralkg.lit_model.html#neuralkg.lit_model.KGELitModel.KGELitModel.training_step">[docs]</a>    <span class="k">def</span> <span class="nf">training_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Getting samples and training in KG model.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            batch: The training data.</span>
+<span class="sd">            batch_idx: The dict_key in batch, type: list.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            loss: The training loss for back propagation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">pos_sample</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;positive_sample&quot;</span><span class="p">]</span>
         <span class="n">neg_sample</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;negative_sample&quot;</span><span class="p">]</span>
         <span class="n">mode</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;mode&quot;</span><span class="p">]</span>
@@ -113,7 +123,15 @@
         <span class="k">return</span> <span class="n">loss</span></div>
     
 <div class="viewcode-block" id="KGELitModel.validation_step"><a class="viewcode-back" href="../../../neuralkg.lit_model.html#neuralkg.lit_model.KGELitModel.KGELitModel.validation_step">[docs]</a>    <span class="k">def</span> <span class="nf">validation_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">):</span>
-        <span class="c1"># pos_triple, tail_label, head_label = batch</span>
+        <span class="sd">&quot;&quot;&quot;Getting samples and validation in KG model.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            batch: The evalutaion data.</span>
+<span class="sd">            batch_idx: The dict_key in batch, type: list.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            results: mrr and hits@1,3,10.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">results</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="n">ranks</span> <span class="o">=</span> <span class="n">link_predict</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
         <span class="n">results</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">numel</span><span class="p">(</span><span class="n">ranks</span><span class="p">)</span>
@@ -128,6 +146,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">log_dict</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">prog_bar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">on_epoch</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="KGELitModel.test_step"><a class="viewcode-back" href="../../../neuralkg.lit_model.html#neuralkg.lit_model.KGELitModel.KGELitModel.test_step">[docs]</a>    <span class="k">def</span> <span class="nf">test_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Getting samples and test in KG model.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            batch: The evaluation data.</span>
+<span class="sd">            batch_idx: The dict_key in batch, type: list.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            results: mrr and hits@1,3,10.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">results</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="n">ranks</span> <span class="o">=</span> <span class="n">link_predict</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
         <span class="n">results</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">numel</span><span class="p">(</span><span class="n">ranks</span><span class="p">)</span>
@@ -141,6 +168,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">log_dict</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">prog_bar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">on_epoch</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
     
 <div class="viewcode-block" id="KGELitModel.get_results"><a class="viewcode-back" href="../../../neuralkg.lit_model.html#neuralkg.lit_model.KGELitModel.KGELitModel.get_results">[docs]</a>    <span class="k">def</span> <span class="nf">get_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Recording the result of validation or test.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">outputs</span> <span class="o">=</span> <span class="n">ddict</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
         <span class="n">count</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">o</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">results</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
         <span class="n">metrics</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;mrr&quot;</span><span class="p">,</span> <span class="s2">&quot;hits@1&quot;</span><span class="p">,</span> <span class="s2">&quot;hits@3&quot;</span><span class="p">,</span> <span class="s2">&quot;hits@10&quot;</span><span class="p">]</span>
@@ -151,8 +180,12 @@
             <span class="n">outputs</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">number</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">outputs</span></div>
 
-    <span class="sd">&#39;&#39;&#39;这里设置优化器和lr_scheduler&#39;&#39;&#39;</span>
 <div class="viewcode-block" id="KGELitModel.configure_optimizers"><a class="viewcode-back" href="../../../neuralkg.lit_model.html#neuralkg.lit_model.KGELitModel.KGELitModel.configure_optimizers">[docs]</a>    <span class="k">def</span> <span class="nf">configure_optimizers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Setting optimizer and lr_scheduler.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            optim_dict: Record the optimizer and lr_scheduler, type: dict.   </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">milestones</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">max_epochs</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
         <span class="n">optimizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizer_class</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">lr</span><span class="p">)</span>
         <span class="n">StepLR</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">MultiStepLR</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">milestones</span><span class="o">=</span><span class="p">[</span><span class="n">milestones</span><span class="p">],</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>

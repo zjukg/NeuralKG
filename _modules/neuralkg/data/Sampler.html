@@ -86,13 +86,26 @@
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">queue</span>
 
-<span class="sd">&#39;&#39;&#39;TransE提出的随机负采样&#39;&#39;&#39;</span>
 <div class="viewcode-block" id="UniSampler"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.UniSampler">[docs]</a><span class="k">class</span> <span class="nc">UniSampler</span><span class="p">(</span><span class="n">BaseSampler</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Random negative sampling </span>
+<span class="sd">    Filtering out positive samples and selecting some samples randomly as negative samples.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        cross_sampling_flag: The flag of cross sampling head and tail negative samples.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cross_sampling_flag</span> <span class="o">=</span> <span class="mi">0</span>
 
 <div class="viewcode-block" id="UniSampler.sampling"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.UniSampler.sampling">[docs]</a>    <span class="k">def</span> <span class="nf">sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Filtering out positive samples and selecting some samples randomly as negative samples.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            data: The triples used to be sampled.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            batch_data: The training data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">batch_data</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">neg_ent_sample</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">subsampling_weight</span> <span class="o">=</span> <span class="p">[]</span>
@@ -138,17 +151,30 @@
 <div class="viewcode-block" id="UniSampler.get_sampling_keys"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.UniSampler.get_sampling_keys">[docs]</a>    <span class="k">def</span> <span class="nf">get_sampling_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;positive_sample&#39;</span><span class="p">,</span> <span class="s1">&#39;negative_sample&#39;</span><span class="p">,</span> <span class="s1">&#39;mode&#39;</span><span class="p">]</span></div></div>
 
-<span class="sd">&#39;&#39;&#39;TransH提出的随机负采样&#39;&#39;&#39;</span>
 <div class="viewcode-block" id="BernSampler"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.BernSampler">[docs]</a><span class="k">class</span> <span class="nc">BernSampler</span><span class="p">(</span><span class="n">BaseSampler</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Using bernoulli distribution to select whether to replace the head entity or tail entity.</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        lef_mean: Record the mean of head entity</span>
+<span class="sd">        rig_mean: Record the mean of tail entity</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lef_mean</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rig_mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_bern</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">__normal_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">neg_size</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Generate replace head/tail list according to Bernoulli distribution.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            h: The head of triples.</span>
+<span class="sd">            r: The relation of triples.</span>
+<span class="sd">            t: The tail of triples.</span>
+<span class="sd">            neg_size: The number of negative samples corresponding to each triple</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">             numpy.array: replace head list and replace tail list.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">neg_size_h</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">neg_size_t</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="sd">&#39;&#39;&#39;使用伯努利分布来选择是替换头实体还是尾实体</span>
-<span class="sd">		原理是prob表示的是关系r组成的三元组中不同尾实体个数的占比,</span>
-<span class="sd">		prob越大表示关系是one-to-many的可能性越高，越应该替换头实体&#39;&#39;&#39;</span>
         <span class="n">prob</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rig_mean</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rig_mean</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">lef_mean</span><span class="p">[</span><span class="n">r</span><span class="p">])</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">bern_flag</span> <span class="k">else</span> <span class="mf">0.5</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">neg_size</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">prob</span><span class="p">:</span>
@@ -175,7 +201,16 @@
             <span class="n">neg_list_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">neg_list_t</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">neg_list_h</span><span class="p">[:</span><span class="n">neg_size_h</span><span class="p">],</span> <span class="n">neg_list_t</span><span class="p">[:</span><span class="n">neg_size_t</span><span class="p">]))</span>
+
 <div class="viewcode-block" id="BernSampler.sampling"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.BernSampler.sampling">[docs]</a>    <span class="k">def</span> <span class="nf">sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Using bernoulli distribution to select whether to replace the head entity or tail entity.</span>
+<span class="sd">    </span>
+<span class="sd">        Args:</span>
+<span class="sd">            data: The triples used to be sampled.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            batch_data: The training data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">batch_data</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">neg_ent_sample</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">batch_data</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;bern&#39;</span>
@@ -186,6 +221,12 @@
         <span class="k">return</span> <span class="n">batch_data</span></div>
     
 <div class="viewcode-block" id="BernSampler.calc_bern"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.BernSampler.calc_bern">[docs]</a>    <span class="k">def</span> <span class="nf">calc_bern</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculating the lef_mean and rig_mean.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            lef_mean: Record the mean of head entity.</span>
+<span class="sd">            rig_mean: Record the mean of tail entity.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">h_of_r</span> <span class="o">=</span> <span class="n">ddict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
         <span class="n">t_of_r</span> <span class="o">=</span> <span class="n">ddict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
         <span class="n">freqRel</span> <span class="o">=</span> <span class="n">ddict</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
@@ -204,15 +245,27 @@
     <span class="k">def</span> <span class="nf">sampling_keys</span><span class="p">():</span>
         <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;positive_sample&#39;</span><span class="p">,</span> <span class="s1">&#39;negative_sample&#39;</span><span class="p">,</span> <span class="s1">&#39;mode&#39;</span><span class="p">]</span></div></div>
 
-<span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">RotatE提出的自对抗负采样,</span>
-<span class="sd">这个类似于一个插件，可以结合uni/bern一起使用</span>
-<span class="sd">&#39;&#39;&#39;</span>
 <div class="viewcode-block" id="AdvSampler"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.AdvSampler">[docs]</a><span class="k">class</span> <span class="nc">AdvSampler</span><span class="p">(</span><span class="n">BaseSampler</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Self-adversarial negative sampling, in math:</span>
+<span class="sd">    </span>
+<span class="sd">    p\left(h_{j}^{\prime}, r, t_{j}^{\prime} \mid\left\{\left(h_{i}, r_{i}, t_{i}\right)\right\}\right)=\frac{\exp \alpha f_{r}\left(\mathbf{h}_{j}^{\prime}, \mathbf{t}_{j}^{\prime}\right)}{\sum_{i} \exp \alpha f_{r}\left(\mathbf{h}_{i}^{\prime}, \mathbf{t}_{i}^{\prime}\right)}</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        freq_hr: The count of (h, r) pairs.</span>
+<span class="sd">        freq_tr: The count of (t, r) pairs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">freq_hr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">freq_tr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_freq</span><span class="p">()</span>
 <div class="viewcode-block" id="AdvSampler.sampling"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.AdvSampler.sampling">[docs]</a>    <span class="k">def</span> <span class="nf">sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos_sample</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Self-adversarial negative sampling.</span>
+<span class="sd">    </span>
+<span class="sd">        Args:</span>
+<span class="sd">            data: The triples used to be sampled.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            batch_data: The training data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">pos_sample</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
         <span class="n">adv_sampling</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
@@ -222,6 +275,12 @@
         <span class="n">adv_sampling</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">adv_sampling</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">adv_sampling</span></div>
 <div class="viewcode-block" id="AdvSampler.calc_freq"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.AdvSampler.calc_freq">[docs]</a>    <span class="k">def</span> <span class="nf">calc_freq</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculating the freq_hr and freq_tr.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            freq_hr: The count of (h, r) pairs.</span>
+<span class="sd">            freq_tr: The count of (t, r) pairs.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">freq_hr</span><span class="p">,</span> <span class="n">freq_tr</span> <span class="o">=</span> <span class="p">{},</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_triples</span><span class="p">:</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">freq_hr</span><span class="p">:</span>
@@ -234,16 +293,22 @@
                 <span class="n">freq_tr</span><span class="p">[(</span><span class="n">t</span><span class="p">,</span> <span class="n">r</span><span class="p">)]</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="n">freq_hr</span><span class="p">,</span> <span class="n">freq_tr</span></div></div>
 
-<span class="sd">&quot;&quot;&quot;ConvE提出的1vsall负采样&quot;&quot;&quot;</span>
-
 <div class="viewcode-block" id="AllSampler"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.AllSampler">[docs]</a><span class="k">class</span> <span class="nc">AllSampler</span><span class="p">(</span><span class="n">RevSampler</span><span class="p">):</span>
-    <span class="c1"># TODO:类名还需要商榷下</span>
+    <span class="sd">&quot;&quot;&quot;Merging triples which have same head and relation, all false tail entities are taken as negative samples.    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
         <span class="c1"># self.num_rel_without_rev = self.args.num_rel // 2</span>
         
 <div class="viewcode-block" id="AllSampler.sampling"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.AllSampler.sampling">[docs]</a>    <span class="k">def</span> <span class="nf">sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;全部做tail_prediction&#39;&#39;&#39;</span>
+        <span class="sd">&quot;&quot;&quot;Randomly sampling from the merged triples.</span>
+<span class="sd">    </span>
+<span class="sd">        Args:</span>
+<span class="sd">            data: The triples used to be sampled.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            batch_data: The training data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># sample_id = [] #确定triple里的relation是否是reverse的。reverse为1，不是为0</span>
         <span class="n">batch_data</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">table</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_ent</span><span class="p">)</span>
@@ -292,6 +357,14 @@
         <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">]</span></div></div>
 
 <div class="viewcode-block" id="ConvSampler"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.ConvSampler">[docs]</a><span class="k">class</span> <span class="nc">ConvSampler</span><span class="p">(</span><span class="n">RevSampler</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Merging triples which have same head and relation, all false tail entities are taken as negative samples.      </span>
+<span class="sd">    </span>
+<span class="sd">    The triples which have same head and relation are treated as one triple.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        label: Mask the false tail as negative samples.</span>
+<span class="sd">        triples: The triples used to be sampled.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">triples</span> <span class="o">=</span> <span class="kc">None</span>
@@ -299,7 +372,14 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_hr_trian</span><span class="p">()</span>
 
 <div class="viewcode-block" id="ConvSampler.sampling"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.ConvSampler.sampling">[docs]</a>    <span class="k">def</span> <span class="nf">sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos_hr_t</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;全部做tail_prediction&#39;&#39;&#39;</span>
+        <span class="sd">&quot;&quot;&quot;Randomly sampling from the merged triples.</span>
+<span class="sd">    </span>
+<span class="sd">        Args:</span>
+<span class="sd">            pos_hr_t: The triples ((head,relation) pairs) used to be sampled.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            batch_data: The training data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">batch_data</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">train_bs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_ent</span><span class="p">)</span>
@@ -315,10 +395,18 @@
 <div class="viewcode-block" id="ConvSampler.sampling_keys"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.ConvSampler.sampling_keys">[docs]</a>    <span class="k">def</span> <span class="nf">sampling_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">]</span></div></div>
 
-<span class="sd">&quot;&quot;&quot;XTransE使用的注意力采样&quot;&quot;&quot;</span>
 <div class="viewcode-block" id="XTransESampler"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.XTransESampler">[docs]</a><span class="k">class</span> <span class="nc">XTransESampler</span><span class="p">(</span><span class="n">RevSampler</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Random negative sampling and recording neighbor entities.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        triples: The triples used to be sampled.</span>
+<span class="sd">        neg_sample: The negative samples.</span>
+<span class="sd">        h_neighbor: The neighbor of sampled entites.</span>
+<span class="sd">        h_mask: The tag of effecitve neighbor.</span>
+<span class="sd">        max_neighbor: The maximum of the neighbor entities.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
-        
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_h2rt_t2hr_from_train</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">triples</span>    <span class="o">=</span> <span class="kc">None</span>
@@ -328,15 +416,23 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">max_neighbor</span> <span class="o">=</span> <span class="mi">200</span>
 
 <div class="viewcode-block" id="XTransESampler.sampling"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.XTransESampler.sampling">[docs]</a>    <span class="k">def</span> <span class="nf">sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Random negative sampling and recording neighbor entities.</span>
+<span class="sd">    </span>
+<span class="sd">        Args:</span>
+<span class="sd">            data: The triples used to be sampled.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            batch_data: The training data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">batch_data</span> <span class="o">=</span> <span class="p">{}</span>
         
         <span class="n">neg_ent_sample</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">train_bs</span><span class="p">,</span> <span class="mi">20000</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>    
-        <span class="n">h_neighbor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">train_bs</span><span class="p">,</span> <span class="mi">20000</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>   <span class="c1">#分别记录关系和尾实体</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">train_bs</span><span class="p">,</span> <span class="mi">20000</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">h_neighbor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">train_bs</span><span class="p">,</span> <span class="mi">20000</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
         
         <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">triples</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
             <span class="n">h</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="n">t</span> <span class="o">=</span> <span class="n">triples</span>
-            <span class="n">num_h_neighbor</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">h2rt_train</span><span class="p">[</span><span class="n">h</span><span class="p">])</span> <span class="c1">#记录 以h为头实体的三元组数量</span>
+            <span class="n">num_h_neighbor</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">h2rt_train</span><span class="p">[</span><span class="n">h</span><span class="p">])</span> 
             <span class="n">h_neighbor</span><span class="p">[</span><span class="nb">id</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">num_h_neighbor</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">h2rt_train</span><span class="p">[</span><span class="n">h</span><span class="p">])</span>
             
             <span class="n">mask</span><span class="p">[</span><span class="nb">id</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">num_h_neighbor</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="n">num_h_neighbor</span><span class="p">])</span>
@@ -359,8 +455,17 @@
 <div class="viewcode-block" id="XTransESampler.get_sampling_keys"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.XTransESampler.get_sampling_keys">[docs]</a>    <span class="k">def</span> <span class="nf">get_sampling_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;positive_sample&#39;</span><span class="p">,</span> <span class="s1">&#39;negative_sample&#39;</span><span class="p">,</span> <span class="s1">&#39;neighbor&#39;</span><span class="p">,</span> <span class="s1">&#39;mask&#39;</span><span class="p">,</span> <span class="s1">&#39;mode&#39;</span><span class="p">]</span></div></div>
 
-<span class="sd">&#39;&#39;&#39;图神经网络中以图为单位采样&#39;&#39;&#39;</span>
 <div class="viewcode-block" id="GraphSampler"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.GraphSampler">[docs]</a><span class="k">class</span> <span class="nc">GraphSampler</span><span class="p">(</span><span class="n">RevSampler</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Graph based sampling in neural network.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        entity: The entities of sampled triples. </span>
+<span class="sd">        relation: The relation of sampled triples.</span>
+<span class="sd">        triples: The sampled triples.</span>
+<span class="sd">        graph: The graph structured sampled triples by dgl.graph in DGL.</span>
+<span class="sd">        norm: The edge norm in graph.</span>
+<span class="sd">        label: Mask the false tail as negative samples.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">entity</span>   <span class="o">=</span> <span class="kc">None</span>
@@ -371,10 +476,18 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">label</span>    <span class="o">=</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="GraphSampler.sampling"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.GraphSampler.sampling">[docs]</a>    <span class="k">def</span> <span class="nf">sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos_triples</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Graph based sampling in neural network.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pos_triples: The triples used to be sampled.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            batch_data: The training data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">batch_data</span> <span class="o">=</span> <span class="p">{}</span>
         
         <span class="n">pos_triples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pos_triples</span><span class="p">)</span>
-        <span class="n">pos_triples</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">entity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_postive</span><span class="p">(</span><span class="n">pos_triples</span><span class="p">)</span>
+        <span class="n">pos_triples</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">entity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_positive</span><span class="p">(</span><span class="n">pos_triples</span><span class="p">)</span>
         <span class="n">head_triples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_negative</span><span class="p">(</span><span class="s1">&#39;head&#39;</span><span class="p">,</span> <span class="n">pos_triples</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_neg</span><span class="p">)</span>
         <span class="n">tail_triples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_negative</span><span class="p">(</span><span class="s1">&#39;tail&#39;</span><span class="p">,</span> <span class="n">pos_triples</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_neg</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">triples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">pos_triples</span><span class="p">,</span><span class="n">head_triples</span><span class="p">,</span><span class="n">tail_triples</span><span class="p">))</span>
@@ -406,7 +519,16 @@
         <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;graph&#39;</span><span class="p">,</span><span class="s1">&#39;triples&#39;</span><span class="p">,</span><span class="s1">&#39;label&#39;</span><span class="p">,</span><span class="s1">&#39;entity&#39;</span><span class="p">,</span><span class="s1">&#39;relation&#39;</span><span class="p">,</span><span class="s1">&#39;norm&#39;</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="GraphSampler.sampling_negative"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.GraphSampler.sampling_negative">[docs]</a>    <span class="k">def</span> <span class="nf">sampling_negative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">pos_triples</span><span class="p">,</span> <span class="n">num_neg</span><span class="p">):</span>
-        
+        <span class="sd">&quot;&quot;&quot;Random negative sampling without filtering</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            mode: The mode of negtive sampling.</span>
+<span class="sd">            pos_triples: The positive triples.</span>
+<span class="sd">            num_neg: The number of negative samples corresponding to each triple.</span>
+
+<span class="sd">        Results:</span>
+<span class="sd">            neg_samples: The negative triples.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">neg_random</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span>
             <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entity</span><span class="p">),</span> 
             <span class="n">size</span> <span class="o">=</span> <span class="n">num_neg</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">pos_triples</span><span class="p">)</span>
@@ -419,6 +541,18 @@
         <span class="k">return</span> <span class="n">neg_samples</span></div>
 
 <div class="viewcode-block" id="GraphSampler.build_graph"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.GraphSampler.build_graph">[docs]</a>    <span class="k">def</span> <span class="nf">build_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_ent</span><span class="p">,</span> <span class="n">triples</span><span class="p">,</span> <span class="n">power</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Using sampled triples to build a graph by dgl.graph in DGL.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            num_ent: The number of entities.</span>
+<span class="sd">            triples: The positive sampled triples.</span>
+<span class="sd">            power: The power index for normalization.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rela: The relation of sampled triples.</span>
+<span class="sd">            graph: The graph structured sampled triples by dgl.graph in DGL.</span>
+<span class="sd">            edge_norm: The edge norm in graph.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">head</span><span class="p">,</span> <span class="n">rela</span><span class="p">,</span> <span class="n">tail</span> <span class="o">=</span> <span class="n">triples</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">triples</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">triples</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
         <span class="n">graph</span> <span class="o">=</span> <span class="n">dgl</span><span class="o">.</span><span class="n">graph</span><span class="p">(([],</span> <span class="p">[]))</span>
         <span class="n">graph</span><span class="o">.</span><span class="n">add_nodes</span><span class="p">(</span><span class="n">num_ent</span><span class="p">)</span>
@@ -429,6 +563,15 @@
         <span class="k">return</span> <span class="n">graph</span><span class="p">,</span> <span class="n">rela</span><span class="p">,</span> <span class="n">edge_norm</span></div>
 
 <div class="viewcode-block" id="GraphSampler.comp_deg_norm"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.GraphSampler.comp_deg_norm">[docs]</a>    <span class="k">def</span> <span class="nf">comp_deg_norm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">power</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculating the normalization node weight.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            graph: The graph structured sampled triples by dgl.graph in DGL.</span>
+<span class="sd">            power: The power index for normalization.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tensor: The node weight of normalization.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">graph</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">local_var</span><span class="p">()</span>
         <span class="n">in_deg</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">in_degrees</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()))</span><span class="o">.</span><span class="n">float</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
         <span class="n">norm</span> <span class="o">=</span> <span class="n">in_deg</span><span class="o">.</span><span class="fm">__pow__</span><span class="p">(</span><span class="n">power</span><span class="p">)</span>
@@ -436,20 +579,37 @@
         <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">norm</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="GraphSampler.node_norm_to_edge_norm"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.GraphSampler.node_norm_to_edge_norm">[docs]</a>    <span class="k">def</span> <span class="nf">node_norm_to_edge_norm</span><span class="p">(</span><span class="n">slef</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">node_norm</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculating the normalization edge weight.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            graph: The graph structured sampled triples by dgl.graph in DGL.</span>
+<span class="sd">            node_norm: The node weight of normalization.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tensor: The edge weight of normalization.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">graph</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">local_var</span><span class="p">()</span>
         <span class="c1"># convert to edge norm</span>
         <span class="n">graph</span><span class="o">.</span><span class="n">ndata</span><span class="p">[</span><span class="s1">&#39;norm&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node_norm</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">graph</span><span class="o">.</span><span class="n">apply_edges</span><span class="p">(</span><span class="k">lambda</span> <span class="n">edges</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;norm&#39;</span> <span class="p">:</span> <span class="n">edges</span><span class="o">.</span><span class="n">dst</span><span class="p">[</span><span class="s1">&#39;norm&#39;</span><span class="p">]})</span>
         <span class="k">return</span> <span class="n">graph</span><span class="o">.</span><span class="n">edata</span><span class="p">[</span><span class="s1">&#39;norm&#39;</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="GraphSampler.sampling_postive"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.GraphSampler.sampling_postive">[docs]</a>    <span class="k">def</span> <span class="nf">sampling_postive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">postive_triples</span><span class="p">):</span>
+<div class="viewcode-block" id="GraphSampler.sampling_positive"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.GraphSampler.sampling_positive">[docs]</a>    <span class="k">def</span> <span class="nf">sampling_positive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">positive_triples</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Regenerate positive sampling.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            positive_triples: The positive sampled triples.</span>
+
+<span class="sd">        Results:</span>
+<span class="sd">            The regenerate triples and entities filter invisible entities.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">postive_triples</span><span class="p">)),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">positive_triples</span><span class="p">)),</span>
             <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">train_bs</span><span class="p">,</span>
             <span class="n">replace</span><span class="o">=</span><span class="kc">False</span>
         <span class="p">)</span>
-        <span class="n">edges</span> <span class="o">=</span> <span class="n">postive_triples</span><span class="p">[</span><span class="n">edges</span><span class="p">]</span>
+        <span class="n">edges</span> <span class="o">=</span> <span class="n">positive_triples</span><span class="p">[</span><span class="n">edges</span><span class="p">]</span>
         <span class="n">head</span><span class="p">,</span> <span class="n">rela</span><span class="p">,</span> <span class="n">tail</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
         <span class="n">entity</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">((</span><span class="n">head</span><span class="p">,</span> <span class="n">tail</span><span class="p">),</span> <span class="n">return_inverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> 
         <span class="n">head</span><span class="p">,</span> <span class="n">tail</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
@@ -458,6 +618,19 @@
                 <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">entity</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">long</span><span class="p">()</span></div></div>
 
 <div class="viewcode-block" id="KBATSampler"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.KBATSampler">[docs]</a><span class="k">class</span> <span class="nc">KBATSampler</span><span class="p">(</span><span class="n">BaseSampler</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Graph based n_hop neighbours in neural network.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        n_hop: The graph of n_hop neighbours.</span>
+<span class="sd">        graph: The adjacency graph.</span>
+<span class="sd">        neighbours: The neighbours of sampled triples.</span>
+<span class="sd">        adj_matrix:The triples of sampled.</span>
+<span class="sd">        triples: The sampled triples.</span>
+<span class="sd">        triples_GAT_pos: Positive triples.</span>
+<span class="sd">        triples_GAT_neg: Negative triples.</span>
+<span class="sd">        triples_Con: All triples including positive triples and negative triples. </span>
+<span class="sd">        label: Mask the false tail as negative samples.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span> 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_hop</span>           <span class="o">=</span> <span class="kc">None</span>
@@ -473,6 +646,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">get_neighbors</span><span class="p">()</span>
 
 <div class="viewcode-block" id="KBATSampler.sampling"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.KBATSampler.sampling">[docs]</a>    <span class="k">def</span> <span class="nf">sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos_triples</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Graph based n_hop neighbours in neural network.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pos_triples: The triples used to be sampled.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            batch_data: The training data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">batch_data</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="c1">#--------------------KBAT-Sampler------------------------------------------</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">entity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_unique_entity</span><span class="p">(</span><span class="n">pos_triples</span><span class="p">)</span>
@@ -483,7 +664,7 @@
         <span class="n">batch_data</span><span class="p">[</span><span class="s1">&#39;triples_GAT_neg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">triples_GAT_neg</span>
 
         <span class="n">head</span><span class="p">,</span> <span class="n">rela</span><span class="p">,</span> <span class="n">tail</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_triples</span><span class="p">)</span><span class="o">.</span><span class="n">t</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">adj_matrix</span>  <span class="o">=</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="n">tail</span><span class="p">,</span> <span class="n">head</span><span class="p">)),</span> <span class="n">rela</span><span class="p">)</span> <span class="c1"># note: 源代码就是先尾后头</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">adj_matrix</span>  <span class="o">=</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="n">tail</span><span class="p">,</span> <span class="n">head</span><span class="p">)),</span> <span class="n">rela</span><span class="p">)</span>
         <span class="n">batch_data</span><span class="p">[</span><span class="s1">&#39;adj_matrix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adj_matrix</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">n_hop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_batch_nhop_neighbors_all</span><span class="p">()</span>
@@ -503,9 +684,16 @@
         <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;adj_matrix&#39;</span><span class="p">,</span> <span class="s1">&#39;n_hop&#39;</span><span class="p">,</span> <span class="s1">&#39;triples_GAT_pos&#39;</span><span class="p">,</span> 
         <span class="s1">&#39;triples_GAT_neg&#39;</span><span class="p">,</span> <span class="s1">&#39;triples_Con&#39;</span> <span class="p">,</span> <span class="s1">&#39;label&#39;</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="KBATSampler.bfs"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.KBATSampler.bfs">[docs]</a>    <span class="k">def</span> <span class="nf">bfs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">nbd_size</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span> <span class="c1"># todo: 这个完全运行需要20分钟，能否优化？</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        返回neigbors 记录source的前两跳关系和实体</span>
+<div class="viewcode-block" id="KBATSampler.bfs"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.KBATSampler.bfs">[docs]</a>    <span class="k">def</span> <span class="nf">bfs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">nbd_size</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Using depth first search algorithm to generate n_hop neighbor graph.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            graph: The adjacency graph.</span>
+<span class="sd">            source: Head node.</span>
+<span class="sd">            nbd_size: The number of hops.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            neighbors: N_hop neighbor graph.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">visit</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">distance</span> <span class="o">=</span> <span class="p">{}</span>
@@ -561,7 +749,14 @@
         <span class="k">return</span> <span class="n">neighbors</span></div>
 
 <div class="viewcode-block" id="KBATSampler.get_neighbors"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.KBATSampler.get_neighbors">[docs]</a>    <span class="k">def</span> <span class="nf">get_neighbors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nbd_size</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;返回neighors记录source在两跳邻域内的关系和实体&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Getting the relation and entity of the source in the n_hop neighborhood.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            nbd_size: The number of hops.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            self.neighbours: Record the relation and entity of the source in the n_hop neighborhood.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">graph</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="k">for</span> <span class="n">triple</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_triples</span><span class="p">:</span>
@@ -602,21 +797,35 @@
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Finish BFS, time taken &quot;</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">neighbours</span> <span class="o">=</span> <span class="n">neighbors</span></div>
 
-
 <div class="viewcode-block" id="KBATSampler.get_unique_entity"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.KBATSampler.get_unique_entity">[docs]</a>    <span class="k">def</span> <span class="nf">get_unique_entity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">triples</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Getting the set of entity.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            triples: The sampled triples.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            numpy.array: The set of entity</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">train_triples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">triples</span><span class="p">)</span>
         <span class="n">train_entities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">train_triples</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">train_triples</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]))</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">train_entities</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="KBATSampler.get_batch_nhop_neighbors_all"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.KBATSampler.get_batch_nhop_neighbors_all">[docs]</a>    <span class="k">def</span> <span class="nf">get_batch_nhop_neighbors_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nbd_size</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
-        
+        <span class="sd">&quot;&quot;&quot;Getting n_hop neighbors of all entities in batch.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            nbd_size: The number of hops.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The set of n_hop neighbors.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">batch_source_triples</span> <span class="o">=</span> <span class="p">[]</span>
         
         <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">entity</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">source</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">neighbours</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                 <span class="n">nhop_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">neighbours</span><span class="p">[</span><span class="n">source</span><span class="p">][</span><span class="n">nbd_size</span><span class="p">]</span>
                 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">tup</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">nhop_list</span><span class="p">):</span>
-                    <span class="k">if</span><span class="p">(</span><span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">):</span>  <span class="c1"># note: 这里如果是FB则仅使用一个2跳邻居 如果是WN则使用全部</span>
+                    <span class="k">if</span><span class="p">(</span><span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">):</span> 
                         <span class="k">break</span>
                     <span class="n">batch_source_triples</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">source</span><span class="p">,</span> 
                                                 <span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> 
@@ -628,6 +837,16 @@
         <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">n_hop</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="KBATSampler.sampling_negative"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.KBATSampler.sampling_negative">[docs]</a>    <span class="k">def</span> <span class="nf">sampling_negative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">pos_triples</span><span class="p">,</span> <span class="n">num_neg</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Random negative sampling.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            mode: The mode of negtive sampling.</span>
+<span class="sd">            pos_triples: The positive triples.</span>
+<span class="sd">            num_neg: The number of negative samples corresponding to each triple.</span>
+
+<span class="sd">        Results:</span>
+<span class="sd">            neg_samples: The negative triples.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">neg_samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">pos_triples</span><span class="p">,</span> <span class="p">(</span><span class="n">num_neg</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;head&#39;</span><span class="p">:</span>
             <span class="n">neg_head</span> <span class="o">=</span> <span class="p">[]</span>
@@ -642,7 +861,16 @@
         <span class="k">return</span> <span class="n">neg_samples</span></div>
 
 <div class="viewcode-block" id="KBATSampler.sam_negative"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.KBATSampler.sam_negative">[docs]</a>    <span class="k">def</span> <span class="nf">sam_negative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">pos_triples</span><span class="p">,</span> <span class="n">num_neg</span><span class="p">):</span>
-        
+        <span class="sd">&quot;&quot;&quot;Random negative sampling without filter.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            mode: The mode of negtive sampling.</span>
+<span class="sd">            pos_triples: The positive triples.</span>
+<span class="sd">            num_neg: The number of negative samples corresponding to each triple.</span>
+
+<span class="sd">        Results:</span>
+<span class="sd">            neg_samples: The negative triples.</span>
+<span class="sd">        &quot;&quot;&quot;</span> 
         <span class="n">neg_random</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span>
             <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entity</span><span class="p">),</span> 
             <span class="n">size</span> <span class="o">=</span> <span class="n">num_neg</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">pos_triples</span><span class="p">)</span>
@@ -655,6 +883,15 @@
         <span class="k">return</span> <span class="n">neg_samples</span></div></div>
 
 <div class="viewcode-block" id="CompGCNSampler"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.CompGCNSampler">[docs]</a><span class="k">class</span> <span class="nc">CompGCNSampler</span><span class="p">(</span><span class="n">GraphSampler</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Graph based sampling in neural network.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        relation: The relation of sampled triples.</span>
+<span class="sd">        triples: The sampled triples.</span>
+<span class="sd">        graph: The graph structured sampled triples by dgl.graph in DGL.</span>
+<span class="sd">        norm: The edge norm in graph.</span>
+<span class="sd">        label: Mask the false tail as negative samples.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">relation</span> <span class="o">=</span> <span class="kc">None</span>
@@ -669,6 +906,14 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">build_graph</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_ent</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t_triples</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">(),</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">)</span>
 
 <div class="viewcode-block" id="CompGCNSampler.sampling"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.CompGCNSampler.sampling">[docs]</a>    <span class="k">def</span> <span class="nf">sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos_hr_t</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Graph based n_hop neighbours in neural network.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pos_hr_t: The triples(hr, t) used to be sampled.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            batch_data: The training data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">batch_data</span> <span class="o">=</span> <span class="p">{}</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">train_bs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_ent</span><span class="p">)</span>
@@ -688,14 +933,29 @@
         <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;sample&#39;</span><span class="p">,</span><span class="s1">&#39;label&#39;</span><span class="p">,</span><span class="s1">&#39;graph&#39;</span><span class="p">,</span><span class="s1">&#39;relation&#39;</span><span class="p">,</span><span class="s1">&#39;norm&#39;</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="CompGCNSampler.node_norm_to_edge_norm"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.CompGCNSampler.node_norm_to_edge_norm">[docs]</a>    <span class="k">def</span> <span class="nf">node_norm_to_edge_norm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">node_norm</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculating the normalization edge weight.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            graph: The graph structured sampled triples by dgl.graph in DGL.</span>
+<span class="sd">            node_norm: The node weight of normalization.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            norm: The edge weight of normalization.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">graph</span><span class="o">.</span><span class="n">ndata</span><span class="p">[</span><span class="s1">&#39;norm&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node_norm</span>
         <span class="n">graph</span><span class="o">.</span><span class="n">apply_edges</span><span class="p">(</span><span class="k">lambda</span> <span class="n">edges</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;norm&#39;</span><span class="p">:</span> <span class="n">edges</span><span class="o">.</span><span class="n">dst</span><span class="p">[</span><span class="s1">&#39;norm&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">edges</span><span class="o">.</span><span class="n">src</span><span class="p">[</span><span class="s1">&#39;norm&#39;</span><span class="p">]})</span>
         <span class="n">norm</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">edata</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;norm&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">norm</span>  <span class="c1">#返回边的id（包括负边） 和 边的norm值</span></div></div>
+        <span class="k">return</span> <span class="n">norm</span></div></div>
 
-
-<span class="sd">&#39;&#39;&#39;测试/验证的时候使用&#39;&#39;&#39;</span>
 <div class="viewcode-block" id="TestSampler"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.TestSampler">[docs]</a><span class="k">class</span> <span class="nc">TestSampler</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Sampling triples and recording positive triples for testing.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        sampler: The function of training sampler.</span>
+<span class="sd">        hr2t_all: Record the tail corresponding to the same head and relation.</span>
+<span class="sd">        rt2h_all: Record the head corresponding to the same tail and relation.</span>
+<span class="sd">        num_ent: The count of entities.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">sampler</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hr2t_all</span> <span class="o">=</span> <span class="n">ddict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
@@ -710,7 +970,6 @@
 <span class="sd">            self.hr2t_all: The set of hr2t.</span>
 <span class="sd">            self.rt2h_all: The set of rt2h.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="sd">&quot;&quot;&quot;与之前从训练集得到numpy字典不一样，这次得到tensor&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">all_true_triples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">get_all_true_triples</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_true_triples</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">hr2t_all</span><span class="p">[(</span><span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">)]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
@@ -721,12 +980,19 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">rt2h_all</span><span class="p">[(</span><span class="n">r</span><span class="p">,</span> <span class="n">t</span><span class="p">)]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rt2h_all</span><span class="p">[(</span><span class="n">r</span><span class="p">,</span> <span class="n">t</span><span class="p">)]))</span></div>
 
 <div class="viewcode-block" id="TestSampler.sampling"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.TestSampler.sampling">[docs]</a>    <span class="k">def</span> <span class="nf">sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="c1"># sample_id = []</span>
+        <span class="sd">&quot;&quot;&quot;Sampling triples and recording positive triples for testing.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data: The triples used to be sampled.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            batch_data: The data used to be evaluated.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">batch_data</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">head_label</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_ent</span><span class="p">)</span>
         <span class="n">tail_label</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_ent</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">triple</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-            <span class="n">head</span><span class="p">,</span> <span class="n">rel</span><span class="p">,</span> <span class="n">tail</span> <span class="o">=</span> <span class="n">triple</span>            
+            <span class="n">head</span><span class="p">,</span> <span class="n">rel</span><span class="p">,</span> <span class="n">tail</span> <span class="o">=</span> <span class="n">triple</span>
             <span class="n">head_label</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">rt2h_all</span><span class="p">[(</span><span class="n">rel</span><span class="p">,</span> <span class="n">tail</span><span class="p">)]]</span> <span class="o">=</span> <span class="mf">1.0</span>
             <span class="n">tail_label</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">hr2t_all</span><span class="p">[(</span><span class="n">head</span><span class="p">,</span> <span class="n">rel</span><span class="p">)]]</span> <span class="o">=</span> <span class="mf">1.0</span>
         <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;positive_sample&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
@@ -738,6 +1004,15 @@
         <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;positive_sample&quot;</span><span class="p">,</span> <span class="s2">&quot;head_label&quot;</span><span class="p">,</span> <span class="s2">&quot;tail_label&quot;</span><span class="p">]</span></div></div>
 
 <div class="viewcode-block" id="GraphTestSampler"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.GraphTestSampler">[docs]</a><span class="k">class</span> <span class="nc">GraphTestSampler</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Sampling graph for testing.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        sampler: The function of training sampler.</span>
+<span class="sd">        hr2t_all: Record the tail corresponding to the same head and relation.</span>
+<span class="sd">        rt2h_all: Record the head corresponding to the same tail and relation.</span>
+<span class="sd">        num_ent: The count of entities.</span>
+<span class="sd">        triples: The training triples.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">sampler</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hr2t_all</span> <span class="o">=</span> <span class="n">ddict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
@@ -747,6 +1022,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">triples</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">train_triples</span>
 
 <div class="viewcode-block" id="GraphTestSampler.get_hr2t_rt2h_from_all"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.GraphTestSampler.get_hr2t_rt2h_from_all">[docs]</a>    <span class="k">def</span> <span class="nf">get_hr2t_rt2h_from_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the set of hr2t and rt2h from all datasets(train, valid, and test), the data type is tensor.</span>
+
+<span class="sd">        Update:</span>
+<span class="sd">            self.hr2t_all: The set of hr2t.</span>
+<span class="sd">            self.rt2h_all: The set of rt2h.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">all_true_triples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">get_all_true_triples</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_true_triples</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">hr2t_all</span><span class="p">[(</span><span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">)]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
@@ -757,6 +1038,14 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">rt2h_all</span><span class="p">[(</span><span class="n">r</span><span class="p">,</span> <span class="n">t</span><span class="p">)]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rt2h_all</span><span class="p">[(</span><span class="n">r</span><span class="p">,</span> <span class="n">t</span><span class="p">)]))</span></div>
 
 <div class="viewcode-block" id="GraphTestSampler.sampling"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.GraphTestSampler.sampling">[docs]</a>    <span class="k">def</span> <span class="nf">sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sampling graph for testing.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data: The triples used to be sampled.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            batch_data: The data used to be evaluated.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">batch_data</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">head_label</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_ent</span><span class="p">)</span>
         <span class="n">tail_label</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_ent</span><span class="p">)</span>
@@ -783,6 +1072,15 @@
              <span class="s2">&quot;graph&quot;</span><span class="p">,</span> <span class="s2">&quot;rela&quot;</span><span class="p">,</span> <span class="s2">&quot;norm&quot;</span><span class="p">,</span> <span class="s2">&quot;entity&quot;</span><span class="p">]</span></div></div>
 
 <div class="viewcode-block" id="CompGCNTestSampler"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.CompGCNTestSampler">[docs]</a><span class="k">class</span> <span class="nc">CompGCNTestSampler</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>  <span class="c1">#TODO: 争取和GraphTestSampler兼容</span>
+    <span class="sd">&quot;&quot;&quot;Sampling graph for testing.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        sampler: The function of training sampler.</span>
+<span class="sd">        hr2t_all: Record the tail corresponding to the same head and relation.</span>
+<span class="sd">        rt2h_all: Record the head corresponding to the same tail and relation.</span>
+<span class="sd">        num_ent: The count of entities.</span>
+<span class="sd">        triples: The training triples.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">sampler</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hr2t_all</span> <span class="o">=</span> <span class="n">ddict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
@@ -792,6 +1090,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">triples</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">t_triples</span>
 
 <div class="viewcode-block" id="CompGCNTestSampler.get_hr2t_rt2h_from_all"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.CompGCNTestSampler.get_hr2t_rt2h_from_all">[docs]</a>    <span class="k">def</span> <span class="nf">get_hr2t_rt2h_from_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the set of hr2t and rt2h from all datasets(train, valid, and test), the data type is tensor.</span>
+
+<span class="sd">        Update:</span>
+<span class="sd">            self.hr2t_all: The set of hr2t.</span>
+<span class="sd">            self.rt2h_all: The set of rt2h.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">all_true_triples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">get_all_true_triples</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_true_triples</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">hr2t_all</span><span class="p">[(</span><span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">)]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
@@ -802,6 +1106,14 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">rt2h_all</span><span class="p">[(</span><span class="n">r</span><span class="p">,</span> <span class="n">t</span><span class="p">)]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rt2h_all</span><span class="p">[(</span><span class="n">r</span><span class="p">,</span> <span class="n">t</span><span class="p">)]))</span></div>
 
 <div class="viewcode-block" id="CompGCNTestSampler.sampling"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.CompGCNTestSampler.sampling">[docs]</a>    <span class="k">def</span> <span class="nf">sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sampling graph for testing.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data: The triples used to be sampled.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            batch_data: The data used to be evaluated.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">batch_data</span> <span class="o">=</span> <span class="p">{}</span>
         
         <span class="n">head_label</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_ent</span><span class="p">)</span>
@@ -831,6 +1143,13 @@
              <span class="s2">&quot;graph&quot;</span><span class="p">,</span> <span class="s2">&quot;rela&quot;</span><span class="p">,</span> <span class="s2">&quot;norm&quot;</span><span class="p">,</span> <span class="s2">&quot;entity&quot;</span><span class="p">]</span></div></div>
 
 <div class="viewcode-block" id="XTransETestSampler"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.XTransETestSampler">[docs]</a><span class="k">class</span> <span class="nc">XTransETestSampler</span><span class="p">(</span><span class="n">TestSampler</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Sampling triples and recording positive triples for testing.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        sampler: The function of training sampler.</span>
+<span class="sd">        hr2t_all: Record the tail corresponding to the same head and relation.</span>
+<span class="sd">        rt2h_all: Record the head corresponding to the same tail and relation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">sampler</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hr2t_all</span> <span class="o">=</span> <span class="n">ddict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
@@ -838,7 +1157,14 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_hr2t_rt2h_from_all</span><span class="p">()</span>
     
 <div class="viewcode-block" id="XTransETestSampler.sampling"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.XTransETestSampler.sampling">[docs]</a>    <span class="k">def</span> <span class="nf">sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sampling triples and recording positive triples for testing.</span>
 
+<span class="sd">        Args:</span>
+<span class="sd">            data: The triples used to be sampled.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            batch_data: The data used to be evaluated.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">batch_data</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">tail_label</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_ent</span><span class="p">)</span>
         <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">train_bs</span><span class="p">,</span> <span class="mi">20000</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>    
@@ -861,8 +1187,6 @@
 <div class="viewcode-block" id="XTransETestSampler.get_sampling_keys"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.XTransETestSampler.get_sampling_keys">[docs]</a>    <span class="k">def</span> <span class="nf">get_sampling_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;positive_sample&quot;</span><span class="p">,</span> <span class="s2">&quot;tail_label&quot;</span><span class="p">,</span> <span class="s2">&quot;neighbor&quot;</span><span class="p">,</span> <span class="s2">&quot;mask&quot;</span><span class="p">]</span></div></div>
     
-
-             
 <span class="sd">&#39;&#39;&#39;继承torch.Dataset&#39;&#39;&#39;</span>
 <div class="viewcode-block" id="KGDataset"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.KGDataset">[docs]</a><span class="k">class</span> <span class="nc">KGDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
 

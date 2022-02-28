@@ -103,6 +103,7 @@
 <dt class="sig sig-object py" id="neuralkg.lit_model.KGELitModel.KGELitModel">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.lit_model.KGELitModel.</span></span><span class="sig-name descname"><span class="pre">KGELitModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/lit_model/KGELitModel.html#KGELitModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.lit_model.KGELitModel.KGELitModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#neuralkg.lit_model.BaseLitModel.BaseLitModel" title="neuralkg.lit_model.BaseLitModel.BaseLitModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">neuralkg.lit_model.BaseLitModel.BaseLitModel</span></code></a></p>
+<p>Processing of training, evaluation and testing.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.lit_model.KGELitModel.KGELitModel.forward">
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/lit_model/KGELitModel.html#KGELitModel.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.lit_model.KGELitModel.KGELitModel.forward" title="Permalink to this definition">¶</a></dt>
@@ -123,161 +124,41 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.lit_model.KGELitModel.KGELitModel.training_step">
 <span class="sig-name descname"><span class="pre">training_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/lit_model/KGELitModel.html#KGELitModel.training_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.lit_model.KGELitModel.KGELitModel.training_step" title="Permalink to this definition">¶</a></dt>
-<dd><p>Here you compute and return the training loss and some additional metrics for e.g.
-the progress bar or logger.</p>
+<dd><p>Getting samples and training in KG model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>batch</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code> | (<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>, …) | [<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>, …]) – The output of your <code class="xref py py-class docutils literal notranslate"><span class="pre">DataLoader</span></code>. A tensor, tuple or list.</p></li>
-<li><p><strong>batch_idx</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>) – Integer displaying index of this batch</p></li>
-<li><p><strong>optimizer_idx</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>) – When using multiple optimizers, this argument will also be present.</p></li>
-<li><p><strong>hiddens</strong> (<code class="docutils literal notranslate"><span class="pre">Any</span></code>) – Passed in if
-<a href="#id1"><span class="problematic" id="id2">:paramref:`~pytorch_lightning.core.lightning.LightningModule.truncated_bptt_steps`</span></a> &gt; 0.</p></li>
+<li><p><strong>batch</strong> – The training data.</p></li>
+<li><p><strong>batch_idx</strong> – The dict_key in batch, type: list.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><p>Any of.</p>
-<ul class="simple">
-<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code> - The loss tensor</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">dict</span></code> - A dictionary. Can include any keys, but must include the key <code class="docutils literal notranslate"><span class="pre">'loss'</span></code></p></li>
-<li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">None</span></code> - Training will skip to the next batch. This is only for automatic optimization.</dt><dd><p>This is not supported for multi-GPU, TPU, IPU, or DeepSpeed.</p>
+<dd class="field-even"><p>The training loss for back propagation.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>loss</p>
 </dd>
 </dl>
-</li>
-</ul>
-</p>
-</dd>
-</dl>
-<p>In this step you’d normally do the forward pass and calculate the loss for a batch.
-You can also do fancier things like multiple forward passes or something model specific.</p>
-<p>Example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">training_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">):</span>
-    <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">batch</span>
-    <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">loss</span>
-</pre></div>
-</div>
-<p>If you define multiple optimizers, this step will be called with an additional
-<code class="docutils literal notranslate"><span class="pre">optimizer_idx</span></code> parameter.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Multiple optimizers (e.g.: GANs)</span>
-<span class="k">def</span> <span class="nf">training_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">,</span> <span class="n">optimizer_idx</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">optimizer_idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="c1"># do training_step with encoder</span>
-        <span class="o">...</span>
-    <span class="k">if</span> <span class="n">optimizer_idx</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="c1"># do training_step with decoder</span>
-        <span class="o">...</span>
-</pre></div>
-</div>
-<p>If you add truncated back propagation through time you will also get an additional
-argument with the hidden states of the previous step.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Truncated back-propagation through time</span>
-<span class="k">def</span> <span class="nf">training_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">,</span> <span class="n">hiddens</span><span class="p">):</span>
-    <span class="c1"># hiddens are the hidden states from the previous truncated backprop step</span>
-    <span class="n">out</span><span class="p">,</span> <span class="n">hiddens</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lstm</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">hiddens</span><span class="p">)</span>
-    <span class="n">loss</span> <span class="o">=</span> <span class="o">...</span>
-    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;loss&quot;</span><span class="p">:</span> <span class="n">loss</span><span class="p">,</span> <span class="s2">&quot;hiddens&quot;</span><span class="p">:</span> <span class="n">hiddens</span><span class="p">}</span>
-</pre></div>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The loss value shown in the progress bar is smoothed (averaged) over the last values,
-so it differs from the actual loss returned in train/validation step.</p>
-</div>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.lit_model.KGELitModel.KGELitModel.validation_step">
 <span class="sig-name descname"><span class="pre">validation_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/lit_model/KGELitModel.html#KGELitModel.validation_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.lit_model.KGELitModel.KGELitModel.validation_step" title="Permalink to this definition">¶</a></dt>
-<dd><p>Operates on a single batch of data from the validation set.
-In this step you’d might generate examples or calculate anything of interest like accuracy.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># the pseudocode for these calls</span>
-<span class="n">val_outs</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">val_batch</span> <span class="ow">in</span> <span class="n">val_data</span><span class="p">:</span>
-    <span class="n">out</span> <span class="o">=</span> <span class="n">validation_step</span><span class="p">(</span><span class="n">val_batch</span><span class="p">)</span>
-    <span class="n">val_outs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
-<span class="n">validation_epoch_end</span><span class="p">(</span><span class="n">val_outs</span><span class="p">)</span>
-</pre></div>
-</div>
+<dd><p>Getting samples and validation in KG model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>batch</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code> | (<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>, …) | [<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>, …]) – The output of your <code class="xref py py-class docutils literal notranslate"><span class="pre">DataLoader</span></code>. A tensor, tuple or list.</p></li>
-<li><p><strong>batch_idx</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – The index of this batch</p></li>
-<li><p><strong>dataloader_idx</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – The index of the dataloader that produced this batch
-(only if multiple val dataloaders used)</p></li>
+<li><p><strong>batch</strong> – The evalutaion data.</p></li>
+<li><p><strong>batch_idx</strong> – The dict_key in batch, type: list.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p>Any object or value</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code> - Validation will skip to the next batch</p></li>
-</ul>
-</p>
+<dd class="field-even"><p>mrr and hits&#64;1,3,10.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>results</p>
 </dd>
 </dl>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># pseudocode of order</span>
-<span class="n">val_outs</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">val_batch</span> <span class="ow">in</span> <span class="n">val_data</span><span class="p">:</span>
-    <span class="n">out</span> <span class="o">=</span> <span class="n">validation_step</span><span class="p">(</span><span class="n">val_batch</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">defined</span><span class="p">(</span><span class="s2">&quot;validation_step_end&quot;</span><span class="p">):</span>
-        <span class="n">out</span> <span class="o">=</span> <span class="n">validation_step_end</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
-    <span class="n">val_outs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
-<span class="n">val_outs</span> <span class="o">=</span> <span class="n">validation_epoch_end</span><span class="p">(</span><span class="n">val_outs</span><span class="p">)</span>
-</pre></div>
-</div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># if you have one val dataloader:</span>
-<span class="k">def</span> <span class="nf">validation_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">):</span>
-    <span class="o">...</span>
-
-
-<span class="c1"># if you have multiple val dataloaders:</span>
-<span class="k">def</span> <span class="nf">validation_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">,</span> <span class="n">dataloader_idx</span><span class="p">):</span>
-    <span class="o">...</span>
-</pre></div>
-</div>
-<p>Examples:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># CASE 1: A single validation dataset</span>
-<span class="k">def</span> <span class="nf">validation_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">):</span>
-    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">batch</span>
-
-    <span class="c1"># implement your own</span>
-    <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-
-    <span class="c1"># log 6 example images</span>
-    <span class="c1"># or generated text... or whatever</span>
-    <span class="n">sample_imgs</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:</span><span class="mi">6</span><span class="p">]</span>
-    <span class="n">grid</span> <span class="o">=</span> <span class="n">torchvision</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">make_grid</span><span class="p">(</span><span class="n">sample_imgs</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">add_image</span><span class="p">(</span><span class="s1">&#39;example_images&#39;</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-
-    <span class="c1"># calculate acc</span>
-    <span class="n">labels_hat</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">val_acc</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">y</span> <span class="o">==</span> <span class="n">labels_hat</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">/</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1.0</span><span class="p">)</span>
-
-    <span class="c1"># log the outputs!</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">log_dict</span><span class="p">({</span><span class="s1">&#39;val_loss&#39;</span><span class="p">:</span> <span class="n">loss</span><span class="p">,</span> <span class="s1">&#39;val_acc&#39;</span><span class="p">:</span> <span class="n">val_acc</span><span class="p">})</span>
-</pre></div>
-</div>
-<p>If you pass in multiple val dataloaders, <a class="reference internal" href="#neuralkg.lit_model.KGELitModel.KGELitModel.validation_step" title="neuralkg.lit_model.KGELitModel.KGELitModel.validation_step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">validation_step()</span></code></a> will have an additional argument.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># CASE 2: multiple validation dataloaders</span>
-<span class="k">def</span> <span class="nf">validation_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">,</span> <span class="n">dataloader_idx</span><span class="p">):</span>
-    <span class="c1"># dataloader_idx tells you which dataset this is.</span>
-    <span class="o">...</span>
-</pre></div>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>If you don’t need to validate you don’t need to implement this method.</p>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>When the <a class="reference internal" href="#neuralkg.lit_model.KGELitModel.KGELitModel.validation_step" title="neuralkg.lit_model.KGELitModel.KGELitModel.validation_step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">validation_step()</span></code></a> is called, the model has been put in eval mode
-and PyTorch gradients have been disabled. At the end of validation,
-the model goes back to training mode and gradients are enabled.</p>
-</div>
 </dd></dl>
 
 <dl class="py method">
@@ -327,87 +208,21 @@ each validation step for that dataloader.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.lit_model.KGELitModel.KGELitModel.test_step">
 <span class="sig-name descname"><span class="pre">test_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/lit_model/KGELitModel.html#KGELitModel.test_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.lit_model.KGELitModel.KGELitModel.test_step" title="Permalink to this definition">¶</a></dt>
-<dd><p>Operates on a single batch of data from the test set.
-In this step you’d normally generate examples or calculate anything of interest
-such as accuracy.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># the pseudocode for these calls</span>
-<span class="n">test_outs</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">test_batch</span> <span class="ow">in</span> <span class="n">test_data</span><span class="p">:</span>
-    <span class="n">out</span> <span class="o">=</span> <span class="n">test_step</span><span class="p">(</span><span class="n">test_batch</span><span class="p">)</span>
-    <span class="n">test_outs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
-<span class="n">test_epoch_end</span><span class="p">(</span><span class="n">test_outs</span><span class="p">)</span>
-</pre></div>
-</div>
+<dd><p>Getting samples and test in KG model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>batch</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code> | (<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>, …) | [<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>, …]) – The output of your <code class="xref py py-class docutils literal notranslate"><span class="pre">DataLoader</span></code>. A tensor, tuple or list.</p></li>
-<li><p><strong>batch_idx</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – The index of this batch.</p></li>
-<li><p><strong>dataloader_idx</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – The index of the dataloader that produced this batch
-(only if multiple test dataloaders used).</p></li>
+<li><p><strong>batch</strong> – The evaluation data.</p></li>
+<li><p><strong>batch_idx</strong> – The dict_key in batch, type: list.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><p>Any of.</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>Any object or value</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code> - Testing will skip to the next batch</p></li>
-</ul>
-</div></blockquote>
-</p>
+<dd class="field-even"><p>mrr and hits&#64;1,3,10.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>results</p>
 </dd>
 </dl>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># if you have one test dataloader:</span>
-<span class="k">def</span> <span class="nf">test_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">):</span>
-    <span class="o">...</span>
-
-
-<span class="c1"># if you have multiple test dataloaders:</span>
-<span class="k">def</span> <span class="nf">test_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">,</span> <span class="n">dataloader_idx</span><span class="p">):</span>
-    <span class="o">...</span>
-</pre></div>
-</div>
-<p>Examples:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># CASE 1: A single test dataset</span>
-<span class="k">def</span> <span class="nf">test_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">):</span>
-    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">batch</span>
-
-    <span class="c1"># implement your own</span>
-    <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-
-    <span class="c1"># log 6 example images</span>
-    <span class="c1"># or generated text... or whatever</span>
-    <span class="n">sample_imgs</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:</span><span class="mi">6</span><span class="p">]</span>
-    <span class="n">grid</span> <span class="o">=</span> <span class="n">torchvision</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">make_grid</span><span class="p">(</span><span class="n">sample_imgs</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">add_image</span><span class="p">(</span><span class="s1">&#39;example_images&#39;</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-
-    <span class="c1"># calculate acc</span>
-    <span class="n">labels_hat</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">test_acc</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">y</span> <span class="o">==</span> <span class="n">labels_hat</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">/</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1.0</span><span class="p">)</span>
-
-    <span class="c1"># log the outputs!</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">log_dict</span><span class="p">({</span><span class="s1">&#39;test_loss&#39;</span><span class="p">:</span> <span class="n">loss</span><span class="p">,</span> <span class="s1">&#39;test_acc&#39;</span><span class="p">:</span> <span class="n">test_acc</span><span class="p">})</span>
-</pre></div>
-</div>
-<p>If you pass in multiple test dataloaders, <a class="reference internal" href="#neuralkg.lit_model.KGELitModel.KGELitModel.test_step" title="neuralkg.lit_model.KGELitModel.KGELitModel.test_step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">test_step()</span></code></a> will have an additional argument.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># CASE 2: multiple test dataloaders</span>
-<span class="k">def</span> <span class="nf">test_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">,</span> <span class="n">dataloader_idx</span><span class="p">):</span>
-    <span class="c1"># dataloader_idx tells you which dataset this is.</span>
-    <span class="o">...</span>
-</pre></div>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>If you don’t need to test you don’t need to implement this method.</p>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>When the <a class="reference internal" href="#neuralkg.lit_model.KGELitModel.KGELitModel.test_step" title="neuralkg.lit_model.KGELitModel.KGELitModel.test_step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">test_step()</span></code></a> is called, the model has been put in eval mode and
-PyTorch gradients have been disabled. At the end of the test epoch, the model goes back
-to training mode and gradients are enabled.</p>
-</div>
 </dd></dl>
 
 <dl class="py method">
@@ -463,179 +278,21 @@ each test step for that dataloader.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.lit_model.KGELitModel.KGELitModel.get_results">
 <span class="sig-name descname"><span class="pre">get_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/lit_model/KGELitModel.html#KGELitModel.get_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.lit_model.KGELitModel.KGELitModel.get_results" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Recording the result of validation or test.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.lit_model.KGELitModel.KGELitModel.configure_optimizers">
 <span class="sig-name descname"><span class="pre">configure_optimizers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/lit_model/KGELitModel.html#KGELitModel.configure_optimizers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.lit_model.KGELitModel.KGELitModel.configure_optimizers" title="Permalink to this definition">¶</a></dt>
-<dd><p>Choose what optimizers and learning-rate schedulers to use in your optimization.
-Normally you’d need one. But in the case of GANs or similar you might have multiple.</p>
+<dd><p>Setting optimizer and lr_scheduler.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><p>Any of these 6 options.</p>
-<ul class="simple">
-<li><p><strong>Single optimizer</strong>.</p></li>
-<li><p><strong>List or Tuple</strong> of optimizers.</p></li>
-<li><p><strong>Two lists</strong> - The first list has multiple optimizers, and the second has multiple LR schedulers
-(or multiple <code class="docutils literal notranslate"><span class="pre">lr_scheduler_config</span></code>).</p></li>
-<li><p><strong>Dictionary</strong>, with an <code class="docutils literal notranslate"><span class="pre">&quot;optimizer&quot;</span></code> key, and (optionally) a <code class="docutils literal notranslate"><span class="pre">&quot;lr_scheduler&quot;</span></code>
-key whose value is a single LR scheduler or <code class="docutils literal notranslate"><span class="pre">lr_scheduler_config</span></code>.</p></li>
-<li><p><strong>Tuple of dictionaries</strong> as described above, with an optional <code class="docutils literal notranslate"><span class="pre">&quot;frequency&quot;</span></code> key.</p></li>
-<li><p><strong>None</strong> - Fit will run without any optimizer.</p></li>
-</ul>
-</p>
+<dd class="field-odd"><p>Record the optimizer and lr_scheduler, type: dict.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>optim_dict</p>
 </dd>
 </dl>
-<p>The <code class="docutils literal notranslate"><span class="pre">lr_scheduler_config</span></code> is a dictionary which contains the scheduler and its associated configuration.
-The default configuration is shown below.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">lr_scheduler_config</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="c1"># REQUIRED: The scheduler instance</span>
-    <span class="s2">&quot;scheduler&quot;</span><span class="p">:</span> <span class="n">lr_scheduler</span><span class="p">,</span>
-    <span class="c1"># The unit of the scheduler&#39;s step size, could also be &#39;step&#39;.</span>
-    <span class="c1"># &#39;epoch&#39; updates the scheduler on epoch end whereas &#39;step&#39;</span>
-    <span class="c1"># updates it after a optimizer update.</span>
-    <span class="s2">&quot;interval&quot;</span><span class="p">:</span> <span class="s2">&quot;epoch&quot;</span><span class="p">,</span>
-    <span class="c1"># How many epochs/steps should pass between calls to</span>
-    <span class="c1"># `scheduler.step()`. 1 corresponds to updating the learning</span>
-    <span class="c1"># rate after every epoch/step.</span>
-    <span class="s2">&quot;frequency&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="c1"># Metric to to monitor for schedulers like `ReduceLROnPlateau`</span>
-    <span class="s2">&quot;monitor&quot;</span><span class="p">:</span> <span class="s2">&quot;val_loss&quot;</span><span class="p">,</span>
-    <span class="c1"># If set to `True`, will enforce that the value specified &#39;monitor&#39;</span>
-    <span class="c1"># is available when the scheduler is updated, thus stopping</span>
-    <span class="c1"># training if not found. If set to `False`, it will only produce a warning</span>
-    <span class="s2">&quot;strict&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="c1"># If using the `LearningRateMonitor` callback to monitor the</span>
-    <span class="c1"># learning rate progress, this keyword can be used to specify</span>
-    <span class="c1"># a custom logged name</span>
-    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p>When there are schedulers in which the <code class="docutils literal notranslate"><span class="pre">.step()</span></code> method is conditioned on a value, such as the
-<code class="xref py py-class docutils literal notranslate"><span class="pre">torch.optim.lr_scheduler.ReduceLROnPlateau</span></code> scheduler, Lightning requires that the
-<code class="docutils literal notranslate"><span class="pre">lr_scheduler_config</span></code> contains the keyword <code class="docutils literal notranslate"><span class="pre">&quot;monitor&quot;</span></code> set to the metric name that the scheduler
-should be conditioned on.</p>
-<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># The ReduceLROnPlateau scheduler requires a monitor</span>
-<span class="k">def</span> <span class="nf">configure_optimizers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="n">optimizer</span> <span class="o">=</span> <span class="n">Adam</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">&quot;optimizer&quot;</span><span class="p">:</span> <span class="n">optimizer</span><span class="p">,</span>
-        <span class="s2">&quot;lr_scheduler&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;scheduler&quot;</span><span class="p">:</span> <span class="n">ReduceLROnPlateau</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="o">...</span><span class="p">),</span>
-            <span class="s2">&quot;monitor&quot;</span><span class="p">:</span> <span class="s2">&quot;metric_to_track&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;frequency&quot;</span><span class="p">:</span> <span class="s2">&quot;indicates how often the metric is updated&quot;</span>
-            <span class="c1"># If &quot;monitor&quot; references validation metrics, then &quot;frequency&quot; should be set to a</span>
-            <span class="c1"># multiple of &quot;trainer.check_val_every_n_epoch&quot;.</span>
-        <span class="p">},</span>
-    <span class="p">}</span>
-
-
-<span class="c1"># In the case of two optimizers, only one using the ReduceLROnPlateau scheduler</span>
-<span class="k">def</span> <span class="nf">configure_optimizers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="n">optimizer1</span> <span class="o">=</span> <span class="n">Adam</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
-    <span class="n">optimizer2</span> <span class="o">=</span> <span class="n">SGD</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
-    <span class="n">scheduler1</span> <span class="o">=</span> <span class="n">ReduceLROnPlateau</span><span class="p">(</span><span class="n">optimizer1</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
-    <span class="n">scheduler2</span> <span class="o">=</span> <span class="n">LambdaLR</span><span class="p">(</span><span class="n">optimizer2</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">(</span>
-        <span class="p">{</span>
-            <span class="s2">&quot;optimizer&quot;</span><span class="p">:</span> <span class="n">optimizer1</span><span class="p">,</span>
-            <span class="s2">&quot;lr_scheduler&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;scheduler&quot;</span><span class="p">:</span> <span class="n">scheduler1</span><span class="p">,</span>
-                <span class="s2">&quot;monitor&quot;</span><span class="p">:</span> <span class="s2">&quot;metric_to_track&quot;</span><span class="p">,</span>
-            <span class="p">},</span>
-        <span class="p">},</span>
-        <span class="p">{</span><span class="s2">&quot;optimizer&quot;</span><span class="p">:</span> <span class="n">optimizer2</span><span class="p">,</span> <span class="s2">&quot;lr_scheduler&quot;</span><span class="p">:</span> <span class="n">scheduler2</span><span class="p">},</span>
-    <span class="p">)</span>
-</pre></div>
-</div>
-<p>Metrics can be made available to monitor by simply logging it using
-<code class="docutils literal notranslate"><span class="pre">self.log('metric_to_track',</span> <span class="pre">metric_val)</span></code> in your <code class="xref py py-class docutils literal notranslate"><span class="pre">LightningModule</span></code>.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">frequency</span></code> value specified in a dict along with the <code class="docutils literal notranslate"><span class="pre">optimizer</span></code> key is an int corresponding
-to the number of sequential batches optimized with the specific optimizer.
-It should be given to none or to all of the optimizers.
-There is a difference between passing multiple optimizers in a list,
-and passing multiple optimizers in dictionaries with a frequency of 1:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>In the former case, all optimizers will operate on the given batch in each optimization step.</p></li>
-<li><p>In the latter, only one optimizer will operate on the given batch at every step.</p></li>
-</ul>
-</div></blockquote>
-<p>This is different from the <code class="docutils literal notranslate"><span class="pre">frequency</span></code> value specified in the <code class="docutils literal notranslate"><span class="pre">lr_scheduler_config</span></code> mentioned above.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">configure_optimizers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="n">optimizer_one</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
-    <span class="n">optimizer_two</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">[</span>
-        <span class="p">{</span><span class="s2">&quot;optimizer&quot;</span><span class="p">:</span> <span class="n">optimizer_one</span><span class="p">,</span> <span class="s2">&quot;frequency&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
-        <span class="p">{</span><span class="s2">&quot;optimizer&quot;</span><span class="p">:</span> <span class="n">optimizer_two</span><span class="p">,</span> <span class="s2">&quot;frequency&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">},</span>
-    <span class="p">]</span>
-</pre></div>
-</div>
-<p>In this example, the first optimizer will be used for the first 5 steps,
-the second optimizer for the next 10 steps and that cycle will continue.
-If an LR scheduler is specified for an optimizer using the <code class="docutils literal notranslate"><span class="pre">lr_scheduler</span></code> key in the above dict,
-the scheduler will only be updated when its optimizer is being used.</p>
-</div>
-<p>Examples:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># most cases. no learning rate scheduler</span>
-<span class="k">def</span> <span class="nf">configure_optimizers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">Adam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">)</span>
-
-<span class="c1"># multiple optimizer case (e.g.: GAN)</span>
-<span class="k">def</span> <span class="nf">configure_optimizers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="n">gen_opt</span> <span class="o">=</span> <span class="n">Adam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_gen</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
-    <span class="n">dis_opt</span> <span class="o">=</span> <span class="n">Adam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_dis</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">gen_opt</span><span class="p">,</span> <span class="n">dis_opt</span>
-
-<span class="c1"># example with learning rate schedulers</span>
-<span class="k">def</span> <span class="nf">configure_optimizers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="n">gen_opt</span> <span class="o">=</span> <span class="n">Adam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_gen</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
-    <span class="n">dis_opt</span> <span class="o">=</span> <span class="n">Adam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_dis</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
-    <span class="n">dis_sch</span> <span class="o">=</span> <span class="n">CosineAnnealing</span><span class="p">(</span><span class="n">dis_opt</span><span class="p">,</span> <span class="n">T_max</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">[</span><span class="n">gen_opt</span><span class="p">,</span> <span class="n">dis_opt</span><span class="p">],</span> <span class="p">[</span><span class="n">dis_sch</span><span class="p">]</span>
-
-<span class="c1"># example with step-based learning rate schedulers</span>
-<span class="c1"># each optimizer has its own scheduler</span>
-<span class="k">def</span> <span class="nf">configure_optimizers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="n">gen_opt</span> <span class="o">=</span> <span class="n">Adam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_gen</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
-    <span class="n">dis_opt</span> <span class="o">=</span> <span class="n">Adam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_dis</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
-    <span class="n">gen_sch</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;scheduler&#39;</span><span class="p">:</span> <span class="n">ExponentialLR</span><span class="p">(</span><span class="n">gen_opt</span><span class="p">,</span> <span class="mf">0.99</span><span class="p">),</span>
-        <span class="s1">&#39;interval&#39;</span><span class="p">:</span> <span class="s1">&#39;step&#39;</span>  <span class="c1"># called after each training step</span>
-    <span class="p">}</span>
-    <span class="n">dis_sch</span> <span class="o">=</span> <span class="n">CosineAnnealing</span><span class="p">(</span><span class="n">dis_opt</span><span class="p">,</span> <span class="n">T_max</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="c1"># called every epoch</span>
-    <span class="k">return</span> <span class="p">[</span><span class="n">gen_opt</span><span class="p">,</span> <span class="n">dis_opt</span><span class="p">],</span> <span class="p">[</span><span class="n">gen_sch</span><span class="p">,</span> <span class="n">dis_sch</span><span class="p">]</span>
-
-<span class="c1"># example with optimizer frequencies</span>
-<span class="c1"># see training procedure in `Improved Training of Wasserstein GANs`, Algorithm 1</span>
-<span class="c1"># https://arxiv.org/abs/1704.00028</span>
-<span class="k">def</span> <span class="nf">configure_optimizers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="n">gen_opt</span> <span class="o">=</span> <span class="n">Adam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_gen</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
-    <span class="n">dis_opt</span> <span class="o">=</span> <span class="n">Adam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_dis</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
-    <span class="n">n_critic</span> <span class="o">=</span> <span class="mi">5</span>
-    <span class="k">return</span> <span class="p">(</span>
-        <span class="p">{</span><span class="s1">&#39;optimizer&#39;</span><span class="p">:</span> <span class="n">dis_opt</span><span class="p">,</span> <span class="s1">&#39;frequency&#39;</span><span class="p">:</span> <span class="n">n_critic</span><span class="p">},</span>
-        <span class="p">{</span><span class="s1">&#39;optimizer&#39;</span><span class="p">:</span> <span class="n">gen_opt</span><span class="p">,</span> <span class="s1">&#39;frequency&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
-    <span class="p">)</span>
-</pre></div>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Some things to know:</p>
-<ul class="simple">
-<li><p>Lightning calls <code class="docutils literal notranslate"><span class="pre">.backward()</span></code> and <code class="docutils literal notranslate"><span class="pre">.step()</span></code> on each optimizer and learning rate scheduler as needed.</p></li>
-<li><p>If you use 16-bit precision (<code class="docutils literal notranslate"><span class="pre">precision=16</span></code>), Lightning will automatically handle the optimizers.</p></li>
-<li><p>If you use multiple optimizers, <a class="reference internal" href="#neuralkg.lit_model.KGELitModel.KGELitModel.training_step" title="neuralkg.lit_model.KGELitModel.KGELitModel.training_step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">training_step()</span></code></a> will have an additional <code class="docutils literal notranslate"><span class="pre">optimizer_idx</span></code> parameter.</p></li>
-<li><p>If you use <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.optim.LBFGS</span></code>, Lightning handles the closure function automatically for you.</p></li>
-<li><p>If you use multiple optimizers, gradients will be calculated only for the parameters of current optimizer
-at each training step.</p></li>
-<li><p>If you need to control how often those optimizers step or override the default <code class="docutils literal notranslate"><span class="pre">.step()</span></code> schedule,
-override the <code class="xref py py-meth docutils literal notranslate"><span class="pre">optimizer_step()</span></code> hook.</p></li>
-</ul>
-</div>
 </dd></dl>
 
 <dl class="py attribute">
@@ -866,7 +523,7 @@ the progress bar or logger.</p>
 <li><p><strong>batch_idx</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>) – Integer displaying index of this batch</p></li>
 <li><p><strong>optimizer_idx</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>) – When using multiple optimizers, this argument will also be present.</p></li>
 <li><p><strong>hiddens</strong> (<code class="docutils literal notranslate"><span class="pre">Any</span></code>) – Passed in if
-<a href="#id3"><span class="problematic" id="id4">:paramref:`~pytorch_lightning.core.lightning.LightningModule.truncated_bptt_steps`</span></a> &gt; 0.</p></li>
+<a href="#id1"><span class="problematic" id="id2">:paramref:`~pytorch_lightning.core.lightning.LightningModule.truncated_bptt_steps`</span></a> &gt; 0.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1163,7 +820,7 @@ the progress bar or logger.</p>
 <li><p><strong>batch_idx</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>) – Integer displaying index of this batch</p></li>
 <li><p><strong>optimizer_idx</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>) – When using multiple optimizers, this argument will also be present.</p></li>
 <li><p><strong>hiddens</strong> (<code class="docutils literal notranslate"><span class="pre">Any</span></code>) – Passed in if
-<a href="#id5"><span class="problematic" id="id6">:paramref:`~pytorch_lightning.core.lightning.LightningModule.truncated_bptt_steps`</span></a> &gt; 0.</p></li>
+<a href="#id3"><span class="problematic" id="id4">:paramref:`~pytorch_lightning.core.lightning.LightningModule.truncated_bptt_steps`</span></a> &gt; 0.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1732,7 +1389,7 @@ the progress bar or logger.</p>
 <li><p><strong>batch_idx</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>) – Integer displaying index of this batch</p></li>
 <li><p><strong>optimizer_idx</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>) – When using multiple optimizers, this argument will also be present.</p></li>
 <li><p><strong>hiddens</strong> (<code class="docutils literal notranslate"><span class="pre">Any</span></code>) – Passed in if
-<a href="#id7"><span class="problematic" id="id8">:paramref:`~pytorch_lightning.core.lightning.LightningModule.truncated_bptt_steps`</span></a> &gt; 0.</p></li>
+<a href="#id5"><span class="problematic" id="id6">:paramref:`~pytorch_lightning.core.lightning.LightningModule.truncated_bptt_steps`</span></a> &gt; 0.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -2301,7 +1958,7 @@ the progress bar or logger.</p>
 <li><p><strong>batch_idx</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>) – Integer displaying index of this batch</p></li>
 <li><p><strong>optimizer_idx</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>) – When using multiple optimizers, this argument will also be present.</p></li>
 <li><p><strong>hiddens</strong> (<code class="docutils literal notranslate"><span class="pre">Any</span></code>) – Passed in if
-<a href="#id9"><span class="problematic" id="id10">:paramref:`~pytorch_lightning.core.lightning.LightningModule.truncated_bptt_steps`</span></a> &gt; 0.</p></li>
+<a href="#id7"><span class="problematic" id="id8">:paramref:`~pytorch_lightning.core.lightning.LightningModule.truncated_bptt_steps`</span></a> &gt; 0.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -2865,7 +2522,7 @@ the progress bar or logger.</p>
 <li><p><strong>batch_idx</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>) – Integer displaying index of this batch</p></li>
 <li><p><strong>optimizer_idx</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>) – When using multiple optimizers, this argument will also be present.</p></li>
 <li><p><strong>hiddens</strong> (<code class="docutils literal notranslate"><span class="pre">Any</span></code>) – Passed in if
-<a href="#id11"><span class="problematic" id="id12">:paramref:`~pytorch_lightning.core.lightning.LightningModule.truncated_bptt_steps`</span></a> &gt; 0.</p></li>
+<a href="#id9"><span class="problematic" id="id10">:paramref:`~pytorch_lightning.core.lightning.LightningModule.truncated_bptt_steps`</span></a> &gt; 0.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -3475,7 +3132,7 @@ the progress bar or logger.</p>
 <li><p><strong>batch_idx</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>) – Integer displaying index of this batch</p></li>
 <li><p><strong>optimizer_idx</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>) – When using multiple optimizers, this argument will also be present.</p></li>
 <li><p><strong>hiddens</strong> (<code class="docutils literal notranslate"><span class="pre">Any</span></code>) – Passed in if
-<a href="#id13"><span class="problematic" id="id14">:paramref:`~pytorch_lightning.core.lightning.LightningModule.truncated_bptt_steps`</span></a> &gt; 0.</p></li>
+<a href="#id11"><span class="problematic" id="id12">:paramref:`~pytorch_lightning.core.lightning.LightningModule.truncated_bptt_steps`</span></a> &gt; 0.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -4044,7 +3701,7 @@ the progress bar or logger.</p>
 <li><p><strong>batch_idx</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>) – Integer displaying index of this batch</p></li>
 <li><p><strong>optimizer_idx</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>) – When using multiple optimizers, this argument will also be present.</p></li>
 <li><p><strong>hiddens</strong> (<code class="docutils literal notranslate"><span class="pre">Any</span></code>) – Passed in if
-<a href="#id15"><span class="problematic" id="id16">:paramref:`~pytorch_lightning.core.lightning.LightningModule.truncated_bptt_steps`</span></a> &gt; 0.</p></li>
+<a href="#id13"><span class="problematic" id="id14">:paramref:`~pytorch_lightning.core.lightning.LightningModule.truncated_bptt_steps`</span></a> &gt; 0.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -4613,7 +4270,7 @@ the progress bar or logger.</p>
 <li><p><strong>batch_idx</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>) – Integer displaying index of this batch</p></li>
 <li><p><strong>optimizer_idx</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>) – When using multiple optimizers, this argument will also be present.</p></li>
 <li><p><strong>hiddens</strong> (<code class="docutils literal notranslate"><span class="pre">Any</span></code>) – Passed in if
-<a href="#id17"><span class="problematic" id="id18">:paramref:`~pytorch_lightning.core.lightning.LightningModule.truncated_bptt_steps`</span></a> &gt; 0.</p></li>
+<a href="#id15"><span class="problematic" id="id16">:paramref:`~pytorch_lightning.core.lightning.LightningModule.truncated_bptt_steps`</span></a> &gt; 0.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -5218,7 +4875,7 @@ the progress bar or logger.</p>
 <li><p><strong>batch_idx</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>) – Integer displaying index of this batch</p></li>
 <li><p><strong>optimizer_idx</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>) – When using multiple optimizers, this argument will also be present.</p></li>
 <li><p><strong>hiddens</strong> (<code class="docutils literal notranslate"><span class="pre">Any</span></code>) – Passed in if
-<a href="#id19"><span class="problematic" id="id20">:paramref:`~pytorch_lightning.core.lightning.LightningModule.truncated_bptt_steps`</span></a> &gt; 0.</p></li>
+<a href="#id17"><span class="problematic" id="id18">:paramref:`~pytorch_lightning.core.lightning.LightningModule.truncated_bptt_steps`</span></a> &gt; 0.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

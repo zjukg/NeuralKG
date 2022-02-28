@@ -103,24 +103,47 @@
 <dt class="sig sig-object py" id="neuralkg.loss.Adv_Loss.Adv_Loss">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.loss.Adv_Loss.</span></span><span class="sig-name descname"><span class="pre">Adv_Loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/loss/Adv_Loss.html#Adv_Loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.loss.Adv_Loss.Adv_Loss" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>Negative sampling loss with self-adversarial training.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.loss.Adv_Loss.Adv_Loss.args">
+<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#neuralkg.loss.Adv_Loss.Adv_Loss.args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Some pre-set parameters, such as self-adversarial temperature, etc.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.loss.Adv_Loss.Adv_Loss.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#neuralkg.loss.Adv_Loss.Adv_Loss.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>The KG model for training.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.loss.Adv_Loss.Adv_Loss.forward">
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos_score</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neg_score</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsampling_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/loss/Adv_Loss.html#Adv_Loss.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.loss.Adv_Loss.Adv_Loss.forward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Defines the computation performed at every call.</p>
-<p>Should be overridden by all subclasses.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Although the recipe for forward pass needs to be defined within
-this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
-instead of this since the former takes care of running the
-registered hooks while the latter silently ignores them.</p>
-</div>
+<dd><p>Negative sampling loss with self-adversarial training. In math:</p>
+<blockquote>
+<div><p>L=-log sigmaleft(gamma-d_{r}(mathbf{h}, mathbf{t})</p>
+</div></blockquote>
+<p>ight)-sum_{i=1}^{n} pleft(h_{i}^{prime}, r, t_{i}^{prime}
+ight) log sigmaleft(d_{r}left(mathbf{h}_{i}^{prime}, mathbf{t}_{i}^{prime}
+ight)-gamma
+ight)</p>
+<blockquote>
+<div><dl class="simple">
+<dt>Args:</dt><dd><p>pos_score: The score of positive samples.
+neg_score: The score of negative samples.
+subsampling_weight: The weight for correcting pos_score and neg_score.</p>
+</dd>
+<dt>Returns:</dt><dd><p>loss: The training loss for back propagation.</p>
+</dd>
+</dl>
+</div></blockquote>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.loss.Adv_Loss.Adv_Loss.normalize">
 <span class="sig-name descname"><span class="pre">normalize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/loss/Adv_Loss.html#Adv_Loss.normalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.loss.Adv_Loss.Adv_Loss.normalize" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>calculating the regularization.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="neuralkg.loss.Adv_Loss.Adv_Loss.training">
