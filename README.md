@@ -46,7 +46,7 @@ KGEs**. We provide [comprehensive documents](https://zjukg.github.io/NeuralKG/in
 # 😃What's New
 
 ## Feb, 2022
-* We have released a paper [NeuralKG: An Open Source Library for Diverse Representation Learning of Knowledge Graphs]()
+* We have released a paper [NeuralKG: An Open Source Library for Diverse Representation Learning of Knowledge Graphs](https://arxiv.org/abs/2202.12571)
 
 <br>
 
@@ -187,6 +187,12 @@ There are some reproduced model results on FB15K-237 dataset using NeuralKG as b
 Please cite our paper if you use NeuralKG in your work
 
 ```bibtex
+@article{zhang2022neuralkg,
+      title={NeuralKG: An Open Source Library for Diverse Representation Learning of Knowledge Graphs}, 
+      author={Zhang, Wen and Chen, Xiangnan and Yao, Zhen and Chen, Mingyang and Zhu, Yushan and Yu, Hongtao and Huang, Yufeng and others},
+      journal={arXiv preprint arXiv:2202.12571},
+      year={2022},
+}
 
 ```
 <br>
