@@ -11,14 +11,19 @@ Create a virtual environment directly (recommend anaconda)
     conda create -n neuralkg python=3.8
     conda activate neuralkg
 
+Install from source
+-------------------
+
+.. code-block:: bash
+
+    git clone git@github.com:zjukg/NeuralKG.git
+    cd NeuralKG
+    python setup.py install
 
 Install by pypi
 ---------------
 
-If use neurokr directly
-
-.. code-block:: python
+.. code-block:: bash
 
     pip install neuralkg
-
 

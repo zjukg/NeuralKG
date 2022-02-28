@@ -6,7 +6,6 @@
   <title>Index &mdash; NeuralKG 1.0.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
@@ -16,8 +15,6 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/clipboard.min.js"></script>
-        <script src="_static/copybutton.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" /> 
@@ -41,6 +38,10 @@
               <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Experiment Result</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="result.html">Results</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Package</span></p>
 <ul>
@@ -110,9 +111,13 @@
         <li><a href="neuralkg.lit_model.html#neuralkg.lit_model.BaseLitModel.BaseLitModel.add_to_argparse">(neuralkg.lit_model.BaseLitModel.BaseLitModel static method)</a>
 </li>
       </ul></li>
+      <li><a href="neuralkg.data.html#neuralkg.data.Sampler.KBATSampler.adj_matrix">adj_matrix (neuralkg.data.Sampler.KBATSampler attribute)</a>
+</li>
       <li><a href="neuralkg.loss.html#neuralkg.loss.Adv_Loss.Adv_Loss">Adv_Loss (class in neuralkg.loss.Adv_Loss)</a>
 </li>
       <li><a href="neuralkg.data.html#neuralkg.data.Sampler.AdvSampler">AdvSampler (class in neuralkg.data.Sampler)</a>
+</li>
+      <li><a href="neuralkg.data.html#neuralkg.data.DataPreprocess.KGData.all_true_triples">all_true_triples (neuralkg.data.DataPreprocess.KGData attribute)</a>
 </li>
       <li><a href="neuralkg.lit_model.html#neuralkg.lit_model.CompGCNLitModel.CompGCNLitModel.allow_zero_length_dataloader_with_multiple_devices">allow_zero_length_dataloader_with_multiple_devices (neuralkg.lit_model.CompGCNLitModel.CompGCNLitModel attribute)</a>
 
@@ -134,9 +139,13 @@
       </ul></li>
       <li><a href="neuralkg.data.html#neuralkg.data.Sampler.AllSampler">AllSampler (class in neuralkg.data.Sampler)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="neuralkg.data.html#neuralkg.data.DataPreprocess.KGData.args">args (neuralkg.data.DataPreprocess.KGData attribute)</a>
 
       <ul>
+        <li><a href="neuralkg.loss.html#neuralkg.loss.Adv_Loss.Adv_Loss.args">(neuralkg.loss.Adv_Loss.Adv_Loss attribute)</a>
+</li>
         <li><a href="gnnmodel.html#neuralkg.model.GNNModel.CompGCN.CompGCN.args">(neuralkg.model.GNNModel.CompGCN.CompGCN attribute)</a>
 </li>
         <li><a href="gnnmodel.html#neuralkg.model.GNNModel.KBAT.KBAT.args">(neuralkg.model.GNNModel.KBAT.KBAT attribute)</a>
@@ -296,6 +305,8 @@
 </li>
       <li><a href="neuralkg.loss.html#neuralkg.loss.Cross_Entropy_Loss.Cross_Entropy_Loss">Cross_Entropy_Loss (class in neuralkg.loss.Cross_Entropy_Loss)</a>
 </li>
+      <li><a href="neuralkg.data.html#neuralkg.data.Sampler.UniSampler.cross_sampling_flag">cross_sampling_flag (neuralkg.data.Sampler.UniSampler attribute)</a>
+</li>
       <li><a href="kgemodel.html#neuralkg.model.KGEModel.CrossE.CrossE">CrossE (class in neuralkg.model.KGEModel.CrossE)</a>
 </li>
       <li><a href="neuralkg.loss.html#neuralkg.loss.CrossE_Loss.CrossE_Loss">CrossE_Loss (class in neuralkg.loss.CrossE_Loss)</a>
@@ -348,6 +359,8 @@
         <li><a href="rulemodel.html#neuralkg.model.RuleModel.RugE.RugE.embedding_range">(neuralkg.model.RuleModel.RugE.RugE attribute)</a>
 </li>
       </ul></li>
+      <li><a href="neuralkg.data.html#neuralkg.data.DataPreprocess.KGData.ent2id">ent2id (neuralkg.data.DataPreprocess.KGData attribute)</a>
+</li>
       <li><a href="kgemodel.html#neuralkg.model.KGEModel.CrossE.CrossE.ent_emb">ent_emb (neuralkg.model.KGEModel.CrossE.CrossE attribute)</a>
 
       <ul>
@@ -373,6 +386,8 @@
       <li><a href="kgemodel.html#neuralkg.model.KGEModel.SimplE.SimplE.ent_h_emb">ent_h_emb (neuralkg.model.KGEModel.SimplE.SimplE attribute)</a>
 </li>
       <li><a href="kgemodel.html#neuralkg.model.KGEModel.SimplE.SimplE.ent_t_emb">ent_t_emb (neuralkg.model.KGEModel.SimplE.SimplE attribute)</a>
+</li>
+      <li><a href="neuralkg.data.html#neuralkg.data.Sampler.GraphSampler.entity">entity (neuralkg.data.Sampler.GraphSampler attribute)</a>
 </li>
       <li><a href="kgemodel.html#neuralkg.model.KGEModel.DistMult.DistMult.epsilon">epsilon (neuralkg.model.KGEModel.DistMult.DistMult attribute)</a>
 
@@ -634,6 +649,14 @@
         <li><a href="neuralkg.data.html#neuralkg.data.DataPreprocess.RevSampler.get_valid">(neuralkg.data.DataPreprocess.RevSampler method)</a>
 </li>
       </ul></li>
+      <li><a href="neuralkg.data.html#neuralkg.data.Sampler.CompGCNSampler.graph">graph (neuralkg.data.Sampler.CompGCNSampler attribute)</a>
+
+      <ul>
+        <li><a href="neuralkg.data.html#neuralkg.data.Sampler.GraphSampler.graph">(neuralkg.data.Sampler.GraphSampler attribute)</a>
+</li>
+        <li><a href="neuralkg.data.html#neuralkg.data.Sampler.KBATSampler.graph">(neuralkg.data.Sampler.KBATSampler attribute)</a>
+</li>
+      </ul></li>
       <li><a href="gnnmodel.html#neuralkg.model.GNNModel.KBAT.GraphAttentionLayer">GraphAttentionLayer (class in neuralkg.model.GNNModel.KBAT)</a>
 </li>
       <li><a href="neuralkg.data.html#neuralkg.data.Sampler.GraphSampler">GraphSampler (class in neuralkg.data.Sampler)</a>
@@ -650,6 +673,12 @@
 <h2 id="H">H</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="neuralkg.data.html#neuralkg.data.DataPreprocess.KGData.h2rt_train">h2rt_train (neuralkg.data.DataPreprocess.KGData attribute)</a>
+</li>
+      <li><a href="neuralkg.data.html#neuralkg.data.Sampler.XTransESampler.h_mask">h_mask (neuralkg.data.Sampler.XTransESampler attribute)</a>
+</li>
+      <li><a href="neuralkg.data.html#neuralkg.data.Sampler.XTransESampler.h_neighbor">h_neighbor (neuralkg.data.Sampler.XTransESampler attribute)</a>
+</li>
       <li><a href="kgemodel.html#neuralkg.model.KGEModel.CrossE.CrossE.h_weighted_vector">h_weighted_vector (neuralkg.model.KGEModel.CrossE.CrossE attribute)</a>
 </li>
       <li><a href="neuralkg.data.html#neuralkg.data.DataPreprocess.BaseSampler.head_batch">head_batch() (neuralkg.data.DataPreprocess.BaseSampler method)</a>
@@ -658,10 +687,26 @@
         <li><a href="neuralkg.data.html#neuralkg.data.DataPreprocess.RevSampler.head_batch">(neuralkg.data.DataPreprocess.RevSampler method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="neuralkg.eval_task.html#neuralkg.eval_task.RGCN_prediction.head_predict">head_predict() (in module neuralkg.eval_task.RGCN_prediction)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="neuralkg.data.html#neuralkg.data.Sampler.CompGCNTestSampler.hr2t_all">hr2t_all (neuralkg.data.Sampler.CompGCNTestSampler attribute)</a>
+
+      <ul>
+        <li><a href="neuralkg.data.html#neuralkg.data.Sampler.GraphTestSampler.hr2t_all">(neuralkg.data.Sampler.GraphTestSampler attribute)</a>
+</li>
+        <li><a href="neuralkg.data.html#neuralkg.data.Sampler.TestSampler.hr2t_all">(neuralkg.data.Sampler.TestSampler attribute)</a>
+</li>
+        <li><a href="neuralkg.data.html#neuralkg.data.Sampler.XTransETestSampler.hr2t_all">(neuralkg.data.Sampler.XTransETestSampler attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="neuralkg.data.html#neuralkg.data.DataPreprocess.KGData.hr2t_train">hr2t_train (neuralkg.data.DataPreprocess.KGData attribute)</a>
+
+      <ul>
+        <li><a href="neuralkg.data.html#neuralkg.data.DataPreprocess.RevSampler.hr2t_train">(neuralkg.data.DataPreprocess.RevSampler attribute)</a>
+</li>
+      </ul></li>
       <li><a href="kgemodel.html#neuralkg.model.KGEModel.CrossE.CrossE.hr_bias">hr_bias (neuralkg.model.KGEModel.CrossE.CrossE attribute)</a>
 </li>
   </ul></td>
@@ -670,6 +715,10 @@
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="neuralkg.data.html#neuralkg.data.DataPreprocess.KGData.id2ent">id2ent (neuralkg.data.DataPreprocess.KGData attribute)</a>
+</li>
+      <li><a href="neuralkg.data.html#neuralkg.data.DataPreprocess.KGData.id2rel">id2rel (neuralkg.data.DataPreprocess.KGData attribute)</a>
+</li>
       <li><a href="gnnmodel.html#neuralkg.model.GNNModel.KBAT.KBAT.init_ConvKB_emb">init_ConvKB_emb() (neuralkg.model.GNNModel.KBAT.KBAT method)</a>
 </li>
       <li><a href="gnnmodel.html#neuralkg.model.GNNModel.XTransE.XTransE.init_emb">init_emb() (neuralkg.model.GNNModel.XTransE.XTransE method)</a>
@@ -750,6 +799,20 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="kgemodel.html#neuralkg.model.KGEModel.SimplE.SimplE.l2_loss">l2_loss() (neuralkg.model.KGEModel.SimplE.SimplE method)</a>
 </li>
+      <li><a href="neuralkg.data.html#neuralkg.data.Sampler.CompGCNSampler.label">label (neuralkg.data.Sampler.CompGCNSampler attribute)</a>
+
+      <ul>
+        <li><a href="neuralkg.data.html#neuralkg.data.Sampler.ConvSampler.label">(neuralkg.data.Sampler.ConvSampler attribute)</a>
+</li>
+        <li><a href="neuralkg.data.html#neuralkg.data.Sampler.GraphSampler.label">(neuralkg.data.Sampler.GraphSampler attribute)</a>
+</li>
+        <li><a href="neuralkg.data.html#neuralkg.data.Sampler.KBATSampler.label">(neuralkg.data.Sampler.KBATSampler attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="neuralkg.data.html#neuralkg.data.Sampler.BernSampler.lef_mean">lef_mean (neuralkg.data.Sampler.BernSampler attribute)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -778,9 +841,13 @@
       </ul></li>
       <li><a href="neuralkg.loss.html#neuralkg.loss.Margin_Loss.Margin_Loss">Margin_Loss (class in neuralkg.loss.Margin_Loss)</a>
 </li>
+      <li><a href="neuralkg.data.html#neuralkg.data.Sampler.XTransESampler.max_neighbor">max_neighbor (neuralkg.data.Sampler.XTransESampler attribute)</a>
+</li>
       <li><a href="gnnmodel.html#neuralkg.model.GNNModel.CompGCN.CompGCNCov.message_func">message_func() (neuralkg.model.GNNModel.CompGCN.CompGCNCov method)</a>
 </li>
       <li><a href="kgemodel.html#neuralkg.model.KGEModel.model.Model">Model (class in neuralkg.model.KGEModel.model)</a>
+</li>
+      <li><a href="neuralkg.loss.html#neuralkg.loss.Adv_Loss.Adv_Loss.model">model (neuralkg.loss.Adv_Loss.Adv_Loss attribute)</a>
 </li>
       <li>
     module
@@ -883,6 +950,12 @@
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="neuralkg.data.html#neuralkg.data.Sampler.KBATSampler.n_hop">n_hop (neuralkg.data.Sampler.KBATSampler attribute)</a>
+</li>
+      <li><a href="neuralkg.data.html#neuralkg.data.Sampler.XTransESampler.neg_sample">neg_sample (neuralkg.data.Sampler.XTransESampler attribute)</a>
+</li>
+      <li><a href="neuralkg.data.html#neuralkg.data.Sampler.KBATSampler.neighbours">neighbours (neuralkg.data.Sampler.KBATSampler attribute)</a>
+</li>
       <li>
     neuralkg.data.base_data_module
 
@@ -1051,8 +1124,6 @@
         <li><a href="neuralkg.loss.html#module-neuralkg.loss.Margin_Loss">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     neuralkg.loss.RGCN_Loss
 
@@ -1060,6 +1131,8 @@
         <li><a href="neuralkg.loss.html#module-neuralkg.loss.RGCN_Loss">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     neuralkg.loss.RugE_Loss
 
@@ -1206,6 +1279,12 @@
         <li><a href="neuralkg.data.html#neuralkg.data.Sampler.GraphSampler.node_norm_to_edge_norm">(neuralkg.data.Sampler.GraphSampler method)</a>
 </li>
       </ul></li>
+      <li><a href="neuralkg.data.html#neuralkg.data.Sampler.CompGCNSampler.norm">norm (neuralkg.data.Sampler.CompGCNSampler attribute)</a>
+
+      <ul>
+        <li><a href="neuralkg.data.html#neuralkg.data.Sampler.GraphSampler.norm">(neuralkg.data.Sampler.GraphSampler attribute)</a>
+</li>
+      </ul></li>
       <li><a href="kgemodel.html#neuralkg.model.KGEModel.TransH.TransH.norm_vector">norm_vector (neuralkg.model.KGEModel.TransH.TransH attribute)</a>
 </li>
       <li><a href="neuralkg.data.html#neuralkg.data.Sampler.normal">normal() (in module neuralkg.data.Sampler)</a>
@@ -1214,6 +1293,14 @@
 
       <ul>
         <li><a href="neuralkg.loss.html#neuralkg.loss.IterE_Loss.IterE_Loss.normalize">(neuralkg.loss.IterE_Loss.IterE_Loss method)</a>
+</li>
+      </ul></li>
+      <li><a href="neuralkg.data.html#neuralkg.data.Sampler.CompGCNTestSampler.num_ent">num_ent (neuralkg.data.Sampler.CompGCNTestSampler attribute)</a>
+
+      <ul>
+        <li><a href="neuralkg.data.html#neuralkg.data.Sampler.GraphTestSampler.num_ent">(neuralkg.data.Sampler.GraphTestSampler attribute)</a>
+</li>
+        <li><a href="neuralkg.data.html#neuralkg.data.Sampler.TestSampler.num_ent">(neuralkg.data.Sampler.TestSampler attribute)</a>
 </li>
       </ul></li>
       <li><a href="neuralkg.data.html#neuralkg.data.RuleDataLoader.RuleDataLoader.num_workers">num_workers (neuralkg.data.RuleDataLoader.RuleDataLoader attribute)</a>
@@ -1288,6 +1375,8 @@
 </li>
       <li><a href="kgemodel.html#neuralkg.model.KGEModel.CrossE.CrossE.regularize_loss">regularize_loss() (neuralkg.model.KGEModel.CrossE.CrossE method)</a>
 </li>
+      <li><a href="neuralkg.data.html#neuralkg.data.DataPreprocess.KGData.rel2id">rel2id (neuralkg.data.DataPreprocess.KGData attribute)</a>
+</li>
       <li><a href="kgemodel.html#neuralkg.model.KGEModel.CrossE.CrossE.rel_emb">rel_emb (neuralkg.model.KGEModel.CrossE.CrossE attribute)</a>
 
       <ul>
@@ -1310,11 +1399,21 @@
         <li><a href="rulemodel.html#neuralkg.model.RuleModel.RugE.RugE.rel_emb">(neuralkg.model.RuleModel.RugE.RugE attribute)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="kgemodel.html#neuralkg.model.KGEModel.SimplE.SimplE.rel_inv_emb">rel_inv_emb (neuralkg.model.KGEModel.SimplE.SimplE attribute)</a>
 </li>
       <li><a href="kgemodel.html#neuralkg.model.KGEModel.CrossE.CrossE.rel_reverse_emb">rel_reverse_emb (neuralkg.model.KGEModel.CrossE.CrossE attribute)</a>
+</li>
+      <li><a href="neuralkg.data.html#neuralkg.data.Sampler.CompGCNSampler.relation">relation (neuralkg.data.Sampler.CompGCNSampler attribute)</a>
+
+      <ul>
+        <li><a href="neuralkg.data.html#neuralkg.data.Sampler.GraphSampler.relation">(neuralkg.data.Sampler.GraphSampler attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="neuralkg.data.html#neuralkg.data.DataPreprocess.KGData.Relation2Tuple">Relation2Tuple (neuralkg.data.DataPreprocess.KGData attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="neuralkg.data.html#neuralkg.data.DataPreprocess.KGData.RelSub2Obj">RelSub2Obj (neuralkg.data.DataPreprocess.KGData attribute)</a>
 </li>
       <li><a href="neuralkg.data.html#neuralkg.data.DataPreprocess.RevSampler">RevSampler (class in neuralkg.data.DataPreprocess)</a>
 </li>
@@ -1326,8 +1425,26 @@
 </li>
       <li><a href="neuralkg.lit_model.html#neuralkg.lit_model.RGCNLitModel.RGCNLitModel">RGCNLitModel (class in neuralkg.lit_model.RGCNLitModel)</a>
 </li>
+      <li><a href="neuralkg.data.html#neuralkg.data.Sampler.BernSampler.rig_mean">rig_mean (neuralkg.data.Sampler.BernSampler attribute)</a>
+</li>
       <li><a href="kgemodel.html#neuralkg.model.KGEModel.RotatE.RotatE">RotatE (class in neuralkg.model.KGEModel.RotatE)</a>
 </li>
+      <li><a href="neuralkg.data.html#neuralkg.data.Sampler.CompGCNTestSampler.rt2h_all">rt2h_all (neuralkg.data.Sampler.CompGCNTestSampler attribute)</a>
+
+      <ul>
+        <li><a href="neuralkg.data.html#neuralkg.data.Sampler.GraphTestSampler.rt2h_all">(neuralkg.data.Sampler.GraphTestSampler attribute)</a>
+</li>
+        <li><a href="neuralkg.data.html#neuralkg.data.Sampler.TestSampler.rt2h_all">(neuralkg.data.Sampler.TestSampler attribute)</a>
+</li>
+        <li><a href="neuralkg.data.html#neuralkg.data.Sampler.XTransETestSampler.rt2h_all">(neuralkg.data.Sampler.XTransETestSampler attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="neuralkg.data.html#neuralkg.data.DataPreprocess.KGData.rt2h_train">rt2h_train (neuralkg.data.DataPreprocess.KGData attribute)</a>
+
+      <ul>
+        <li><a href="neuralkg.data.html#neuralkg.data.DataPreprocess.RevSampler.rt2h_train">(neuralkg.data.DataPreprocess.RevSampler attribute)</a>
+</li>
+      </ul></li>
       <li><a href="rulemodel.html#neuralkg.model.RuleModel.RugE.RugE">RugE (class in neuralkg.model.RuleModel.RugE)</a>
 </li>
       <li><a href="neuralkg.loss.html#neuralkg.loss.RugE_Loss.RugE_Loss">RugE_Loss (class in neuralkg.loss.RugE_Loss)</a>
@@ -1349,7 +1466,17 @@
       <li><a href="neuralkg.data.html#neuralkg.data.Sampler.KBATSampler.sam_negative">sam_negative() (neuralkg.data.Sampler.KBATSampler method)</a>
 </li>
       <li><a href="neuralkg.data.html#neuralkg.data.RuleDataLoader.RuleDataLoader.sampler">sampler (neuralkg.data.RuleDataLoader.RuleDataLoader attribute)</a>
+
+      <ul>
+        <li><a href="neuralkg.data.html#neuralkg.data.Sampler.CompGCNTestSampler.sampler">(neuralkg.data.Sampler.CompGCNTestSampler attribute)</a>
 </li>
+        <li><a href="neuralkg.data.html#neuralkg.data.Sampler.GraphTestSampler.sampler">(neuralkg.data.Sampler.GraphTestSampler attribute)</a>
+</li>
+        <li><a href="neuralkg.data.html#neuralkg.data.Sampler.TestSampler.sampler">(neuralkg.data.Sampler.TestSampler attribute)</a>
+</li>
+        <li><a href="neuralkg.data.html#neuralkg.data.Sampler.XTransETestSampler.sampler">(neuralkg.data.Sampler.XTransETestSampler attribute)</a>
+</li>
+      </ul></li>
       <li><a href="neuralkg.data.html#neuralkg.data.Sampler.AdvSampler.sampling">sampling() (neuralkg.data.Sampler.AdvSampler method)</a>
 
       <ul>
@@ -1396,10 +1523,10 @@
         <li><a href="neuralkg.data.html#neuralkg.data.Sampler.KBATSampler.sampling_negative">(neuralkg.data.Sampler.KBATSampler method)</a>
 </li>
       </ul></li>
-      <li><a href="neuralkg.data.html#neuralkg.data.Sampler.GraphSampler.sampling_postive">sampling_postive() (neuralkg.data.Sampler.GraphSampler method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="neuralkg.data.html#neuralkg.data.Sampler.GraphSampler.sampling_positive">sampling_positive() (neuralkg.data.Sampler.GraphSampler method)</a>
+</li>
       <li><a href="gnnmodel.html#neuralkg.model.GNNModel.XTransE.XTransE.score_func">score_func() (neuralkg.model.GNNModel.XTransE.XTransE method)</a>
 
       <ul>
@@ -1456,6 +1583,8 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="neuralkg.data.html#neuralkg.data.DataPreprocess.KGData.t2rh_train">t2rh_train (neuralkg.data.DataPreprocess.KGData attribute)</a>
+</li>
       <li><a href="kgemodel.html#neuralkg.model.KGEModel.CrossE.CrossE.t_weighted_vector">t_weighted_vector (neuralkg.model.KGEModel.CrossE.CrossE attribute)</a>
 </li>
       <li><a href="neuralkg.data.html#neuralkg.data.DataPreprocess.BaseSampler.tail_batch">tail_batch() (neuralkg.data.DataPreprocess.BaseSampler method)</a>
@@ -1514,6 +1643,8 @@
         <li><a href="neuralkg.lit_model.html#neuralkg.lit_model.XTransELitModel.XTransELitModel.test_step">(neuralkg.lit_model.XTransELitModel.XTransELitModel method)</a>
 </li>
       </ul></li>
+      <li><a href="neuralkg.data.html#neuralkg.data.DataPreprocess.KGData.test_triples">test_triples (neuralkg.data.DataPreprocess.KGData attribute)</a>
+</li>
       <li><a href="neuralkg.data.html#neuralkg.data.Sampler.TestSampler">TestSampler (class in neuralkg.data.Sampler)</a>
 </li>
       <li><a href="neuralkg.data.html#neuralkg.data.RuleDataLoader.RuleDataLoader.timeout">timeout (neuralkg.data.RuleDataLoader.RuleDataLoader attribute)</a>
@@ -1526,6 +1657,8 @@
         <li><a href="neuralkg.data.html#neuralkg.data.KGDataModule.KGDataModule.train_dataloader">(neuralkg.data.KGDataModule.KGDataModule method)</a>
 </li>
       </ul></li>
+      <li><a href="neuralkg.data.html#neuralkg.data.DataPreprocess.KGData.train_triples">train_triples (neuralkg.data.DataPreprocess.KGData attribute)</a>
+</li>
       <li><a href="neuralkg.lit_model.html#neuralkg.lit_model.BaseLitModel.BaseLitModel.training">training (neuralkg.lit_model.BaseLitModel.BaseLitModel attribute)</a>
 
       <ul>
@@ -1640,6 +1773,8 @@
         <li><a href="neuralkg.lit_model.html#neuralkg.lit_model.XTransELitModel.XTransELitModel.training_step">(neuralkg.lit_model.XTransELitModel.XTransELitModel method)</a>
 </li>
       </ul></li>
+      <li><a href="neuralkg.data.html#neuralkg.data.DataPreprocess.KGData.TrainTriples">TrainTriples (neuralkg.data.DataPreprocess.KGData attribute)</a>
+</li>
       <li><a href="kgemodel.html#neuralkg.model.KGEModel.TransE.TransE">TransE (class in neuralkg.model.KGEModel.TransE)</a>
 </li>
       <li><a href="gnnmodel.html#neuralkg.model.GNNModel.XTransE.XTransE.transe_func">transe_func() (neuralkg.model.GNNModel.XTransE.XTransE method)</a>
@@ -1656,6 +1791,28 @@
         <li><a href="kgemodel.html#neuralkg.model.KGEModel.model.Model.tri2emb">(neuralkg.model.KGEModel.model.Model method)</a>
 </li>
       </ul></li>
+      <li><a href="neuralkg.data.html#neuralkg.data.Sampler.CompGCNSampler.triples">triples (neuralkg.data.Sampler.CompGCNSampler attribute)</a>
+
+      <ul>
+        <li><a href="neuralkg.data.html#neuralkg.data.Sampler.CompGCNTestSampler.triples">(neuralkg.data.Sampler.CompGCNTestSampler attribute)</a>
+</li>
+        <li><a href="neuralkg.data.html#neuralkg.data.Sampler.ConvSampler.triples">(neuralkg.data.Sampler.ConvSampler attribute)</a>
+</li>
+        <li><a href="neuralkg.data.html#neuralkg.data.Sampler.GraphSampler.triples">(neuralkg.data.Sampler.GraphSampler attribute)</a>
+</li>
+        <li><a href="neuralkg.data.html#neuralkg.data.Sampler.GraphTestSampler.triples">(neuralkg.data.Sampler.GraphTestSampler attribute)</a>
+</li>
+        <li><a href="neuralkg.data.html#neuralkg.data.Sampler.KBATSampler.triples">(neuralkg.data.Sampler.KBATSampler attribute)</a>
+</li>
+        <li><a href="neuralkg.data.html#neuralkg.data.Sampler.XTransESampler.triples">(neuralkg.data.Sampler.XTransESampler attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="neuralkg.data.html#neuralkg.data.Sampler.KBATSampler.triples_Con">triples_Con (neuralkg.data.Sampler.KBATSampler attribute)</a>
+</li>
+      <li><a href="neuralkg.data.html#neuralkg.data.Sampler.KBATSampler.triples_GAT_neg">triples_GAT_neg (neuralkg.data.Sampler.KBATSampler attribute)</a>
+</li>
+      <li><a href="neuralkg.data.html#neuralkg.data.Sampler.KBATSampler.triples_GAT_pos">triples_GAT_pos (neuralkg.data.Sampler.KBATSampler attribute)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -1702,6 +1859,8 @@
         <li><a href="neuralkg.data.html#neuralkg.data.KGDataModule.KGDataModule.val_dataloader">(neuralkg.data.KGDataModule.KGDataModule method)</a>
 </li>
       </ul></li>
+      <li><a href="neuralkg.data.html#neuralkg.data.DataPreprocess.KGData.valid_triples">valid_triples (neuralkg.data.DataPreprocess.KGData attribute)</a>
+</li>
       <li><a href="neuralkg.lit_model.html#neuralkg.lit_model.CompGCNLitModel.CompGCNLitModel.validation_epoch_end">validation_epoch_end() (neuralkg.lit_model.CompGCNLitModel.CompGCNLitModel method)</a>
 
       <ul>

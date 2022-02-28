@@ -18,6 +18,13 @@ NeuralKG is a knowledge Graph Represent Learning toolkit.
    install
 
 
+.. toctree::
+   :glob
+   :maxdepth: 1
+   :caption: Experiment Result
+   
+   result
+
 
 .. toctree::
    :glob:
@@ -25,4 +32,6 @@ NeuralKG is a knowledge Graph Represent Learning toolkit.
    :caption: Package 
 
    neuralkg
+
+
 

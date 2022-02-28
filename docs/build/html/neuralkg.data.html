@@ -7,7 +7,6 @@
   <title>Data &mdash; NeuralKG 1.0.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
@@ -17,8 +16,6 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/clipboard.min.js"></script>
-        <script src="_static/copybutton.js"></script>
         <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -45,6 +42,10 @@
               <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Experiment Result</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="result.html">Results</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Package</span></p>
 <ul class="current">
@@ -104,7 +105,7 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="neuralkg.data.base_data_module.BaseDataModule">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.base_data_module.</span></span><span class="sig-name descname"><span class="pre">BaseDataModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/base_data_module.html#BaseDataModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.base_data_module.BaseDataModule" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.base_data_module.</span></span><span class="sig-name descname"><span class="pre">BaseDataModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><span class="pre">Any</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/base_data_module.html#BaseDataModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.base_data_module.BaseDataModule" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pytorch_lightning.core.datamodule.LightningDataModule</span></code></p>
 <p>Base DataModule.
 Learn more at <a class="reference external" href="https://pytorch-lightning.readthedocs.io/en/stable/datamodules.html">https://pytorch-lightning.readthedocs.io/en/stable/datamodules.html</a></p>
@@ -353,6 +354,93 @@ will have an argument <code class="docutils literal notranslate"><span class="pr
 <dd><p>Some pre-set parameters, such as dataset path, etc.</p>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.KGData.ent2id">
+<span class="sig-name descname"><span class="pre">ent2id</span></span><a class="headerlink" href="#neuralkg.data.DataPreprocess.KGData.ent2id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encoding the entity in triples, type: dict.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.KGData.rel2id">
+<span class="sig-name descname"><span class="pre">rel2id</span></span><a class="headerlink" href="#neuralkg.data.DataPreprocess.KGData.rel2id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encoding the relation in triples, type: dict.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.KGData.id2ent">
+<span class="sig-name descname"><span class="pre">id2ent</span></span><a class="headerlink" href="#neuralkg.data.DataPreprocess.KGData.id2ent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decoding the entity in triples, type: dict.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.KGData.id2rel">
+<span class="sig-name descname"><span class="pre">id2rel</span></span><a class="headerlink" href="#neuralkg.data.DataPreprocess.KGData.id2rel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decoding the realtion in triples, type: dict.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.KGData.train_triples">
+<span class="sig-name descname"><span class="pre">train_triples</span></span><a class="headerlink" href="#neuralkg.data.DataPreprocess.KGData.train_triples" title="Permalink to this definition">¶</a></dt>
+<dd><p>Record the triples for training, type: list.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.KGData.valid_triples">
+<span class="sig-name descname"><span class="pre">valid_triples</span></span><a class="headerlink" href="#neuralkg.data.DataPreprocess.KGData.valid_triples" title="Permalink to this definition">¶</a></dt>
+<dd><p>Record the triples for validation, type: list.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.KGData.test_triples">
+<span class="sig-name descname"><span class="pre">test_triples</span></span><a class="headerlink" href="#neuralkg.data.DataPreprocess.KGData.test_triples" title="Permalink to this definition">¶</a></dt>
+<dd><p>Record the triples for testing, type: list.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.KGData.all_true_triples">
+<span class="sig-name descname"><span class="pre">all_true_triples</span></span><a class="headerlink" href="#neuralkg.data.DataPreprocess.KGData.all_true_triples" title="Permalink to this definition">¶</a></dt>
+<dd><p>Record all triples including train,valid and test, type: list.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.KGData.TrainTriples">
+<span class="sig-name descname"><span class="pre">TrainTriples</span></span><a class="headerlink" href="#neuralkg.data.DataPreprocess.KGData.TrainTriples" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.KGData.Relation2Tuple">
+<span class="sig-name descname"><span class="pre">Relation2Tuple</span></span><a class="headerlink" href="#neuralkg.data.DataPreprocess.KGData.Relation2Tuple" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.KGData.RelSub2Obj">
+<span class="sig-name descname"><span class="pre">RelSub2Obj</span></span><a class="headerlink" href="#neuralkg.data.DataPreprocess.KGData.RelSub2Obj" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.KGData.hr2t_train">
+<span class="sig-name descname"><span class="pre">hr2t_train</span></span><a class="headerlink" href="#neuralkg.data.DataPreprocess.KGData.hr2t_train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Record the tail corresponding to the same head and relation, type: defaultdict(class:set).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.KGData.rt2h_train">
+<span class="sig-name descname"><span class="pre">rt2h_train</span></span><a class="headerlink" href="#neuralkg.data.DataPreprocess.KGData.rt2h_train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Record the head corresponding to the same tail and relation, type: defaultdict(class:set).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.KGData.h2rt_train">
+<span class="sig-name descname"><span class="pre">h2rt_train</span></span><a class="headerlink" href="#neuralkg.data.DataPreprocess.KGData.h2rt_train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Record the tail, relation corresponding to the same head, type: defaultdict(class:set).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.KGData.t2rh_train">
+<span class="sig-name descname"><span class="pre">t2rh_train</span></span><a class="headerlink" href="#neuralkg.data.DataPreprocess.KGData.t2rh_train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Record the head, realtion corresponding to the same tail, type: defaultdict(class:set).</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.KGData.get_id">
 <span class="sig-name descname"><span class="pre">get_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#KGData.get_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.KGData.get_id" title="Permalink to this definition">¶</a></dt>
@@ -394,8 +482,22 @@ self.rt2h_train: The set of rt2h.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.KGData.count_frequency">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">count_frequency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">triples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#KGData.count_frequency"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.KGData.count_frequency" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get frequency of a partial triple like (head, relation) or (relation, tail)
-The frequency will be used for subsampling like word2vec</p>
+<dd><p>Get frequency of a partial triple like (head, relation) or (relation, tail).</p>
+<p>The frequency will be used for subsampling like word2vec.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>triples</strong> – Sampled triples.</p></li>
+<li><p><strong>start</strong> – Initial count number.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Record the number of (head, relation).</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>count</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -412,7 +514,17 @@ self.t2rh_train: The set of t2hr.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.KGData.get_hr_trian">
 <span class="sig-name descname"><span class="pre">get_hr_trian</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#KGData.get_hr_trian"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.KGData.get_hr_trian" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Change the generation mode of batch.
+Merging triples which have same head and relation for 1vsN training mode.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The tuple(hr, t) list for training</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>self.train_triples</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -420,25 +532,86 @@ self.t2rh_train: The set of t2hr.</p>
 <dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.BaseSampler">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.DataPreprocess.</span></span><span class="sig-name descname"><span class="pre">BaseSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#BaseSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.BaseSampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#neuralkg.data.DataPreprocess.KGData" title="neuralkg.data.DataPreprocess.KGData"><code class="xref py py-class docutils literal notranslate"><span class="pre">neuralkg.data.DataPreprocess.KGData</span></code></a></p>
+<p>Traditional random sampling mode.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.BaseSampler.corrupt_head">
 <span class="sig-name descname"><span class="pre">corrupt_head</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#BaseSampler.corrupt_head"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.BaseSampler.corrupt_head" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Negative sampling of head entities.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> – Tail entity in triple.</p></li>
+<li><p><strong>r</strong> – Relation in triple.</p></li>
+<li><p><strong>num_max</strong> – The maximum of negative samples generated</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The negative sample of head entity filtering out the positive head entity.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>neg</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.BaseSampler.corrupt_tail">
 <span class="sig-name descname"><span class="pre">corrupt_tail</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#BaseSampler.corrupt_tail"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.BaseSampler.corrupt_tail" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Negative sampling of tail entities.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>h</strong> – Head entity in triple.</p></li>
+<li><p><strong>r</strong> – Relation in triple.</p></li>
+<li><p><strong>num_max</strong> – The maximum of negative samples generated</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The negative sample of tail entity filtering out the positive tail entity.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>neg</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.BaseSampler.head_batch">
 <span class="sig-name descname"><span class="pre">head_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neg_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#BaseSampler.head_batch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.BaseSampler.head_batch" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Negative sampling of head entities.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>h</strong> – Head entity in triple</p></li>
+<li><p><strong>t</strong> – Tail entity in triple.</p></li>
+<li><p><strong>r</strong> – Relation in triple.</p></li>
+<li><p><strong>neg_size</strong> – The size of negative samples.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The negative sample of head entity. [neg_size]</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.BaseSampler.tail_batch">
 <span class="sig-name descname"><span class="pre">tail_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neg_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#BaseSampler.tail_batch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.BaseSampler.tail_batch" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Negative sampling of tail entities.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>h</strong> – Head entity in triple</p></li>
+<li><p><strong>t</strong> – Tail entity in triple.</p></li>
+<li><p><strong>r</strong> – Relation in triple.</p></li>
+<li><p><strong>neg_size</strong> – The size of negative samples.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The negative sample of tail entity. [neg_size]</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.BaseSampler.get_train">
@@ -466,6 +639,21 @@ self.t2rh_train: The set of t2hr.</p>
 <dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.RevSampler">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.DataPreprocess.</span></span><span class="sig-name descname"><span class="pre">RevSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#RevSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.RevSampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#neuralkg.data.DataPreprocess.KGData" title="neuralkg.data.DataPreprocess.KGData"><code class="xref py py-class docutils literal notranslate"><span class="pre">neuralkg.data.DataPreprocess.KGData</span></code></a></p>
+<p>Adding reverse triples in traditional random sampling mode.</p>
+<p>For each triple (h, r, t), generate the reverse triple (t, r`, h).
+r` = r + num_rel.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.RevSampler.hr2t_train">
+<span class="sig-name descname"><span class="pre">hr2t_train</span></span><a class="headerlink" href="#neuralkg.data.DataPreprocess.RevSampler.hr2t_train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Record the tail corresponding to the same head and relation, type: defaultdict(class:set).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.RevSampler.rt2h_train">
+<span class="sig-name descname"><span class="pre">rt2h_train</span></span><a class="headerlink" href="#neuralkg.data.DataPreprocess.RevSampler.rt2h_train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Record the head corresponding to the same tail and relation, type: defaultdict(class:set).</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.RevSampler.add_reverse_relation">
 <span class="sig-name descname"><span class="pre">add_reverse_relation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#RevSampler.add_reverse_relation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.RevSampler.add_reverse_relation" title="Permalink to this definition">¶</a></dt>
@@ -482,7 +670,15 @@ self.args.num_rel: Relation number.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.RevSampler.add_reverse_triples">
 <span class="sig-name descname"><span class="pre">add_reverse_triples</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#RevSampler.add_reverse_triples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.RevSampler.add_reverse_triples" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Generate reverse triples (t, r`, h).</p>
+<dl class="simple">
+<dt>Update:</dt><dd><p>self.train_triples: Triples for training.
+self.valid_triples: Triples for validation.
+self.test_triples: Triples for testing.
+self.all_ture_triples: All triples including train, valid and test.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.RevSampler.get_train">
@@ -507,22 +703,82 @@ self.args.num_rel: Relation number.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.RevSampler.corrupt_head">
 <span class="sig-name descname"><span class="pre">corrupt_head</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#RevSampler.corrupt_head"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.RevSampler.corrupt_head" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Negative sampling of head entities.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> – Tail entity in triple.</p></li>
+<li><p><strong>r</strong> – Relation in triple.</p></li>
+<li><p><strong>num_max</strong> – The maximum of negative samples generated</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The negative sample of head entity filtering out the positive head entity.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>neg</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.RevSampler.corrupt_tail">
 <span class="sig-name descname"><span class="pre">corrupt_tail</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#RevSampler.corrupt_tail"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.RevSampler.corrupt_tail" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Negative sampling of tail entities.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>h</strong> – Head entity in triple.</p></li>
+<li><p><strong>r</strong> – Relation in triple.</p></li>
+<li><p><strong>num_max</strong> – The maximum of negative samples generated</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The negative sample of tail entity filtering out the positive tail entity.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>neg</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.RevSampler.head_batch">
 <span class="sig-name descname"><span class="pre">head_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neg_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#RevSampler.head_batch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.RevSampler.head_batch" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Negative sampling of head entities.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>h</strong> – Head entity in triple</p></li>
+<li><p><strong>t</strong> – Tail entity in triple.</p></li>
+<li><p><strong>r</strong> – Relation in triple.</p></li>
+<li><p><strong>neg_size</strong> – The size of negative samples.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The negative sample of head entity. [neg_size]</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.DataPreprocess.RevSampler.tail_batch">
 <span class="sig-name descname"><span class="pre">tail_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neg_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/DataPreprocess.html#RevSampler.tail_batch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.DataPreprocess.RevSampler.tail_batch" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Negative sampling of tail entities.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>h</strong> – Head entity in triple</p></li>
+<li><p><strong>t</strong> – Tail entity in triple.</p></li>
+<li><p><strong>r</strong> – Relation in triple.</p></li>
+<li><p><strong>neg_size</strong> – The size of negative samples.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The negative sample of tail entity. [neg_size]</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -636,10 +892,30 @@ the probability density function:</p>
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.UniSampler">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.Sampler.</span></span><span class="sig-name descname"><span class="pre">UniSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#UniSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.UniSampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#neuralkg.data.DataPreprocess.BaseSampler" title="neuralkg.data.DataPreprocess.BaseSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">neuralkg.data.DataPreprocess.BaseSampler</span></code></a></p>
+<p>Random negative sampling
+Filtering out positive samples and selecting some samples randomly as negative samples.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.UniSampler.cross_sampling_flag">
+<span class="sig-name descname"><span class="pre">cross_sampling_flag</span></span><a class="headerlink" href="#neuralkg.data.Sampler.UniSampler.cross_sampling_flag" title="Permalink to this definition">¶</a></dt>
+<dd><p>The flag of cross sampling head and tail negative samples.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.UniSampler.sampling">
 <span class="sig-name descname"><span class="pre">sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#UniSampler.sampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.UniSampler.sampling" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Filtering out positive samples and selecting some samples randomly as negative samples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – The triples used to be sampled.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The training data.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>batch_data</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.UniSampler.uni_sampling">
@@ -657,15 +933,50 @@ the probability density function:</p>
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.BernSampler">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.Sampler.</span></span><span class="sig-name descname"><span class="pre">BernSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#BernSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.BernSampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#neuralkg.data.DataPreprocess.BaseSampler" title="neuralkg.data.DataPreprocess.BaseSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">neuralkg.data.DataPreprocess.BaseSampler</span></code></a></p>
+<p>Using bernoulli distribution to select whether to replace the head entity or tail entity.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.BernSampler.lef_mean">
+<span class="sig-name descname"><span class="pre">lef_mean</span></span><a class="headerlink" href="#neuralkg.data.Sampler.BernSampler.lef_mean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Record the mean of head entity</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.BernSampler.rig_mean">
+<span class="sig-name descname"><span class="pre">rig_mean</span></span><a class="headerlink" href="#neuralkg.data.Sampler.BernSampler.rig_mean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Record the mean of tail entity</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.BernSampler.sampling">
 <span class="sig-name descname"><span class="pre">sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#BernSampler.sampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.BernSampler.sampling" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Using bernoulli distribution to select whether to replace the head entity or tail entity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – The triples used to be sampled.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The training data.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>batch_data</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.BernSampler.calc_bern">
 <span class="sig-name descname"><span class="pre">calc_bern</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#BernSampler.calc_bern"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.BernSampler.calc_bern" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Calculating the lef_mean and rig_mean.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Record the mean of head entity.
+rig_mean: Record the mean of tail entity.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>lef_mean</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.BernSampler.sampling_keys">
@@ -678,15 +989,54 @@ the probability density function:</p>
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.AdvSampler">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.Sampler.</span></span><span class="sig-name descname"><span class="pre">AdvSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#AdvSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.AdvSampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#neuralkg.data.DataPreprocess.BaseSampler" title="neuralkg.data.DataPreprocess.BaseSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">neuralkg.data.DataPreprocess.BaseSampler</span></code></a></p>
+<p>Self-adversarial negative sampling, in math:</p>
+<blockquote>
+<div><p>pleft(h_{j}^{prime}, r, t_{j}^{prime} midleft{left(h_{i}, r_{i}, t_{i}</p>
+</div></blockquote>
+<p>ight)
+ight}
+ight)=
+rac{exp lpha f_{r}left(mathbf{h}_{j}^{prime}, mathbf{t}_{j}^{prime}
+ight)}{sum_{i} exp lpha f_{r}left(mathbf{h}_{i}^{prime}, mathbf{t}_{i}^{prime}
+ight)}</p>
+<blockquote>
+<div><dl class="simple">
+<dt>Attributes:</dt><dd><p>freq_hr: The count of (h, r) pairs.
+freq_tr: The count of (t, r) pairs.</p>
+</dd>
+</dl>
+</div></blockquote>
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.AdvSampler.sampling">
 <span class="sig-name descname"><span class="pre">sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos_sample</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#AdvSampler.sampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.AdvSampler.sampling" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Self-adversarial negative sampling.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – The triples used to be sampled.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The training data.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>batch_data</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.AdvSampler.calc_freq">
 <span class="sig-name descname"><span class="pre">calc_freq</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#AdvSampler.calc_freq"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.AdvSampler.calc_freq" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Calculating the freq_hr and freq_tr.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The count of (h, r) pairs.
+freq_tr: The count of (t, r) pairs.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>freq_hr</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -694,10 +1044,22 @@ the probability density function:</p>
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.AllSampler">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.Sampler.</span></span><span class="sig-name descname"><span class="pre">AllSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#AllSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.AllSampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#neuralkg.data.DataPreprocess.RevSampler" title="neuralkg.data.DataPreprocess.RevSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">neuralkg.data.DataPreprocess.RevSampler</span></code></a></p>
+<p>Merging triples which have same head and relation, all false tail entities are taken as negative samples.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.AllSampler.sampling">
 <span class="sig-name descname"><span class="pre">sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#AllSampler.sampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.AllSampler.sampling" title="Permalink to this definition">¶</a></dt>
-<dd><p>全部做tail_prediction</p>
+<dd><p>Randomly sampling from the merged triples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – The triples used to be sampled.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The training data.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>batch_data</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -733,10 +1095,35 @@ the probability density function:</p>
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.ConvSampler">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.Sampler.</span></span><span class="sig-name descname"><span class="pre">ConvSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#ConvSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.ConvSampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#neuralkg.data.DataPreprocess.RevSampler" title="neuralkg.data.DataPreprocess.RevSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">neuralkg.data.DataPreprocess.RevSampler</span></code></a></p>
+<p>Merging triples which have same head and relation, all false tail entities are taken as negative samples.</p>
+<p>The triples which have same head and relation are treated as one triple.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.ConvSampler.label">
+<span class="sig-name descname"><span class="pre">label</span></span><a class="headerlink" href="#neuralkg.data.Sampler.ConvSampler.label" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mask the false tail as negative samples.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.ConvSampler.triples">
+<span class="sig-name descname"><span class="pre">triples</span></span><a class="headerlink" href="#neuralkg.data.Sampler.ConvSampler.triples" title="Permalink to this definition">¶</a></dt>
+<dd><p>The triples used to be sampled.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.ConvSampler.sampling">
 <span class="sig-name descname"><span class="pre">sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos_hr_t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#ConvSampler.sampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.ConvSampler.sampling" title="Permalink to this definition">¶</a></dt>
-<dd><p>全部做tail_prediction</p>
+<dd><p>Randomly sampling from the merged triples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>pos_hr_t</strong> – The triples ((head,relation) pairs) used to be sampled.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The training data.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>batch_data</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -750,10 +1137,53 @@ the probability density function:</p>
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.XTransESampler">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.Sampler.</span></span><span class="sig-name descname"><span class="pre">XTransESampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#XTransESampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.XTransESampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#neuralkg.data.DataPreprocess.RevSampler" title="neuralkg.data.DataPreprocess.RevSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">neuralkg.data.DataPreprocess.RevSampler</span></code></a></p>
+<p>Random negative sampling and recording neighbor entities.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.XTransESampler.triples">
+<span class="sig-name descname"><span class="pre">triples</span></span><a class="headerlink" href="#neuralkg.data.Sampler.XTransESampler.triples" title="Permalink to this definition">¶</a></dt>
+<dd><p>The triples used to be sampled.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.XTransESampler.neg_sample">
+<span class="sig-name descname"><span class="pre">neg_sample</span></span><a class="headerlink" href="#neuralkg.data.Sampler.XTransESampler.neg_sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>The negative samples.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.XTransESampler.h_neighbor">
+<span class="sig-name descname"><span class="pre">h_neighbor</span></span><a class="headerlink" href="#neuralkg.data.Sampler.XTransESampler.h_neighbor" title="Permalink to this definition">¶</a></dt>
+<dd><p>The neighbor of sampled entites.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.XTransESampler.h_mask">
+<span class="sig-name descname"><span class="pre">h_mask</span></span><a class="headerlink" href="#neuralkg.data.Sampler.XTransESampler.h_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>The tag of effecitve neighbor.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.XTransESampler.max_neighbor">
+<span class="sig-name descname"><span class="pre">max_neighbor</span></span><a class="headerlink" href="#neuralkg.data.Sampler.XTransESampler.max_neighbor" title="Permalink to this definition">¶</a></dt>
+<dd><p>The maximum of the neighbor entities.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.XTransESampler.sampling">
 <span class="sig-name descname"><span class="pre">sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#XTransESampler.sampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.XTransESampler.sampling" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Random negative sampling and recording neighbor entities.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – The triples used to be sampled.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The training data.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>batch_data</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.XTransESampler.get_sampling_keys">
@@ -766,10 +1196,59 @@ the probability density function:</p>
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.GraphSampler">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.Sampler.</span></span><span class="sig-name descname"><span class="pre">GraphSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#GraphSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.GraphSampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#neuralkg.data.DataPreprocess.RevSampler" title="neuralkg.data.DataPreprocess.RevSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">neuralkg.data.DataPreprocess.RevSampler</span></code></a></p>
+<p>Graph based sampling in neural network.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.GraphSampler.entity">
+<span class="sig-name descname"><span class="pre">entity</span></span><a class="headerlink" href="#neuralkg.data.Sampler.GraphSampler.entity" title="Permalink to this definition">¶</a></dt>
+<dd><p>The entities of sampled triples.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.GraphSampler.relation">
+<span class="sig-name descname"><span class="pre">relation</span></span><a class="headerlink" href="#neuralkg.data.Sampler.GraphSampler.relation" title="Permalink to this definition">¶</a></dt>
+<dd><p>The relation of sampled triples.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.GraphSampler.triples">
+<span class="sig-name descname"><span class="pre">triples</span></span><a class="headerlink" href="#neuralkg.data.Sampler.GraphSampler.triples" title="Permalink to this definition">¶</a></dt>
+<dd><p>The sampled triples.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.GraphSampler.graph">
+<span class="sig-name descname"><span class="pre">graph</span></span><a class="headerlink" href="#neuralkg.data.Sampler.GraphSampler.graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>The graph structured sampled triples by dgl.graph in DGL.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.GraphSampler.norm">
+<span class="sig-name descname"><span class="pre">norm</span></span><a class="headerlink" href="#neuralkg.data.Sampler.GraphSampler.norm" title="Permalink to this definition">¶</a></dt>
+<dd><p>The edge norm in graph.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.GraphSampler.label">
+<span class="sig-name descname"><span class="pre">label</span></span><a class="headerlink" href="#neuralkg.data.Sampler.GraphSampler.label" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mask the false tail as negative samples.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.GraphSampler.sampling">
 <span class="sig-name descname"><span class="pre">sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos_triples</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#GraphSampler.sampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.GraphSampler.sampling" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Graph based sampling in neural network.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>pos_triples</strong> – The triples used to be sampled.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The training data.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>batch_data</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.GraphSampler.get_sampling_keys">
@@ -779,27 +1258,99 @@ the probability density function:</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.GraphSampler.sampling_negative">
 <span class="sig-name descname"><span class="pre">sampling_negative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_triples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_neg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#GraphSampler.sampling_negative"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.GraphSampler.sampling_negative" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Random negative sampling without filtering</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mode</strong> – The mode of negtive sampling.</p></li>
+<li><p><strong>pos_triples</strong> – The positive triples.</p></li>
+<li><p><strong>num_neg</strong> – The number of negative samples corresponding to each triple.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Results:</dt><dd><p>neg_samples: The negative triples.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.GraphSampler.build_graph">
 <span class="sig-name descname"><span class="pre">build_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_ent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">triples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#GraphSampler.build_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.GraphSampler.build_graph" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Using sampled triples to build a graph by dgl.graph in DGL.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_ent</strong> – The number of entities.</p></li>
+<li><p><strong>triples</strong> – The positive sampled triples.</p></li>
+<li><p><strong>power</strong> – The power index for normalization.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The relation of sampled triples.
+graph: The graph structured sampled triples by dgl.graph in DGL.
+edge_norm: The edge norm in graph.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>rela</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.GraphSampler.comp_deg_norm">
 <span class="sig-name descname"><span class="pre">comp_deg_norm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#GraphSampler.comp_deg_norm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.GraphSampler.comp_deg_norm" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Calculating the normalization node weight.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>graph</strong> – The graph structured sampled triples by dgl.graph in DGL.</p></li>
+<li><p><strong>power</strong> – The power index for normalization.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The node weight of normalization.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tensor</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.GraphSampler.node_norm_to_edge_norm">
 <span class="sig-name descname"><span class="pre">node_norm_to_edge_norm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_norm</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#GraphSampler.node_norm_to_edge_norm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.GraphSampler.node_norm_to_edge_norm" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Calculating the normalization edge weight.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>graph</strong> – The graph structured sampled triples by dgl.graph in DGL.</p></li>
+<li><p><strong>node_norm</strong> – The node weight of normalization.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The edge weight of normalization.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tensor</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="neuralkg.data.Sampler.GraphSampler.sampling_postive">
-<span class="sig-name descname"><span class="pre">sampling_postive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">postive_triples</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#GraphSampler.sampling_postive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.GraphSampler.sampling_postive" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.GraphSampler.sampling_positive">
+<span class="sig-name descname"><span class="pre">sampling_positive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">positive_triples</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#GraphSampler.sampling_positive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.GraphSampler.sampling_positive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Regenerate positive sampling.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>positive_triples</strong> – The positive sampled triples.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Results:</dt><dd><p>The regenerate triples and entities filter invisible entities.</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -807,10 +1358,77 @@ the probability density function:</p>
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.KBATSampler">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.Sampler.</span></span><span class="sig-name descname"><span class="pre">KBATSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#KBATSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.KBATSampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#neuralkg.data.DataPreprocess.BaseSampler" title="neuralkg.data.DataPreprocess.BaseSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">neuralkg.data.DataPreprocess.BaseSampler</span></code></a></p>
+<p>Graph based n_hop neighbours in neural network.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.KBATSampler.n_hop">
+<span class="sig-name descname"><span class="pre">n_hop</span></span><a class="headerlink" href="#neuralkg.data.Sampler.KBATSampler.n_hop" title="Permalink to this definition">¶</a></dt>
+<dd><p>The graph of n_hop neighbours.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.KBATSampler.graph">
+<span class="sig-name descname"><span class="pre">graph</span></span><a class="headerlink" href="#neuralkg.data.Sampler.KBATSampler.graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>The adjacency graph.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.KBATSampler.neighbours">
+<span class="sig-name descname"><span class="pre">neighbours</span></span><a class="headerlink" href="#neuralkg.data.Sampler.KBATSampler.neighbours" title="Permalink to this definition">¶</a></dt>
+<dd><p>The neighbours of sampled triples.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.KBATSampler.adj_matrix">
+<span class="sig-name descname"><span class="pre">adj_matrix</span></span><a class="headerlink" href="#neuralkg.data.Sampler.KBATSampler.adj_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>The triples of sampled.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.KBATSampler.triples">
+<span class="sig-name descname"><span class="pre">triples</span></span><a class="headerlink" href="#neuralkg.data.Sampler.KBATSampler.triples" title="Permalink to this definition">¶</a></dt>
+<dd><p>The sampled triples.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.KBATSampler.triples_GAT_pos">
+<span class="sig-name descname"><span class="pre">triples_GAT_pos</span></span><a class="headerlink" href="#neuralkg.data.Sampler.KBATSampler.triples_GAT_pos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Positive triples.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.KBATSampler.triples_GAT_neg">
+<span class="sig-name descname"><span class="pre">triples_GAT_neg</span></span><a class="headerlink" href="#neuralkg.data.Sampler.KBATSampler.triples_GAT_neg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Negative triples.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.KBATSampler.triples_Con">
+<span class="sig-name descname"><span class="pre">triples_Con</span></span><a class="headerlink" href="#neuralkg.data.Sampler.KBATSampler.triples_Con" title="Permalink to this definition">¶</a></dt>
+<dd><p>All triples including positive triples and negative triples.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.KBATSampler.label">
+<span class="sig-name descname"><span class="pre">label</span></span><a class="headerlink" href="#neuralkg.data.Sampler.KBATSampler.label" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mask the false tail as negative samples.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.KBATSampler.sampling">
 <span class="sig-name descname"><span class="pre">sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos_triples</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#KBATSampler.sampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.KBATSampler.sampling" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Graph based n_hop neighbours in neural network.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>pos_triples</strong> – The triples used to be sampled.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The training data.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>batch_data</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.KBATSampler.get_sampling_keys">
@@ -820,34 +1438,109 @@ the probability density function:</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.KBATSampler.bfs">
 <span class="sig-name descname"><span class="pre">bfs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nbd_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#KBATSampler.bfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.KBATSampler.bfs" title="Permalink to this definition">¶</a></dt>
-<dd><p>返回neigbors 记录source的前两跳关系和实体</p>
+<dd><p>Using depth first search algorithm to generate n_hop neighbor graph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>graph</strong> – The adjacency graph.</p></li>
+<li><p><strong>source</strong> – Head node.</p></li>
+<li><p><strong>nbd_size</strong> – The number of hops.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>N_hop neighbor graph.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>neighbors</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.KBATSampler.get_neighbors">
 <span class="sig-name descname"><span class="pre">get_neighbors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nbd_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#KBATSampler.get_neighbors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.KBATSampler.get_neighbors" title="Permalink to this definition">¶</a></dt>
-<dd><p>返回neighors记录source在两跳邻域内的关系和实体</p>
+<dd><p>Getting the relation and entity of the source in the n_hop neighborhood.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>nbd_size</strong> – The number of hops.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Record the relation and entity of the source in the n_hop neighborhood.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>self.neighbours</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.KBATSampler.get_unique_entity">
 <span class="sig-name descname"><span class="pre">get_unique_entity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">triples</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#KBATSampler.get_unique_entity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.KBATSampler.get_unique_entity" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Getting the set of entity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>triples</strong> – The sampled triples.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The set of entity</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.array</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.KBATSampler.get_batch_nhop_neighbors_all">
 <span class="sig-name descname"><span class="pre">get_batch_nhop_neighbors_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nbd_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#KBATSampler.get_batch_nhop_neighbors_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.KBATSampler.get_batch_nhop_neighbors_all" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Getting n_hop neighbors of all entities in batch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>nbd_size</strong> – The number of hops.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The set of n_hop neighbors.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.KBATSampler.sampling_negative">
 <span class="sig-name descname"><span class="pre">sampling_negative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_triples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_neg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#KBATSampler.sampling_negative"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.KBATSampler.sampling_negative" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Random negative sampling.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mode</strong> – The mode of negtive sampling.</p></li>
+<li><p><strong>pos_triples</strong> – The positive triples.</p></li>
+<li><p><strong>num_neg</strong> – The number of negative samples corresponding to each triple.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Results:</dt><dd><p>neg_samples: The negative triples.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.KBATSampler.sam_negative">
 <span class="sig-name descname"><span class="pre">sam_negative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_triples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_neg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#KBATSampler.sam_negative"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.KBATSampler.sam_negative" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Random negative sampling without filter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mode</strong> – The mode of negtive sampling.</p></li>
+<li><p><strong>pos_triples</strong> – The positive triples.</p></li>
+<li><p><strong>num_neg</strong> – The number of negative samples corresponding to each triple.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Results:</dt><dd><p>neg_samples: The negative triples.</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -855,10 +1548,53 @@ the probability density function:</p>
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.CompGCNSampler">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.Sampler.</span></span><span class="sig-name descname"><span class="pre">CompGCNSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#CompGCNSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.CompGCNSampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#neuralkg.data.Sampler.GraphSampler" title="neuralkg.data.Sampler.GraphSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">neuralkg.data.Sampler.GraphSampler</span></code></a></p>
+<p>Graph based sampling in neural network.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.CompGCNSampler.relation">
+<span class="sig-name descname"><span class="pre">relation</span></span><a class="headerlink" href="#neuralkg.data.Sampler.CompGCNSampler.relation" title="Permalink to this definition">¶</a></dt>
+<dd><p>The relation of sampled triples.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.CompGCNSampler.triples">
+<span class="sig-name descname"><span class="pre">triples</span></span><a class="headerlink" href="#neuralkg.data.Sampler.CompGCNSampler.triples" title="Permalink to this definition">¶</a></dt>
+<dd><p>The sampled triples.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.CompGCNSampler.graph">
+<span class="sig-name descname"><span class="pre">graph</span></span><a class="headerlink" href="#neuralkg.data.Sampler.CompGCNSampler.graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>The graph structured sampled triples by dgl.graph in DGL.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.CompGCNSampler.norm">
+<span class="sig-name descname"><span class="pre">norm</span></span><a class="headerlink" href="#neuralkg.data.Sampler.CompGCNSampler.norm" title="Permalink to this definition">¶</a></dt>
+<dd><p>The edge norm in graph.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.CompGCNSampler.label">
+<span class="sig-name descname"><span class="pre">label</span></span><a class="headerlink" href="#neuralkg.data.Sampler.CompGCNSampler.label" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mask the false tail as negative samples.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.CompGCNSampler.sampling">
 <span class="sig-name descname"><span class="pre">sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos_hr_t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#CompGCNSampler.sampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.CompGCNSampler.sampling" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Graph based n_hop neighbours in neural network.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>pos_hr_t</strong> – The triples(hr, t) used to be sampled.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The training data.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>batch_data</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.CompGCNSampler.get_sampling_keys">
@@ -868,7 +1604,22 @@ the probability density function:</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.CompGCNSampler.node_norm_to_edge_norm">
 <span class="sig-name descname"><span class="pre">node_norm_to_edge_norm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_norm</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#CompGCNSampler.node_norm_to_edge_norm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.CompGCNSampler.node_norm_to_edge_norm" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Calculating the normalization edge weight.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>graph</strong> – The graph structured sampled triples by dgl.graph in DGL.</p></li>
+<li><p><strong>node_norm</strong> – The node weight of normalization.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The edge weight of normalization.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>norm</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -876,6 +1627,31 @@ the probability density function:</p>
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.TestSampler">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.Sampler.</span></span><span class="sig-name descname"><span class="pre">TestSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampler</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#TestSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.TestSampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Sampling triples and recording positive triples for testing.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.TestSampler.sampler">
+<span class="sig-name descname"><span class="pre">sampler</span></span><a class="headerlink" href="#neuralkg.data.Sampler.TestSampler.sampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>The function of training sampler.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.TestSampler.hr2t_all">
+<span class="sig-name descname"><span class="pre">hr2t_all</span></span><a class="headerlink" href="#neuralkg.data.Sampler.TestSampler.hr2t_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Record the tail corresponding to the same head and relation.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.TestSampler.rt2h_all">
+<span class="sig-name descname"><span class="pre">rt2h_all</span></span><a class="headerlink" href="#neuralkg.data.Sampler.TestSampler.rt2h_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Record the head corresponding to the same tail and relation.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.TestSampler.num_ent">
+<span class="sig-name descname"><span class="pre">num_ent</span></span><a class="headerlink" href="#neuralkg.data.Sampler.TestSampler.num_ent" title="Permalink to this definition">¶</a></dt>
+<dd><p>The count of entities.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.TestSampler.get_hr2t_rt2h_from_all">
 <span class="sig-name descname"><span class="pre">get_hr2t_rt2h_from_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#TestSampler.get_hr2t_rt2h_from_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.TestSampler.get_hr2t_rt2h_from_all" title="Permalink to this definition">¶</a></dt>
@@ -890,7 +1666,19 @@ self.rt2h_all: The set of rt2h.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.TestSampler.sampling">
 <span class="sig-name descname"><span class="pre">sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#TestSampler.sampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.TestSampler.sampling" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Sampling triples and recording positive triples for testing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – The triples used to be sampled.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The data used to be evaluated.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>batch_data</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.TestSampler.get_sampling_keys">
@@ -903,15 +1691,64 @@ self.rt2h_all: The set of rt2h.</p>
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.GraphTestSampler">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.Sampler.</span></span><span class="sig-name descname"><span class="pre">GraphTestSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampler</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#GraphTestSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.GraphTestSampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Sampling graph for testing.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.GraphTestSampler.sampler">
+<span class="sig-name descname"><span class="pre">sampler</span></span><a class="headerlink" href="#neuralkg.data.Sampler.GraphTestSampler.sampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>The function of training sampler.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.GraphTestSampler.hr2t_all">
+<span class="sig-name descname"><span class="pre">hr2t_all</span></span><a class="headerlink" href="#neuralkg.data.Sampler.GraphTestSampler.hr2t_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Record the tail corresponding to the same head and relation.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.GraphTestSampler.rt2h_all">
+<span class="sig-name descname"><span class="pre">rt2h_all</span></span><a class="headerlink" href="#neuralkg.data.Sampler.GraphTestSampler.rt2h_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Record the head corresponding to the same tail and relation.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.GraphTestSampler.num_ent">
+<span class="sig-name descname"><span class="pre">num_ent</span></span><a class="headerlink" href="#neuralkg.data.Sampler.GraphTestSampler.num_ent" title="Permalink to this definition">¶</a></dt>
+<dd><p>The count of entities.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.GraphTestSampler.triples">
+<span class="sig-name descname"><span class="pre">triples</span></span><a class="headerlink" href="#neuralkg.data.Sampler.GraphTestSampler.triples" title="Permalink to this definition">¶</a></dt>
+<dd><p>The training triples.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.GraphTestSampler.get_hr2t_rt2h_from_all">
 <span class="sig-name descname"><span class="pre">get_hr2t_rt2h_from_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#GraphTestSampler.get_hr2t_rt2h_from_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.GraphTestSampler.get_hr2t_rt2h_from_all" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get the set of hr2t and rt2h from all datasets(train, valid, and test), the data type is tensor.</p>
+<dl class="simple">
+<dt>Update:</dt><dd><p>self.hr2t_all: The set of hr2t.
+self.rt2h_all: The set of rt2h.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.GraphTestSampler.sampling">
 <span class="sig-name descname"><span class="pre">sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#GraphTestSampler.sampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.GraphTestSampler.sampling" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Sampling graph for testing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – The triples used to be sampled.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The data used to be evaluated.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>batch_data</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.GraphTestSampler.get_sampling_keys">
@@ -924,15 +1761,64 @@ self.rt2h_all: The set of rt2h.</p>
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.CompGCNTestSampler">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.Sampler.</span></span><span class="sig-name descname"><span class="pre">CompGCNTestSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampler</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#CompGCNTestSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.CompGCNTestSampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Sampling graph for testing.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.CompGCNTestSampler.sampler">
+<span class="sig-name descname"><span class="pre">sampler</span></span><a class="headerlink" href="#neuralkg.data.Sampler.CompGCNTestSampler.sampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>The function of training sampler.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.CompGCNTestSampler.hr2t_all">
+<span class="sig-name descname"><span class="pre">hr2t_all</span></span><a class="headerlink" href="#neuralkg.data.Sampler.CompGCNTestSampler.hr2t_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Record the tail corresponding to the same head and relation.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.CompGCNTestSampler.rt2h_all">
+<span class="sig-name descname"><span class="pre">rt2h_all</span></span><a class="headerlink" href="#neuralkg.data.Sampler.CompGCNTestSampler.rt2h_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Record the head corresponding to the same tail and relation.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.CompGCNTestSampler.num_ent">
+<span class="sig-name descname"><span class="pre">num_ent</span></span><a class="headerlink" href="#neuralkg.data.Sampler.CompGCNTestSampler.num_ent" title="Permalink to this definition">¶</a></dt>
+<dd><p>The count of entities.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.CompGCNTestSampler.triples">
+<span class="sig-name descname"><span class="pre">triples</span></span><a class="headerlink" href="#neuralkg.data.Sampler.CompGCNTestSampler.triples" title="Permalink to this definition">¶</a></dt>
+<dd><p>The training triples.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.CompGCNTestSampler.get_hr2t_rt2h_from_all">
 <span class="sig-name descname"><span class="pre">get_hr2t_rt2h_from_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#CompGCNTestSampler.get_hr2t_rt2h_from_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.CompGCNTestSampler.get_hr2t_rt2h_from_all" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get the set of hr2t and rt2h from all datasets(train, valid, and test), the data type is tensor.</p>
+<dl class="simple">
+<dt>Update:</dt><dd><p>self.hr2t_all: The set of hr2t.
+self.rt2h_all: The set of rt2h.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.CompGCNTestSampler.sampling">
 <span class="sig-name descname"><span class="pre">sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#CompGCNTestSampler.sampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.CompGCNTestSampler.sampling" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Sampling graph for testing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – The triples used to be sampled.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The data used to be evaluated.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>batch_data</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.CompGCNTestSampler.get_sampling_keys">
@@ -945,10 +1831,41 @@ self.rt2h_all: The set of rt2h.</p>
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.XTransETestSampler">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.Sampler.</span></span><span class="sig-name descname"><span class="pre">XTransETestSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampler</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#XTransETestSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.XTransETestSampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#neuralkg.data.Sampler.TestSampler" title="neuralkg.data.Sampler.TestSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">neuralkg.data.Sampler.TestSampler</span></code></a></p>
+<p>Sampling triples and recording positive triples for testing.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.XTransETestSampler.sampler">
+<span class="sig-name descname"><span class="pre">sampler</span></span><a class="headerlink" href="#neuralkg.data.Sampler.XTransETestSampler.sampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>The function of training sampler.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.XTransETestSampler.hr2t_all">
+<span class="sig-name descname"><span class="pre">hr2t_all</span></span><a class="headerlink" href="#neuralkg.data.Sampler.XTransETestSampler.hr2t_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Record the tail corresponding to the same head and relation.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg.data.Sampler.XTransETestSampler.rt2h_all">
+<span class="sig-name descname"><span class="pre">rt2h_all</span></span><a class="headerlink" href="#neuralkg.data.Sampler.XTransETestSampler.rt2h_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Record the head corresponding to the same tail and relation.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.XTransETestSampler.sampling">
 <span class="sig-name descname"><span class="pre">sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#XTransETestSampler.sampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.XTransETestSampler.sampling" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Sampling triples and recording positive triples for testing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – The triples used to be sampled.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The data used to be evaluated.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>batch_data</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.XTransETestSampler.get_sampling_keys">
@@ -1048,7 +1965,7 @@ self.rt2h_all: The set of rt2h.</p>
 <p>Base DataModule class.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="neuralkg.data.KGDataModule.KGDataModule">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.KGDataModule.</span></span><span class="sig-name descname"><span class="pre">KGDataModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/KGDataModule.html#KGDataModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.KGDataModule.KGDataModule" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.KGDataModule.</span></span><span class="sig-name descname"><span class="pre">KGDataModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><span class="pre">Any</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/KGDataModule.html#KGDataModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.KGDataModule.KGDataModule" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#neuralkg.data.base_data_module.BaseDataModule" title="neuralkg.data.base_data_module.BaseDataModule"><code class="xref py py-class docutils literal notranslate"><span class="pre">neuralkg.data.base_data_module.BaseDataModule</span></code></a></p>
 <p>Base DataModule.
 Learn more at <a class="reference external" href="https://pytorch-lightning.readthedocs.io/en/stable/datamodules.html">https://pytorch-lightning.readthedocs.io/en/stable/datamodules.html</a></p>
@@ -1074,7 +1991,18 @@ Should assign <cite>torch Dataset</cite> objects to self.data_train, self.data_v
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.KGDataModule.KGDataModule.get_train_bs">
 <span class="sig-name descname"><span class="pre">get_train_bs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/KGDataModule.html#KGDataModule.get_train_bs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.KGDataModule.KGDataModule.get_train_bs" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get batch size for training.</p>
+<p>If the num_batches isn`t zero, it will divide data_train by num_batches to get batch size.
+And if user don`t give batch size and num_batches=0, it will raise ValueError.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The batch size for training.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>self.args.train_bs</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.data.KGDataModule.KGDataModule.train_dataloader">
