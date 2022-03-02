@@ -6,8 +6,8 @@
     <a href="http://neuralkg.zjukg.cn/">
         <img alt="Website" src="https://img.shields.io/badge/website-online-orange">
     </a>
-    <a href="https://pypi.org/project/neuralkg/1.0.2/#description">
-        <img alt="Pypi" src="https://img.shields.io/badge/release-1.0.2-red">
+    <a href="https://pypi.org/project/neuralkg/1.0.3/">
+        <img alt="Pypi" src="https://img.shields.io/badge/release-1.0.3-red">
     </a>
     <!-- <a href="">
         <img alt="LICENSE" src="https://img.shields.io/badge/license-MIT-brightgreen">
