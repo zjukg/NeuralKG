@@ -9,6 +9,9 @@ if os.path.isfile(requirement_path):
     with open(requirement_path) as f:
         install_requires = f.read().splitlines()
 
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
 setuptools.setup(
     name='neuralkg',
     version='1.0.2',
@@ -23,5 +26,7 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     install_requires=install_requires
 )
