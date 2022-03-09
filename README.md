@@ -88,10 +88,23 @@ NeuralKG is built on [PyTorch Lightning](https://www.pytorchlightning.ai/). It p
 **Step1** Create a virtual environment using ```Anaconda``` and enter it
 ```bash
 conda create -n neuralkg python=3.8
-
 conda activate neuralkg
+#Install the appropriate pytorch according to your cuda version, we recommend pytorch >= 1.7.0
 ```
-**Step2** Install package
+**Step2** Install the appropriate PyTorch and DGL according to your cuda version
+
+Here we give a sample installation based on cuda == 11.1
+
++  Install PyTorch
+```
+pip install torch==1.9.1+cu111 -f https://download.pytorch.org/whl/torch_stable.html
+```
++ Install DGL
+```
+conda install -c dglteam dgl-cuda11.1
+```
+
+**Step3** Install package
 + From Pypi
 ```bash
 pip install neuralkg

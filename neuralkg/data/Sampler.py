@@ -52,8 +52,8 @@ class UniSampler(BaseSampler):
                     weight = self.count[(h, r)] + self.count[(t, -r-1)]
                     subsampling_weight.append(weight)
 
-        batch_data["positive_sample"] = torch.LongTensor(data)
-        batch_data['negative_sample'] = torch.LongTensor(neg_ent_sample)
+        batch_data["positive_sample"] = torch.LongTensor(np.array(data))
+        batch_data['negative_sample'] = torch.LongTensor(np.array(neg_ent_sample))
         if self.args.use_weight:
             batch_data["subsampling_weight"] = torch.sqrt(1/torch.tensor(subsampling_weight))
         return batch_data
@@ -68,9 +68,9 @@ class UniSampler(BaseSampler):
             neg_tail = self.tail_batch(h, r, t, self.args.num_neg)
             neg_tail_list.append(neg_tail)
 
-        batch_data["positive_sample"] = torch.LongTensor(data)
-        batch_data['negative_head'] = torch.LongTensor(neg_head_list)
-        batch_data['negative_tail'] = torch.LongTensor(neg_tail_list)
+        batch_data["positive_sample"] = torch.LongTensor(np.array(data))
+        batch_data['negative_head'] = torch.LongTensor(np.arrary(neg_head_list))
+        batch_data['negative_tail'] = torch.LongTensor(np.arrary(neg_tail_list))
         return batch_data
 
     def get_sampling_keys(self):
@@ -141,8 +141,8 @@ class BernSampler(BaseSampler):
         batch_data['mode'] = 'bern'
         for h, r, t in data:
             neg_ent_sample = self.__normal_batch(h, r, t, self.args.num_neg)
-        batch_data["positive_sample"] = torch.LongTensor(data)
-        batch_data['negative_sample'] = torch.LongTensor(neg_ent_sample)
+        batch_data["positive_sample"] = torch.LongTensor(np.array(data))
+        batch_data['negative_sample'] = torch.LongTensor(np.array(neg_ent_sample))
         return batch_data
     
     def calc_bern(self):
@@ -244,7 +244,7 @@ class AllSampler(RevSampler):
             #     sample_id.append(1)
             # else:
             #     sample_id.append(0)
-        batch_data["sample"] = torch.LongTensor(data)
+        batch_data["sample"] = torch.LongTensor(np.array(data))
         batch_data["label"] = table.float()
         # batch_data["sample_id"] = torch.LongTensor(sample_id)
         return batch_data

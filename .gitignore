@@ -142,14 +142,3 @@ state/
 output/
 training/
 wandb/
-/.vscode
-config/
-dataset/FB15K237/2hop.pickle
-/data
-/eval_task
-/lit_model
-/loss 
-/model  
-/training
-/utils
-/wandb

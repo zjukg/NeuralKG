@@ -4,17 +4,14 @@
 import setuptools
 import os
 
-requirement_path = os.path.realpath("requirements.txt")
-if os.path.isfile(requirement_path):
-    with open(requirement_path) as f:
-        install_requires = f.read().splitlines()
+
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name='neuralkg',
-    version='1.0.3',
+    version='1.0.6',
     author='ZJUKG',
     author_email='xnchen2020@zju.edu.cn',
     url='https://github.com/zjukg/NeuralKG',
@@ -28,5 +25,11 @@ setuptools.setup(
     ],
     long_description=long_description,
     long_description_content_type="text/markdown",
-    install_requires=install_requires
+    install_requires=[
+        'pytorch_lightning==1.5.0',
+        'PyYAML==6.0',
+        'ipython==7.29.0',
+        'wandb==0.12.7'
+    ],
+    python_requires=">=3.6"
 )
