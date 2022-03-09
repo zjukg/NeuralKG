@@ -100,7 +100,7 @@ pip install torch==1.9.1+cu111 -f https://download.pytorch.org/whl/torch_stable.
 ```
 + Install DGL
 ```
-conda install -c dglteam dgl-cuda11.1
+pip install dgl-cu111 dglgo -f https://data.dgl.ai/wheels/repo.html
 ```
 
 **Step3** Install package
