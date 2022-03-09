@@ -189,6 +189,9 @@ There are some reproduced model results on FB15K-237 dataset using NeuralKG as b
 
 *:There is a label leakage error in KBAT, so the corrected result is poor compared with the paper result. Details in https://github.com/deepakn97/relationPrediction/issues/28
 
+# Detailed Documentation
+https://zjukg.github.io/NeuralKG/neuralkg.html
+
 <!-- <br> -->
 
 <!-- # To do -->
