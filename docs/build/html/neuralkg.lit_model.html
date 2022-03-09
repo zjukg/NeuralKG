@@ -122,6 +122,11 @@
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="neuralkg.lit_model.KGELitModel.KGELitModel.add_to_argparse">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">add_to_argparse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parser</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/lit_model/KGELitModel.html#KGELitModel.add_to_argparse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.lit_model.KGELitModel.KGELitModel.add_to_argparse" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.lit_model.KGELitModel.KGELitModel.training_step">
 <span class="sig-name descname"><span class="pre">training_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/lit_model/KGELitModel.html#KGELitModel.training_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.lit_model.KGELitModel.KGELitModel.training_step" title="Permalink to this definition">¶</a></dt>
 <dd><p>Getting samples and training in KG model.</p>
@@ -760,19 +765,17 @@ to training mode and gradients are enabled.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="neuralkg.lit_model.BaseLitModel.BaseLitModel.collect_results">
 <span class="sig-name descname"><span class="pre">collect_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/lit_model/BaseLitModel.html#BaseLitModel.collect_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.lit_model.BaseLitModel.BaseLitModel.collect_results" title="Permalink to this definition">¶</a></dt>
-<dd><p>Summarize the results of each batch and calculate the final result of the epoch</p>
+<dd><p>Summarize the results of each batch and calculate the final result of the epoch
+:param results: The results of each batch
+:type results: [type]
+:param mode: Eval or Test
+:type mode: [type]</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>results</strong> (<em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.10)"><em>type</em></a><em>]</em>) – The results of each batch</p></li>
-<li><p><strong>mode</strong> (<em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.10)"><em>type</em></a><em>]</em>) – Eval or Test</p></li>
-</ul>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The final result of the epoch</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The final result of the epoch</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)">dict</a></p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
