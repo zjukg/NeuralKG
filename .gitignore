@@ -153,4 +153,3 @@ dataset/FB15K237/2hop.pickle
 /training
 /utils
 /wandb
-*.pyc
