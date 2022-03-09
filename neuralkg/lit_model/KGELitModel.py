@@ -72,7 +72,7 @@ class KGELitModel(BaseLitModel):
         return results
     
     def validation_epoch_end(self, results) -> None:
-        outputs = self.collect_results(results, "Eval")
+        outputs = self.get_results(results, "Eval|")
         # self.log("Eval|mrr", outputs["Eval|mrr"], on_epoch=True)
         self.log_dict(outputs, prog_bar=True, on_epoch=True)
 
@@ -95,7 +95,7 @@ class KGELitModel(BaseLitModel):
         return results
     
     def test_epoch_end(self, results) -> None:
-        outputs = self.collect_results(results, "Test")
+        outputs = self.get_results(results, "Test|")
         self.log_dict(outputs, prog_bar=True, on_epoch=True)
     
     def get_results(self, results, mode):
@@ -111,20 +111,6 @@ class KGELitModel(BaseLitModel):
             outputs[metric] = round(number, 2)
         return outputs
     
-    def collect_results(self, results, mode):
-        """Summarize the results of each batch and calculate the final result of the epoch
-        Args:
-            results ([type]): The results of each batch
-            mode ([type]): Eval or Test
-        Returns:
-            dict: The final result of the epoch
-        """
-        outputs = ddict(float)
-        count = np.array([o["count"] for o in results]).sum()
-        for metric in list(results[0].keys())[1:]:
-            final_metric = "|".join([mode, metric])
-            outputs[final_metric] = np.around(np.array([o[metric] for o in results]).sum() / count, decimals=3).item()
-        return outputs
 
     def configure_optimizers(self):
         """Setting optimizer and lr_scheduler.
