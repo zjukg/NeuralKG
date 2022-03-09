@@ -107,7 +107,7 @@ class ConvE(Model):
         score = self.score_func(head_emb, rela_emb)
         return score
 
-    def get_score(self, batch):
+    def get_score(self, batch, mode="tail_predict"):
 
         """The functions used in the testing phase
 

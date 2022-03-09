@@ -21,6 +21,7 @@ class RGCN(nn.Module):
         self.ent_emb = None
         self.rel_emb = None 
         self.RGCN = None 
+        self.Loss_emb = None
         self.build_model()
 
     def build_model(self):
@@ -61,6 +62,7 @@ class RGCN(nn.Module):
         embedding = self.ent_emb(ent.squeeze())
         for layer in self.RGCN:
             embedding = layer(graph, embedding, rel, norm)
+        self.Loss_emb = embedding
         head_emb, rela_emb, tail_emb = self.tri2emb(embedding, triples, mode)
         score = DistMult.score_func(self,head_emb, rela_emb, tail_emb, mode)
 

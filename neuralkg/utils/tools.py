@@ -16,7 +16,7 @@ def save_config(args):
     args.save_config = False  #防止和get_config冲突，导致把加载的config又保存了一遍
     if not os.path.exists("config"):
         os.mkdir("config")
-    config_file_name = time.strftime("%H:%M:%S", time.localtime()) + ".yaml"
+    config_file_name = time.strftime(str(args.model_name)+"_"+str(args.dataset_name)) + ".yaml"
     day_name = time.strftime("%Y-%m-%d")
     if not os.path.exists(os.path.join("config", day_name)):
         os.makedirs(os.path.join("config", day_name))
