@@ -996,7 +996,7 @@ class GraphTestSampler(object):
         return ["positive_sample", "head_label", "tail_label",\
              "graph", "rela", "norm", "entity"]
 
-class CompGCNTestSampler(object):  #TODO: 争取和GraphTestSampler兼容
+class CompGCNTestSampler(object):
     """Sampling graph for testing.
 
     Attributes:
@@ -1067,51 +1067,6 @@ class CompGCNTestSampler(object):  #TODO: 争取和GraphTestSampler兼容
         return ["positive_sample", "head_label", "tail_label",\
              "graph", "rela", "norm", "entity"]
 
-class XTransETestSampler(TestSampler):
-    """Sampling triples and recording positive triples for testing.
-
-    Attributes:
-        sampler: The function of training sampler.
-        hr2t_all: Record the tail corresponding to the same head and relation.
-        rt2h_all: Record the head corresponding to the same tail and relation.
-    """
-    def __init__(self, sampler):
-        self.sampler = sampler
-        self.hr2t_all = ddict(set)
-        self.rt2h_all = ddict(set)
-        super().get_hr2t_rt2h_from_all()
-    
-    def sampling(self, data):
-        """Sampling triples and recording positive triples for testing.
-
-        Args:
-            data: The triples used to be sampled.
-
-        Returns:
-            batch_data: The data used to be evaluated.
-        """
-        batch_data = {}
-        tail_label = torch.zeros(len(data), self.sampler.args.num_ent)
-        mask = np.zeros([self.sampler.args.train_bs, 20000], dtype=float)    
-        h_neighbor = np.zeros([self.sampler.args.train_bs, 20000, 2])   #分别记录关系和尾实体
-        
-        for idx, triple in enumerate(data):
-            head, rel, tail = triple
-            num_h_neighbor = len(self.sampler.h2rt_train[head])
-            h_neighbor[id][0:num_h_neighbor] = np.asarray(self.sampler.h2rt_train[head])
-            mask[id][0:num_h_neighbor] = np.ones([num_h_neighbor])
-            tail_label[idx][self.sampler.hr2t_all[(head, rel)]] = 1.0
-        
-        batch_data["positive_sample"] = torch.tensor(data)
-        batch_data["tail_label"] = tail_label
-        batch_data['neighbor'] = h_neighbor[:,:self.sampler.max_neighbor]
-        batch_data['mask'] = mask[:,:self.sampler.max_neighbor]
-
-        return batch_data
-
-    def get_sampling_keys(self):
-        return ["positive_sample", "tail_label", "neighbor", "mask"]
-    
 '''继承torch.Dataset'''
 class KGDataset(Dataset):
 

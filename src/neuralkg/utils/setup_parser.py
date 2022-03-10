@@ -24,7 +24,7 @@ def setup_parser():
     parser.add_argument('--load_config', default=False, action='store_true')
     parser.add_argument('--negative_adversarial_sampling','-adv', default=True, action='store_false')
     parser.add_argument('--use_weight', default=False, action='store_true')
-    parser.add_argument("--seed", default=666, type=int)
+    parser.add_argument("--seed", default=321, type=int)
     parser.add_argument("--litmodel_name", default="KGELitModel", type=str)
     parser.add_argument('--model_name', default="TransE", type=str)
     parser.add_argument('--loss_name', default="Adv_Loss", type=str)
@@ -58,7 +58,7 @@ def setup_parser():
     parser.add_argument("--test_sampler_class",default="TestSampler",type=str)
     parser.add_argument("--decoder_model", default=None, type=str)
     parser.add_argument("--opn", default='corr',type=str, help="only on CompGCN, choose Composition Operation")
-    
+    parser.add_argument("--num_layers", default=2, type=int)
     parser.add_argument('--gpu', default='cuda:0', type=str)
     parser.add_argument('--shuffle', default=True, action='store_false')
     parser.add_argument('--bern_flag', default=False, action='store_true')

@@ -93,7 +93,44 @@ class CompGCN(nn.Module):
             score = self.DistMult(head_emb, rela_emb)
         
         else:
-            raise ValueError("^")
+            raise ValueError("please choose decoder (DistMult/ConvE)")
+
+        return score
+    
+    def get_score(self, batch, mode):
+        """The functions used in the testing phase
+
+        Args:
+            batch: A batch of data.
+            mode: Choose head-predict or tail-predict.
+
+        Returns:
+            score: The score of triples.
+        """
+        triples    = batch['positive_sample']
+        graph      = batch['graph']
+        relation   = batch['rela']
+        norm       = batch['norm'] 
+
+        head, rela = triples[:,0], triples[:, 1]
+        x, r = self.ent_emb, self.rel_emb  # embedding of relations
+        x, r = self.GraphCov(graph, x, r, relation, norm)
+        x = self.drop(x)  # embeddings of entities [num_ent, dim]
+        head_emb = torch.index_select(x, 0, head)  # filter out embeddings of subjects in this batch
+        #head_in_emb = head_emb.view(-1, 1, 10, 20)
+
+        rela_emb = torch.index_select(r, 0, rela)  # filter out embeddings of relations in this batch
+        #rela_in_emb = rela_emb.view(-1, 1, 10, 20)
+
+        if self.args.decoder_model.lower() == 'conve':
+           # score = ConvE.score_func(self, head_in_emb, rela_in_emb, x)
+           score = self.ConvE(head_emb, rela_emb, x)
+
+        elif self.args.decoder_model.lower() == 'distmult':
+            score = self.DistMult(head_emb, rela_emb)
+        
+        else:
+            raise ValueError("please choose decoder (DistMult/ConvE)")
 
         return score
 
