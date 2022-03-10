@@ -35,3 +35,4 @@ CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
     --check_per_epoch $CHECK_PER_EPOCH \
     --num_workers $NUM_WORKERS \
     --use_wandb \
+    --save_config \

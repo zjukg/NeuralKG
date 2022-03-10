@@ -19,7 +19,7 @@ OPN=mult
 NUM_WORKERS=16
 GPU=1
 
-CUDA_VISIBLE_DEVICES=$GPU python -u main.py  \
+CUDA_VISIBLE_DEVICES=$GPU python -W ignore -u main.py  \
     --model_name $MODEL_NAME \
     --dataset_name $DATASET_NAME \
     --data_path $DATA_PATH \
@@ -38,6 +38,7 @@ CUDA_VISIBLE_DEVICES=$GPU python -u main.py  \
     --opn $OPN \
     --num_workers $NUM_WORKERS \
     --use_wandb \
+    --save_config \
 
 
 

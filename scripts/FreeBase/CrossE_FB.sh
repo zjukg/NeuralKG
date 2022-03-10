@@ -6,7 +6,7 @@ DATA_PATH=$DATA_DIR/$DATASET_NAME
 LITMODEL_NAME=CrossELitModel
 TRAIN_SAMPLER_CLASS=CrossESampler
 MAX_EPOCHES=1000
-DIM=300
+EMB_DIM=300
 LOSS=CrossE_Loss
 TRAIN_BS=4000
 EVAL_BS=512
@@ -25,7 +25,7 @@ CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
     --litmodel_name $LITMODEL_NAME \
     --train_sampler_class $TRAIN_SAMPLER_CLASS \
     --max_epochs $MAX_EPOCHES \
-    --emb_dim $DIM \
+    --emb_dim $EMB_DIM \
     --loss $LOSS \
     --train_bs $TRAIN_BS \
     --eval_bs $EVAL_BS \

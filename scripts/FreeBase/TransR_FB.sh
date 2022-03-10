@@ -15,7 +15,7 @@ MARGIN=9.0
 LR=1e-6
 CHECK_PER_EPOCH=100
 NUM_WORKERS=16
-GPU=3
+GPU=0
 
 
 CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
@@ -35,6 +35,7 @@ CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
     --check_per_epoch $CHECK_PER_EPOCH \
     --num_workers $NUM_WORKERS \
     --use_wandb \
+    --save_config \
 
 
 

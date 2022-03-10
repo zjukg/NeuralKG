@@ -1,0 +1,6 @@
+_also_see	_derivationally_related_form	_derivationally_related_form
+_verb_group	_derivationally_related_form	_derivationally_related_form
+_verb_group	_hypernym	_hypernym
+_member_of_domain_region	_has_part	_member_of_domain_region
+_derivationally_related_form	_derivationally_related_form	_hypernym
+_also_see	_also_see	_also_see
