@@ -8,9 +8,8 @@ class SimplE_Loss(nn.Module):
         super(SimplE_Loss, self).__init__()
         self.args = args
         self.model = model
-    def forward(self, pos_sample, neg_sample, mode):
-        neg_score = self.model(pos_sample, neg_sample, mode) #shape:[bs, neg_num]
-        pos_score = -self.model(pos_sample).view(-1, 1) #shape:[bs]
+    def forward(self, pos_score, neg_score):
+        pos_score = -pos_score
         score = torch.cat((neg_score, pos_score), dim = -1) #shape:[bs, neg_num+1]
         loss = torch.sum(F.softplus(score)) + self.args.regularization * self.model.l2_loss()
 

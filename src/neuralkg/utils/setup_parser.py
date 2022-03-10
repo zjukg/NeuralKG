@@ -15,9 +15,8 @@ def setup_parser():
     parser = argparse.ArgumentParser(add_help=False, parents=[trainer_parser])
 
     # Basic arguments
-    parser.add_argument('--name', default='ComplEX_FB15K', type=str)
     parser.add_argument('--num_epoch', default=1000, type=int)
-    parser.add_argument("--use_wandb", default=True, action='store_false')
+    parser.add_argument("--use_wandb", default=False, action='store_true')
     parser.add_argument('--norm_flag', default=False, action='store_true')
     parser.add_argument('--test_only', default=False, action='store_true')
     parser.add_argument('--filter_flag', default=True, action='store_false')

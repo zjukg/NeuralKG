@@ -290,3 +290,4 @@ training/
 wandb/
 __pycache__
 *.pyc
+config/

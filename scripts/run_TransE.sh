@@ -18,7 +18,7 @@ CACHE_SIZE=50
 UPDATE_CACHE_EPOCH=5
 ALPHA=1
 WARMUP=15
-GPU=3
+GPU=1
 
 
 CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
@@ -35,8 +35,8 @@ CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
     --early_stop_patience $EARLY_STOP \
     --num_neg $NUM_NEG \
     --margin $MARGIN \
-    --use_wandb \
     --adv_temp $ADV_TEMP \
+    # --use_wandb \
     #--wandb_offline \
     #--calc_filter \
     #--cache_size $CACHE_SIZE \
