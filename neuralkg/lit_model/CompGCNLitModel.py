@@ -37,7 +37,7 @@ class CompGCNLitModel(BaseLitModel):
     def validation_step(self, batch, batch_idx):
         # pos_triple, tail_label, head_label = batch
         results = dict()
-        ranks = CompGCN_predict(batch, self.model, predicion='tail')
+        ranks = link_predict(batch, self.model, predicion='tail')
         results["count"] = torch.numel(ranks)
         results["Eval|mrr"] = torch.sum(1.0 / ranks).item()
         for k in [1, 3, 10]:
@@ -51,7 +51,7 @@ class CompGCNLitModel(BaseLitModel):
 
     def test_step(self, batch, batch_idx):
         results = dict()
-        ranks = CompGCN_predict(batch, self.model, predicion='tail')
+        ranks = link_predict(batch, self.model, predicion='tail')
         results["count"] = torch.numel(ranks)
         results["Test|mrr"] = torch.sum(1.0 / ranks).item()
         for k in [1, 3, 10]:

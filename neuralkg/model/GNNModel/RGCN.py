@@ -68,7 +68,32 @@ class RGCN(nn.Module):
 
         return score
 
-    def tri2emb(self, embedding, triples, mode="single"):
+    def get_score(self, batch, mode):
+        """The functions used in the testing phase
+
+        Args:
+            batch: A batch of data.
+            mode: Choose head-predict or tail-predict.
+
+        Returns:
+            score: The score of triples.
+        """
+        triples    = batch['positive_sample']
+        graph      = batch['graph']
+        ent        = batch['entity']
+        rel        = batch['rela']
+        norm       = batch['norm']
+
+        embedding = self.ent_emb(ent.squeeze())
+        for layer in self.RGCN:
+            embedding = layer(graph, embedding, rel, norm)
+        self.Loss_emb = embedding
+        head_emb, rela_emb, tail_emb = self.tri2emb(embedding, triples, mode)
+        score = DistMult.score_func(self,head_emb, rela_emb, tail_emb, mode)
+
+        return score
+
+    def tri2emb(self, embedding, triples, mode="single"): #TODO:和XTransE合并
         
         """Get embedding of triples.
         
@@ -93,10 +118,10 @@ class RGCN(nn.Module):
         head_emb = embedding[triples[:, 0]].unsqueeze(1)  # [bs, 1, dim] 
         tail_emb = embedding[triples[:, 2]].unsqueeze(1)  # [bs, 1, dim]
 
-        if mode == "head-batch":
+        if mode == "head-batch" or mode == "head_predict":
             head_emb = embedding.unsqueeze(0)  # [1, num_ent, dim]
 
-        elif mode == "tail-batch":
+        elif mode == "tail-batch" or mode == "tail_predict":
             tail_emb = embedding.unsqueeze(0)  # [1, num_ent, dim]
 
         return head_emb, rela_emb, tail_emb

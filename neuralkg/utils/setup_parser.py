@@ -25,7 +25,7 @@ def setup_parser():
     parser.add_argument('--load_config', default=False, action='store_true')
     parser.add_argument('--negative_adversarial_sampling','-adv', default=True, action='store_false')
     parser.add_argument('--use_weight', default=False, action='store_true')
-    parser.add_argument("--seed", default=666, type=int)
+    parser.add_argument("--seed", default=321, type=int)
     parser.add_argument("--litmodel_name", default="KGELitModel", type=str)
     parser.add_argument('--model_name', default="TransE", type=str)
     parser.add_argument('--loss_name', default="Adv_Loss", type=str)

@@ -127,5 +127,22 @@ class XTransE(Model):
         
         return TransE_score + XTransE_score
 
+    def get_score(self, batch, mode):
+        """The functions used in the testing phase
+
+        Args:
+            batch: A batch of data.
+            mode: Choose head-predict or tail-predict.
+
+        Returns:
+            score: The score of triples.
+        """
+
+        triples = batch["positive_sample"]
+        head_emb, relation_emb, tail_emb = self.tri2emb(triples, mode=mode)
+        score = self.transe_func(head_emb, relation_emb, tail_emb)
+        
+        return score
+
 
 
