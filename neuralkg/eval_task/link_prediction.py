@@ -74,7 +74,7 @@ def calc_ranks(idx, label, pred_score):
 
     b_range = torch.arange(pred_score.size()[0])
     target_pred = pred_score[b_range, idx]
-    pred_score = torch.where(label.byte(), -torch.ones_like(pred_score) * 10000000, pred_score)
+    pred_score = torch.where(label.bool(), -torch.ones_like(pred_score) * 10000000, pred_score)
     pred_score[b_range, idx] = target_pred
 
     ranks = (

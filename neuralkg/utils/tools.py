@@ -13,7 +13,7 @@ def import_class(module_and_class_name: str) -> type:
 
 
 def save_config(args):
-    args.save_config = False  #防止和get_config冲突，导致把加载的config又保存了一遍
+    args.save_config = False  #防止和load_config冲突，导致把加载的config又保存了一遍
     if not os.path.exists("config"):
         os.mkdir("config")
     config_file_name = time.strftime(str(args.model_name)+"_"+str(args.dataset_name)) + ".yaml"
