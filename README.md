@@ -36,6 +36,7 @@ KGEs**. We provide [comprehensive documents](https://zjukg.github.io/NeuralKG/in
    * [Training](#Training)
    * [Evaluation](#Evaluation)
    * [Hyperparameter Tuning](#Hyperparameter-Tuning)
+* [Notebook Guide](#Notebook-Guide)
 * [Reproduced Results](#Reproduced-Results)
 * [Citation](#citation)
 <!-- * [To do](#to-do) -->
@@ -188,8 +189,15 @@ There are some reproduced model results on FB15K-237 dataset using NeuralKG as b
 
 *:There is a label leakage error in KBAT, so the corrected result is poor compared with the paper result. Details in https://github.com/deepakn97/relationPrediction/issues/28
 
+<br>
+
+# Notebook Guide
+😃We use colab to provide some notebooks to help users use our library.
+[![Colab Notebook](https://colab.research.google.com/assets/colab-badge.svg)](https://drive.google.com/drive/folders/1OyuxvdjRNFzRuheNZaGGCsPe75T1pW1P?usp=sharing)
+
 # Detailed Documentation
 https://zjukg.github.io/NeuralKG/neuralkg.html
+
 
 <!-- <br> -->
 
