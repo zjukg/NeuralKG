@@ -10,7 +10,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name='neuralkg',
-    version='1.0.10',
+    version='1.0.12',
     author='ZJUKG',
     author_email='xnchen2020@zju.edu.cn',
     url='https://github.com/zjukg/NeuralKG',
@@ -28,6 +28,7 @@ setuptools.setup(
         'pytorch_lightning>=1.5.0',
         'PyYAML>=6.0',
         'wandb>=0.12.7',
+        'IPython>=5.0.0'
     ],
     python_requires=">=3.6"
 )

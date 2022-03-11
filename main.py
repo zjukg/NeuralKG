@@ -12,7 +12,8 @@ from neuralkg.data.Grounding import GroundAllRules
 
 
 def main():
-    args = setup_parser() #设置参数
+    parser = setup_parser() #设置参数
+    args = parser.parse_args()
     if args.load_config:
         args = load_config(args, args.config_path)
     seed_everything(args.seed) 

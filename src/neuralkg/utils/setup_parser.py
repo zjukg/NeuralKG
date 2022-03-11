@@ -84,6 +84,6 @@ def setup_parser():
 
 
     parser.add_argument("--help", "-h", action="help")
-    args = parser.parse_args()
     
-    return args
+    
+    return parser
