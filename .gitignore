@@ -292,3 +292,4 @@ __pycache__
 *.pyc
 config/
 docs/
+demo.py

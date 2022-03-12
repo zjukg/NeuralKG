@@ -65,4 +65,6 @@ class BaseLitModel(pl.LightningModule):
         for metric in list(results[0].keys())[1:]:
             final_metric = "|".join([mode, metric])
             outputs[final_metric] = np.around(np.array([o[metric] for o in results]).sum() / count, decimals=3).item()
-        return 
+        return outputs
+    
+    
