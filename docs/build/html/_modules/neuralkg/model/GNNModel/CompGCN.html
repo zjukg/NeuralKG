@@ -168,7 +168,44 @@
             <span class="n">score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DistMult</span><span class="p">(</span><span class="n">head_emb</span><span class="p">,</span> <span class="n">rela_emb</span><span class="p">)</span>
         
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;^&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;please choose decoder (DistMult/ConvE)&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">score</span></div>
+    
+<div class="viewcode-block" id="CompGCN.get_score"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg.model.GNNModel.CompGCN.CompGCN.get_score">[docs]</a>    <span class="k">def</span> <span class="nf">get_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The functions used in the testing phase</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            batch: A batch of data.</span>
+<span class="sd">            mode: Choose head-predict or tail-predict.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            score: The score of triples.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">triples</span>    <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s1">&#39;positive_sample&#39;</span><span class="p">]</span>
+        <span class="n">graph</span>      <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s1">&#39;graph&#39;</span><span class="p">]</span>
+        <span class="n">relation</span>   <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s1">&#39;rela&#39;</span><span class="p">]</span>
+        <span class="n">norm</span>       <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s1">&#39;norm&#39;</span><span class="p">]</span> 
+
+        <span class="n">head</span><span class="p">,</span> <span class="n">rela</span> <span class="o">=</span> <span class="n">triples</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">triples</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ent_emb</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rel_emb</span>  <span class="c1"># embedding of relations</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GraphCov</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">relation</span><span class="p">,</span> <span class="n">norm</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># embeddings of entities [num_ent, dim]</span>
+        <span class="n">head_emb</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">index_select</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">head</span><span class="p">)</span>  <span class="c1"># filter out embeddings of subjects in this batch</span>
+        <span class="c1">#head_in_emb = head_emb.view(-1, 1, 10, 20)</span>
+
+        <span class="n">rela_emb</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">index_select</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">rela</span><span class="p">)</span>  <span class="c1"># filter out embeddings of relations in this batch</span>
+        <span class="c1">#rela_in_emb = rela_emb.view(-1, 1, 10, 20)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">decoder_model</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;conve&#39;</span><span class="p">:</span>
+           <span class="c1"># score = ConvE.score_func(self, head_in_emb, rela_in_emb, x)</span>
+           <span class="n">score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ConvE</span><span class="p">(</span><span class="n">head_emb</span><span class="p">,</span> <span class="n">rela_emb</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">decoder_model</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;distmult&#39;</span><span class="p">:</span>
+            <span class="n">score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DistMult</span><span class="p">(</span><span class="n">head_emb</span><span class="p">,</span> <span class="n">rela_emb</span><span class="p">)</span>
+        
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;please choose decoder (DistMult/ConvE)&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">score</span></div>
 

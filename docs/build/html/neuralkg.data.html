@@ -105,7 +105,7 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="neuralkg.data.base_data_module.BaseDataModule">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.base_data_module.</span></span><span class="sig-name descname"><span class="pre">BaseDataModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><span class="pre">Any</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/base_data_module.html#BaseDataModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.base_data_module.BaseDataModule" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.base_data_module.</span></span><span class="sig-name descname"><span class="pre">BaseDataModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/base_data_module.html#BaseDataModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.base_data_module.BaseDataModule" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pytorch_lightning.core.datamodule.LightningDataModule</span></code></p>
 <p>Base DataModule.
 Learn more at <a class="reference external" href="https://pytorch-lightning.readthedocs.io/en/stable/datamodules.html">https://pytorch-lightning.readthedocs.io/en/stable/datamodules.html</a></p>
@@ -1828,53 +1828,6 @@ self.rt2h_all: The set of rt2h.</p>
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="neuralkg.data.Sampler.XTransETestSampler">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.Sampler.</span></span><span class="sig-name descname"><span class="pre">XTransETestSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampler</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#XTransETestSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.XTransETestSampler" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#neuralkg.data.Sampler.TestSampler" title="neuralkg.data.Sampler.TestSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">neuralkg.data.Sampler.TestSampler</span></code></a></p>
-<p>Sampling triples and recording positive triples for testing.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="neuralkg.data.Sampler.XTransETestSampler.sampler">
-<span class="sig-name descname"><span class="pre">sampler</span></span><a class="headerlink" href="#neuralkg.data.Sampler.XTransETestSampler.sampler" title="Permalink to this definition">¶</a></dt>
-<dd><p>The function of training sampler.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="neuralkg.data.Sampler.XTransETestSampler.hr2t_all">
-<span class="sig-name descname"><span class="pre">hr2t_all</span></span><a class="headerlink" href="#neuralkg.data.Sampler.XTransETestSampler.hr2t_all" title="Permalink to this definition">¶</a></dt>
-<dd><p>Record the tail corresponding to the same head and relation.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="neuralkg.data.Sampler.XTransETestSampler.rt2h_all">
-<span class="sig-name descname"><span class="pre">rt2h_all</span></span><a class="headerlink" href="#neuralkg.data.Sampler.XTransETestSampler.rt2h_all" title="Permalink to this definition">¶</a></dt>
-<dd><p>Record the head corresponding to the same tail and relation.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="neuralkg.data.Sampler.XTransETestSampler.sampling">
-<span class="sig-name descname"><span class="pre">sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#XTransETestSampler.sampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.XTransETestSampler.sampling" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sampling triples and recording positive triples for testing.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>data</strong> – The triples used to be sampled.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The data used to be evaluated.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>batch_data</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="neuralkg.data.Sampler.XTransETestSampler.get_sampling_keys">
-<span class="sig-name descname"><span class="pre">get_sampling_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#XTransETestSampler.get_sampling_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.XTransETestSampler.get_sampling_keys" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
 <dt class="sig sig-object py" id="neuralkg.data.Sampler.KGDataset">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.Sampler.</span></span><span class="sig-name descname"><span class="pre">KGDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">triples</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/Sampler.html#KGDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.Sampler.KGDataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.data.dataset.Dataset</span></code></p>
@@ -1965,7 +1918,7 @@ self.rt2h_all: The set of rt2h.</p>
 <p>Base DataModule class.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="neuralkg.data.KGDataModule.KGDataModule">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.KGDataModule.</span></span><span class="sig-name descname"><span class="pre">KGDataModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><span class="pre">Any</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/KGDataModule.html#KGDataModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.KGDataModule.KGDataModule" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg.data.KGDataModule.</span></span><span class="sig-name descname"><span class="pre">KGDataModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg/data/KGDataModule.html#KGDataModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg.data.KGDataModule.KGDataModule" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#neuralkg.data.base_data_module.BaseDataModule" title="neuralkg.data.base_data_module.BaseDataModule"><code class="xref py py-class docutils literal notranslate"><span class="pre">neuralkg.data.base_data_module.BaseDataModule</span></code></a></p>
 <p>Base DataModule.
 Learn more at <a class="reference external" href="https://pytorch-lightning.readthedocs.io/en/stable/datamodules.html">https://pytorch-lightning.readthedocs.io/en/stable/datamodules.html</a></p>

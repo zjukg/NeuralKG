@@ -198,6 +198,8 @@ There are some reproduced model results on FB15K-237 dataset using NeuralKG as b
 
 [![Colab Notebook](https://colab.research.google.com/assets/colab-badge.svg)](https://drive.google.com/drive/folders/1OyuxvdjRNFzRuheNZaGGCsPe75T1pW1P?usp=sharing)
 
+<br>
+
 # Detailed Documentation
 https://zjukg.github.io/NeuralKG/neuralkg.html
 
