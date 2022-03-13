@@ -40,7 +40,7 @@ class CrossELitModel(BaseLitModel):
     def validation_step(self, batch, batch_idx):
         # pos_triple, tail_label, head_label = batch
         results = dict()
-        ranks = link_predict(batch, self.model, predicion='all')
+        ranks = link_predict(batch, self.model, prediction='all')
         results["count"] = torch.numel(ranks)
         results["mrr"] = torch.sum(1.0 / ranks).item()
         for k in self.args.calc_hits:
@@ -54,7 +54,7 @@ class CrossELitModel(BaseLitModel):
 
     def test_step(self, batch, batch_idx):
         results = dict()
-        ranks = link_predict(batch, self.model, predicion='all')
+        ranks = link_predict(batch, self.model, prediction='all')
         results["count"] = torch.numel(ranks)
         results["mrr"] = torch.sum(1.0 / ranks).item()
         for k in self.args.calc_hits:

@@ -3,7 +3,7 @@ import os
 from IPython import embed
 
 
-def link_predict(batch, model, predicion="all"):
+def link_predict(batch, model, prediction="all"):
     """The evaluate task is predicting the head entity or tail entity in incomplete triples.
         
     Args:
@@ -14,13 +14,13 @@ def link_predict(batch, model, predicion="all"):
     Returns:
         ranks: The rank of the triple to be predicted.
     """
-    if predicion == "all":
+    if prediction == "all":
         tail_ranks = tail_predict(batch, model)
         head_ranks = head_predict(batch, model)
         ranks = torch.cat([tail_ranks, head_ranks])
-    elif predicion == "head":
+    elif prediction == "head":
         ranks = head_predict(batch, model)
-    elif predicion == "tail":
+    elif prediction == "tail":
         ranks = tail_predict(batch, model)
 
     return ranks.float()

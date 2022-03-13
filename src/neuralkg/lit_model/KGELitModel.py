@@ -64,7 +64,7 @@ class KGELitModel(BaseLitModel):
             results: mrr and hits@1,3,10.
         """
         results = dict()
-        ranks = link_predict(batch, self.model, predicion='all')
+        ranks = link_predict(batch, self.model, prediction='all')
         results["count"] = torch.numel(ranks)
         results["mrr"] = torch.sum(1.0 / ranks).item()
         for k in self.args.calc_hits:
@@ -87,7 +87,7 @@ class KGELitModel(BaseLitModel):
             results: mrr and hits@1,3,10.
         """
         results = dict()
-        ranks = link_predict(batch, self.model, predicion='all')
+        ranks = link_predict(batch, self.model, prediction='all')
         results["count"] = torch.numel(ranks)
         results["mrr"] = torch.sum(1.0 / ranks).item()
         for k in self.args.calc_hits:
