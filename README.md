@@ -113,7 +113,7 @@ pip install neuralkg
 + From Source
 
 ```bash
-git clone git@github.com:zjukg/NeuralKG.git
+git clone https://github.com/zjukg/NeuralKG.git
 cd NeuralKG
 python setup.py install
 ```
