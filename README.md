@@ -20,6 +20,9 @@
 <h1 align="center">
     <p>An Open Source Library for Diverse Representation Learning of Knowledge Graphs</p>
 </h1>
+<p align="center">
+    <b> English | <a href="https://github.com/zjukg/NeuralKG/blob/main/README_CN.md">中文</a> </b>
+</p>
 
 NeuralKG is a python-based library for diverse representation learning of knowledge graphs implementing **Conventional KGEs**, **GNN-based KGEs**, and **Rule-based
 KGEs**. We provide [comprehensive documents](https://zjukg.github.io/NeuralKG/index.html) for beginners and an [online website](http://neuralkg.zjukg.cn/) to organize an open and shared KG representation learning community.
@@ -77,7 +80,7 @@ NeuralKG is built on [PyTorch Lightning](https://www.pytorchlightning.ai/). It p
 
 # Implemented KGEs
 
-|Components| Models |    
+|Components| Models |
 |:---|:--------------:|
 |KGEModel|[TransE](https://papers.nips.cc/paper/2013/hash/1cecc7a77928ca8133fa24680a88d2f9-Abstract.html), [TransH](https://ojs.aaai.org/index.php/AAAI/article/view/8870), [TransR](https://www.aaai.org/ocs/index.php/AAAI/AAAI15/paper/viewFile/9571/9523/), [ComplEx](http://proceedings.mlr.press/v48/trouillon16.pdf), [DistMult](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/ICLR2015_updated.pdf), [RotatE](https://arxiv.org/abs/1902.10197), [ConvE](https://arxiv.org/abs/1707.01476), [BoxE](https://arxiv.org/pdf/2007.06267.pdf), [CrossE](https://arxiv.org/abs/1903.04750), [SimplE](https://arxiv.org/abs/1802.04868)|
 |GNNModel|[RGCN](https://arxiv.org/abs/1703.06103), [KBAT](https://arxiv.org/abs/1906.01195), [CompGCN](https://arxiv.org/abs/1906.01195), [XTransE](https://link.springer.com/chapter/10.1007/978-981-15-3412-6_8)|
