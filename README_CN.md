@@ -33,7 +33,7 @@ NeuralKG是一个支持多种知识图谱表示学习/知识图谱嵌入（Knowl
     * [下载](#下载)
    * [模型训练](#模型训练)
    * [模型验证](#模型验证)
-   * [超参数调节](#超参数调节)
+   * [超参调节](#超参调节)
 * [复现结果](#复现结果)
 * [Notebook教程](#Notebook教程)
 * [详细文档](#详细文档)
@@ -68,7 +68,7 @@ NeuralKG工具包整体基于[PyTorch Lightning](https://www.pytorchlightning.ai
 
 
 + **方便快速的客制化。** NeuralKG对知识图谱表示模型进行细化的模块解耦以方便使用者快速定制自己的模型，其中包括知识图谱数据处理模块，负采样模块，超参数监控模块，训练模块以及模型验证模块。这些模块被广泛应用于不同的知识图谱嵌入模型中
-+ **长期技术支持。**NeuralKG的核心开发团队将提供长期的技术支持，同时我们也欢迎开发者们对本项目进行pull requests。
++ **长期技术支持。** NeuralKG的核心开发团队将提供长期的技术支持，同时我们也欢迎开发者们对本项目进行pull requests。
 
 <br>
 
@@ -131,7 +131,7 @@ python main.py --load_config --config_path <your-config>
 ```
 python main.py --test_only --checkpoint_dir <your-model-path>
 ```
-## 超参数调节
+## 超参调节
 NeuralKG使用[Weights&Biases](https://wandb.ai/site)进行超参数调节，支持多种超参优化例如网格搜索、随机搜索和贝叶斯优化。搜索类型和搜索空间可以通过配置（*.yaml）文件进行设置。
 
 下面展示了在FB15k-237上训练TransE，并使用网格搜索（grid search）进行超参数调节的配置文件：
@@ -213,7 +213,7 @@ https://zjukg.github.io/NeuralKG/neuralkg.html
 
 # 引用
 
-如果您使用来NeuralKG，请引用我们的论文
+如果您使用了NeuralKG，请引用我们的论文
 
 ```bibtex
 @article{zhang2022neuralkg,
