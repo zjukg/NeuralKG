@@ -2,14 +2,14 @@ import torch
 import os
 from IPython import embed
 
-def CompGCN_predict(batch, model, predicion='all'):
-    if predicion == 'all':
+def CompGCN_predict(batch, model, prediction='all'):
+    if prediction == 'all':
         tail_ranks = head_predict(batch, model)
         head_ranks = tail_predict(batch, model)
         ranks = torch.cat([tail_ranks,head_ranks])
-    elif predicion == 'head':
+    elif prediction == 'head':
         ranks = head_predict(batch, model)
-    elif predicion == 'tail':
+    elif prediction == 'tail':
         ranks = tail_predict(batch, model)
 
     return ranks.float()

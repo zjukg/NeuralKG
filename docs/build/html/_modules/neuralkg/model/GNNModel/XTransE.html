@@ -200,7 +200,24 @@
         <span class="n">TransE_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transe_func</span><span class="p">(</span><span class="n">head_emb</span><span class="p">,</span> <span class="n">relation_emb</span><span class="p">,</span> <span class="n">tail_emb</span><span class="p">)</span>
         <span class="n">XTransE_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">score_func</span><span class="p">(</span><span class="n">triples</span><span class="p">,</span> <span class="n">neighbor</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">negs</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
         
-        <span class="k">return</span> <span class="n">TransE_score</span> <span class="o">+</span> <span class="n">XTransE_score</span></div></div>
+        <span class="k">return</span> <span class="n">TransE_score</span> <span class="o">+</span> <span class="n">XTransE_score</span></div>
+
+<div class="viewcode-block" id="XTransE.get_score"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg.model.GNNModel.XTransE.XTransE.get_score">[docs]</a>    <span class="k">def</span> <span class="nf">get_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The functions used in the testing phase</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            batch: A batch of data.</span>
+<span class="sd">            mode: Choose head-predict or tail-predict.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            score: The score of triples.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">triples</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;positive_sample&quot;</span><span class="p">]</span>
+        <span class="n">head_emb</span><span class="p">,</span> <span class="n">relation_emb</span><span class="p">,</span> <span class="n">tail_emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tri2emb</span><span class="p">(</span><span class="n">triples</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
+        <span class="n">score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transe_func</span><span class="p">(</span><span class="n">head_emb</span><span class="p">,</span> <span class="n">relation_emb</span><span class="p">,</span> <span class="n">tail_emb</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">score</span></div></div>
 
 
 

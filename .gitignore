@@ -291,3 +291,7 @@ wandb/
 __pycache__
 *.pyc
 config/
+docs/
+demo.py
+scripts/
+scripts/

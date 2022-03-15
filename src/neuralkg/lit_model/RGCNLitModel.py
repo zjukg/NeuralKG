@@ -37,41 +37,30 @@ class RGCNLitModel(BaseLitModel):
     def validation_step(self, batch, batch_idx):
         # pos_triple, tail_label, head_label = batch
         results = dict()
-        ranks = link_predict(batch, self.model)
+        ranks = link_predict(batch, self.model, prediction='all')
         results["count"] = torch.numel(ranks)
-        results["Eval|mrr"] = torch.sum(1.0 / ranks).item()
-        for k in [1, 3, 10]:
-            results['Eval|hits@{}'.format(k)] = torch.numel(ranks[ranks <= k])
+        results["mrr"] = torch.sum(1.0 / ranks).item()
+        for k in self.args.calc_hits:
+            results['hits@{}'.format(k)] = torch.numel(ranks[ranks <= k])
         return results
     
     def validation_epoch_end(self, results) -> None:
-        outputs = self.get_results(results, "Eval|")
+        outputs = self.get_results(results, "Eval")
         # self.log("Eval|mrr", outputs["Eval|mrr"], on_epoch=True)
         self.log_dict(outputs, prog_bar=True, on_epoch=True)
 
     def test_step(self, batch, batch_idx):
         results = dict()
-        ranks = link_predict(batch, self.model)
+        ranks = link_predict(batch, self.model, prediction='all')
         results["count"] = torch.numel(ranks)
-        results["Test|mrr"] = torch.sum(1.0 / ranks).item()
-        for k in [1, 3, 10]:
-            results['Test|hits@{}'.format(k)] = torch.numel(ranks[ranks <= k])
+        results["mrr"] = torch.sum(1.0 / ranks).item()
+        for k in self.args.calc_hits:
+            results['hits@{}'.format(k)] = torch.numel(ranks[ranks <= k])
         return results
     
     def test_epoch_end(self, results) -> None:
-        outputs = self.get_results(results, "Test|")
+        outputs = self.get_results(results, "Test")
         self.log_dict(outputs, prog_bar=True, on_epoch=True)
-    
-    def get_results(self, results, mode):
-        outputs = ddict(float)
-        count = np.array([o["count"] for o in results]).sum().item()
-        metrics = ["mrr", "hits@1", "hits@3", "hits@10"]
-        metrics = [mode + metric for metric in metrics]
-        for metric in metrics:
-            number = np.array([o[metric] for \
-             o in results]).sum().item() / count
-            outputs[metric] = round(number, 2)
-        return outputs
 
     '''这里设置优化器和lr_scheduler'''
     def configure_optimizers(self):

@@ -36,6 +36,7 @@ KGEs**. We provide [comprehensive documents](https://zjukg.github.io/NeuralKG/in
    * [Training](#Training)
    * [Evaluation](#Evaluation)
    * [Hyperparameter Tuning](#Hyperparameter-Tuning)
+* [Notebook Guide](#Notebook-Guide)
 * [Reproduced Results](#Reproduced-Results)
 * [Citation](#citation)
 <!-- * [To do](#to-do) -->
@@ -44,6 +45,9 @@ KGEs**. We provide [comprehensive documents](https://zjukg.github.io/NeuralKG/in
 <br>
 
 # 😃What's New
+
+## Mar, 2022
+* We have provided [Google Colab Tutotials](https://drive.google.com/drive/folders/1OyuxvdjRNFzRuheNZaGGCsPe75T1pW1P?usp=sharing) help users use our library
 
 ## Feb, 2022
 * We have released a paper [NeuralKG: An Open Source Library for Diverse Representation Learning of Knowledge Graphs](https://arxiv.org/abs/2202.12571)
@@ -112,7 +116,7 @@ pip install neuralkg
 + From Source
 
 ```bash
-git clone git@github.com:zjukg/NeuralKG.git
+git clone https://github.com/zjukg/NeuralKG.git
 cd NeuralKG
 python setup.py install
 ```
@@ -188,8 +192,20 @@ There are some reproduced model results on FB15K-237 dataset using NeuralKG as b
 
 *:There is a label leakage error in KBAT, so the corrected result is poor compared with the paper result. Details in https://github.com/deepakn97/relationPrediction/issues/28
 
+<br>
+
+# Notebook Guide
+
+
+😃We use colab to provide some notebooks to help users use our library.
+
+[![Colab Notebook](https://colab.research.google.com/assets/colab-badge.svg)](https://drive.google.com/drive/folders/1OyuxvdjRNFzRuheNZaGGCsPe75T1pW1P?usp=sharing)
+
+<br>
+
 # Detailed Documentation
 https://zjukg.github.io/NeuralKG/neuralkg.html
+
 
 <!-- <br> -->
 

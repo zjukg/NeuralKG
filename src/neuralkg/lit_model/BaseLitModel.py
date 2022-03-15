@@ -52,7 +52,7 @@ class BaseLitModel(pl.LightningModule):
     def test_step(self, batch, batch_idx):  # pylint: disable=unused-argument
         raise NotImplementedError
     
-    def collect_results(self, results, mode):
+    def get_results(self, results, mode):
         """Summarize the results of each batch and calculate the final result of the epoch
         Args:
             results ([type]): The results of each batch
@@ -65,4 +65,6 @@ class BaseLitModel(pl.LightningModule):
         for metric in list(results[0].keys())[1:]:
             final_metric = "|".join([mode, metric])
             outputs[final_metric] = np.around(np.array([o[metric] for o in results]).sum() / count, decimals=3).item()
-        return 
+        return outputs
+    
+    
