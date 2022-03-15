@@ -48,7 +48,7 @@ class CrossELitModel(BaseLitModel):
         return results
     
     def validation_epoch_end(self, results) -> None:
-        outputs = self.collect_results(results, "Eval")
+        outputs = self.get_results(results, "Eval")
         # self.log("Eval|mrr", outputs["Eval|mrr"], on_epoch=True)
         self.log_dict(outputs, prog_bar=True, on_epoch=True)
 
@@ -62,7 +62,7 @@ class CrossELitModel(BaseLitModel):
         return results
     
     def test_epoch_end(self, results) -> None:
-        outputs = self.collect_results(results, "Test")
+        outputs = self.get_results(results, "Test")
         self.log_dict(outputs, prog_bar=True, on_epoch=True)
 
     '''这里设置优化器和lr_scheduler'''

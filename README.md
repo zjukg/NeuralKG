@@ -46,6 +46,9 @@ KGEs**. We provide [comprehensive documents](https://zjukg.github.io/NeuralKG/in
 
 # 😃What's New
 
+## Mar, 2022
+* We have provided [Google Colab Tutotials](https://drive.google.com/drive/folders/1OyuxvdjRNFzRuheNZaGGCsPe75T1pW1P?usp=sharing) help users use our library
+
 ## Feb, 2022
 * We have released a paper [NeuralKG: An Open Source Library for Diverse Representation Learning of Knowledge Graphs](https://arxiv.org/abs/2202.12571)
 

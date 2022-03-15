@@ -293,3 +293,5 @@ __pycache__
 config/
 docs/
 demo.py
+scripts/
+scripts/
