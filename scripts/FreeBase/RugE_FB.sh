@@ -26,7 +26,6 @@ LITMODEL_NAME=RugELitModel
 TRAIN_SAMPLER_CLASS=UniSampler
 
 CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
-    --name "$MODEL_NAME"_"$DATASET_NAME"_"$SAVE_ID" \
     --model_name $MODEL_NAME \
     --data_path $DATA_PATH \
     --num_epoch $EPOCHES \
@@ -45,3 +44,4 @@ CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
     --weight_decay $WEIGHT_DECAY\
     --litmodel_name $LITMODEL_NAME \
     --train_sampler_class $TRAIN_SAMPLER_CLASS \
+    --save_config \

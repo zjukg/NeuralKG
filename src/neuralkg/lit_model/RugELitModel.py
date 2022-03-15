@@ -24,7 +24,7 @@ class RugELitModel(BaseLitModel):
         super().__init__(model, args)
         self.args = args
         self.temp_list = []
-        self.rule_dataloader = RuleDataLoader(self.args)
+        self.rule_dataloader = RuleDataLoader.RuleDataLoader(self.args)
         tq = tqdm(self.rule_dataloader, desc='{}'.format('rule'), ncols=0)
         print('start first load')
         for new_data in tq:
