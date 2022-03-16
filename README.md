@@ -233,5 +233,6 @@ Please cite our paper if you use NeuralKG in your work
 
 # NeuralKG Core Team 
 **Zhejiang University**: Wen Zhang, Xiangnan Chen, Zhen Yao, Mingyang Chen, Yushan Zhu, Hongtao Yu, Yufeng Huang, Zezhong Xu, Yajing Xu, Peng Ye, Yichi Zhang, Ningyu Zhang, Guozhou Zheng, Huajun Chen
+
 **Alibaba Group**: Feiyu Xiong, Hui Chen, Qiang Chen
 
