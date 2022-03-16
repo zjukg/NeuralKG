@@ -191,7 +191,7 @@ There are some reproduced model results on FB15K-237 dataset using NeuralKG as b
 |RGCN|0.25|0.16|0.27|0.43|
 |KBAT*|0.19|0.11|0.22|0.38|
 |CompGCN|0.34|0.25|0.38|0.52|
-|IterE|0.18|0.13|0.19|0.26|
+|IterE|0.26|0.19|0.29|0.41|
 
 *:There is a label leakage error in KBAT, so the corrected result is poor compared with the paper result. Details in https://github.com/deepakn97/relationPrediction/issues/28
 
