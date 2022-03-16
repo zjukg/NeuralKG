@@ -1,6 +1,4 @@
-
 #!/bin/sh
-python -u -c 'import torch; print(torch.__version__)'
 DATA_DIR=dataset
 
 MODEL_NAME=RugE
@@ -16,7 +14,7 @@ REGULARIZATION=0.0
 MU=10
 DATA_PATH=$DATA_DIR/$DATASET_NAME
 SAVE_ID=1
-GPU=0
+GPU=1
 SLACKNESS_PENALTY=0.01
 LOSS_NAME=RugE_Loss
 OPTIM_NAME=Adagrad
@@ -44,4 +42,4 @@ CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
     --weight_decay $WEIGHT_DECAY\
     --litmodel_name $LITMODEL_NAME \
     --train_sampler_class $TRAIN_SAMPLER_CLASS \
-    --save_config \
+
