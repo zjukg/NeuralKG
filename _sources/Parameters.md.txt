@@ -1,0 +1,37 @@
+## Description of basic parameters
+
+```model_name``` : The name of model.<br>
+```dataset_name```: The name of dataset. <br>
+```data_path``` : The folder path of dataset.<br>
+```data_class``` : The name of data preprocessing module, default KGDataModule.<br>
+```litmodel_name``` : The name of processing module of training, evaluation and testing, default KGELitModel.<br>
+```train_sampler_class``` : Sampling method used in training, default UniSampler.<br>
+```test_sampler_class``` : Sampling method used in validation and testing, default TestSampler.<br>
+```loss_name``` : The name of loss function.<br>
+```negative_adversarial_sampling``` : Use self-adversarial negative sampling.<br>
+```optim_name``` : The name of optimizer.<br>
+```seed```: Random seed. <br>
+```margin``` : The fixed margin in loss function. <br> 
+```adv_temp``` : The temperature of sampling in self-adversarial negative sampling. <br>
+```emb_dim``` : The embedding dimension in KGE model. <br>
+```out_dim``` : The output embedding dimmension in some KGE model.<br>
+```max_epochs``` : The maximum epoch in training. <br>
+```lr``` : Learning rate<br>
+```train_bs``` : Batch size in training.<br>
+```eval_bs``` : Bathc size in evaluation and testing.<br> ```num_neg``` : The number of negative samples corresponding to each positive sample<br>
+```num_ent``` : The number of entity, autogenerate. <br>
+```num_rel``` : The number of relation, autogenerate.<br>
+```check_per_epoch``` : Evaluation per n epoch of training.<br>
+```early_stop_patience``` : If the number of consecutive bad results is n, early stop.<br>
+```num_layers``` : The number of layers in some GNN model.<br>
+```decoder_model``` : The name of decoder model, in some model.<br>
+```eval_task``` : The task of validation, default link_prediction.<br>
+```calc_hits``` : Calculate the hit rate, default [1,3,10].<br>
+```gpu``` : Select the GPU in training, default cuda:0.<br>
+```filter_flag``` : Filter in negative sampling.<br>
+```use_wandb``` : Use "weight and bias" to record the result.<br> 
+```use_weight``` : Use subsampling weight.<br>
+```checkpoint_dir``` : The checkpoint model path.<br>
+```save_config``` : Save parameters config file.<br>
+```load_config``` : Load parameters config file.<br>
+```config_path``` : The config path.<br>
