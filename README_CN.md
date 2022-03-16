@@ -189,7 +189,7 @@ parameters:
 |RGCN|0.25|0.16|0.27|0.43|
 |KBAT*|0.19|0.11|0.22|0.38|
 |CompGCN|0.34|0.25|0.38|0.52|
-|IterE|0.18|0.13|0.19|0.26|
+|IterE|0.26|0.19|0.29|0.41|
 
 *:在KBAT的原论文作者实现中存在标签泄漏的问题，所以正确的结果相对较低，具体可以查看https://github.com/deepakn97/relationPrediction/issues/28
 
@@ -228,3 +228,9 @@ https://zjukg.github.io/NeuralKG/neuralkg.html
 
 ```
 <br>
+
+# NeuralKG核心团队
+
+**浙江大学**: 张文，陈湘楠，姚祯，陈名杨，朱渝珊，俞洪涛，黄雨峰，许泽众，徐雅静，叶鹏，张溢驰，张宁豫，郑国轴，陈华钧
+
+
