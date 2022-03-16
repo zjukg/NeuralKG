@@ -77,14 +77,14 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">IPython</span> <span class="kn">import</span> <span class="n">embed</span>
 
-<div class="viewcode-block" id="RGCN_predict"><a class="viewcode-back" href="../../../neuralkg.eval_task.html#neuralkg.eval_task.RGCN_prediction.RGCN_predict">[docs]</a><span class="k">def</span> <span class="nf">RGCN_predict</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">predicion</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">predicion</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+<div class="viewcode-block" id="RGCN_predict"><a class="viewcode-back" href="../../../neuralkg.eval_task.html#neuralkg.eval_task.RGCN_prediction.RGCN_predict">[docs]</a><span class="k">def</span> <span class="nf">RGCN_predict</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">prediction</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">prediction</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
         <span class="n">tail_ranks</span> <span class="o">=</span> <span class="n">head_predict</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
         <span class="n">head_ranks</span> <span class="o">=</span> <span class="n">tail_predict</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
         <span class="n">ranks</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">tail_ranks</span><span class="p">,</span><span class="n">head_ranks</span><span class="p">])</span>
-    <span class="k">elif</span> <span class="n">predicion</span> <span class="o">==</span> <span class="s1">&#39;tail&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">prediction</span> <span class="o">==</span> <span class="s1">&#39;tail&#39;</span><span class="p">:</span>
         <span class="n">ranks</span> <span class="o">=</span> <span class="n">head_predict</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">predicion</span> <span class="o">==</span> <span class="s1">&#39;head&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">prediction</span> <span class="o">==</span> <span class="s1">&#39;head&#39;</span><span class="p">:</span>
         <span class="n">ranks</span> <span class="o">=</span> <span class="n">tail_predict</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">ranks</span><span class="o">.</span><span class="n">float</span><span class="p">()</span></div>

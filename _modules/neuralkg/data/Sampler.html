@@ -1071,7 +1071,7 @@
         <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;positive_sample&quot;</span><span class="p">,</span> <span class="s2">&quot;head_label&quot;</span><span class="p">,</span> <span class="s2">&quot;tail_label&quot;</span><span class="p">,</span>\
              <span class="s2">&quot;graph&quot;</span><span class="p">,</span> <span class="s2">&quot;rela&quot;</span><span class="p">,</span> <span class="s2">&quot;norm&quot;</span><span class="p">,</span> <span class="s2">&quot;entity&quot;</span><span class="p">]</span></div></div>
 
-<div class="viewcode-block" id="CompGCNTestSampler"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.CompGCNTestSampler">[docs]</a><span class="k">class</span> <span class="nc">CompGCNTestSampler</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>  <span class="c1">#TODO: 争取和GraphTestSampler兼容</span>
+<div class="viewcode-block" id="CompGCNTestSampler"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.CompGCNTestSampler">[docs]</a><span class="k">class</span> <span class="nc">CompGCNTestSampler</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Sampling graph for testing.</span>
 
 <span class="sd">    Attributes:</span>
@@ -1142,51 +1142,6 @@
         <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;positive_sample&quot;</span><span class="p">,</span> <span class="s2">&quot;head_label&quot;</span><span class="p">,</span> <span class="s2">&quot;tail_label&quot;</span><span class="p">,</span>\
              <span class="s2">&quot;graph&quot;</span><span class="p">,</span> <span class="s2">&quot;rela&quot;</span><span class="p">,</span> <span class="s2">&quot;norm&quot;</span><span class="p">,</span> <span class="s2">&quot;entity&quot;</span><span class="p">]</span></div></div>
 
-<div class="viewcode-block" id="XTransETestSampler"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.XTransETestSampler">[docs]</a><span class="k">class</span> <span class="nc">XTransETestSampler</span><span class="p">(</span><span class="n">TestSampler</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Sampling triples and recording positive triples for testing.</span>
-
-<span class="sd">    Attributes:</span>
-<span class="sd">        sampler: The function of training sampler.</span>
-<span class="sd">        hr2t_all: Record the tail corresponding to the same head and relation.</span>
-<span class="sd">        rt2h_all: Record the head corresponding to the same tail and relation.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">sampler</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hr2t_all</span> <span class="o">=</span> <span class="n">ddict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rt2h_all</span> <span class="o">=</span> <span class="n">ddict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_hr2t_rt2h_from_all</span><span class="p">()</span>
-    
-<div class="viewcode-block" id="XTransETestSampler.sampling"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.XTransETestSampler.sampling">[docs]</a>    <span class="k">def</span> <span class="nf">sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Sampling triples and recording positive triples for testing.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            data: The triples used to be sampled.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            batch_data: The data used to be evaluated.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">batch_data</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">tail_label</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_ent</span><span class="p">)</span>
-        <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">train_bs</span><span class="p">,</span> <span class="mi">20000</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>    
-        <span class="n">h_neighbor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">train_bs</span><span class="p">,</span> <span class="mi">20000</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>   <span class="c1">#分别记录关系和尾实体</span>
-        
-        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">triple</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-            <span class="n">head</span><span class="p">,</span> <span class="n">rel</span><span class="p">,</span> <span class="n">tail</span> <span class="o">=</span> <span class="n">triple</span>
-            <span class="n">num_h_neighbor</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">h2rt_train</span><span class="p">[</span><span class="n">head</span><span class="p">])</span>
-            <span class="n">h_neighbor</span><span class="p">[</span><span class="nb">id</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">num_h_neighbor</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">h2rt_train</span><span class="p">[</span><span class="n">head</span><span class="p">])</span>
-            <span class="n">mask</span><span class="p">[</span><span class="nb">id</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">num_h_neighbor</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="n">num_h_neighbor</span><span class="p">])</span>
-            <span class="n">tail_label</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">hr2t_all</span><span class="p">[(</span><span class="n">head</span><span class="p">,</span> <span class="n">rel</span><span class="p">)]]</span> <span class="o">=</span> <span class="mf">1.0</span>
-        
-        <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;positive_sample&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;tail_label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tail_label</span>
-        <span class="n">batch_data</span><span class="p">[</span><span class="s1">&#39;neighbor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">h_neighbor</span><span class="p">[:,:</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">max_neighbor</span><span class="p">]</span>
-        <span class="n">batch_data</span><span class="p">[</span><span class="s1">&#39;mask&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mask</span><span class="p">[:,:</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">max_neighbor</span><span class="p">]</span>
-
-        <span class="k">return</span> <span class="n">batch_data</span></div>
-
-<div class="viewcode-block" id="XTransETestSampler.get_sampling_keys"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.XTransETestSampler.get_sampling_keys">[docs]</a>    <span class="k">def</span> <span class="nf">get_sampling_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;positive_sample&quot;</span><span class="p">,</span> <span class="s2">&quot;tail_label&quot;</span><span class="p">,</span> <span class="s2">&quot;neighbor&quot;</span><span class="p">,</span> <span class="s2">&quot;mask&quot;</span><span class="p">]</span></div></div>
-    
 <span class="sd">&#39;&#39;&#39;继承torch.Dataset&#39;&#39;&#39;</span>
 <div class="viewcode-block" id="KGDataset"><a class="viewcode-back" href="../../../neuralkg.data.html#neuralkg.data.Sampler.KGDataset">[docs]</a><span class="k">class</span> <span class="nc">KGDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
 

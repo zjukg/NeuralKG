@@ -140,7 +140,9 @@
         <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">1</span><span class="p">:]:</span>
             <span class="n">final_metric</span> <span class="o">=</span> <span class="s2">&quot;|&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">mode</span><span class="p">,</span> <span class="n">metric</span><span class="p">])</span>
             <span class="n">outputs</span><span class="p">[</span><span class="n">final_metric</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">o</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">results</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">count</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
-        <span class="k">return</span> </div></div>
+        <span class="k">return</span> <span class="n">outputs</span></div></div>
+    
+    
 </pre></div>
 
            </div>
