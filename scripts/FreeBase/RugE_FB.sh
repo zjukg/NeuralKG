@@ -26,7 +26,7 @@ TRAIN_SAMPLER_CLASS=UniSampler
 CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
     --model_name $MODEL_NAME \
     --data_path $DATA_PATH \
-    --num_epoch $EPOCHES \
+    --max_epochs $EPOCHES \
     --emb_dim $DIM \
     --num_neg $NUM_NEG \
     --train_bs $TRAIN_BS \
@@ -42,4 +42,6 @@ CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
     --weight_decay $WEIGHT_DECAY\
     --litmodel_name $LITMODEL_NAME \
     --train_sampler_class $TRAIN_SAMPLER_CLASS \
+    --use_wandb \
+    --save_config \
 
