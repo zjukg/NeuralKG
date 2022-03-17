@@ -49,6 +49,7 @@ NeuralKG是一个支持多种知识图谱表示学习/知识图谱嵌入（Knowl
 
 ## 2022年3月
 * 我们提供了一个[Google Colab教程](https://drive.google.com/drive/folders/1OyuxvdjRNFzRuheNZaGGCsPe75T1pW1P?usp=sharing)帮助用户使用我们的工具包
+* 我们提供了一篇[博客](http://neuralkg.zjukg.cn/CN/index.php/2022/03/17/neuralkg-for-recommendation/)来介绍我们的工具包在自定义数据集上的使用方式
 
 ## 2022年2月
 * 我们发布了关于该工具包的论文[NeuralKG: An Open Source Library for Diverse Representation Learning of Knowledge Graphs](https://arxiv.org/abs/2202.12571)
@@ -231,6 +232,5 @@ https://zjukg.github.io/NeuralKG/neuralkg.html
 
 # NeuralKG核心团队
 
-**浙江大学**: 张文，陈湘楠，姚祯，陈名杨，朱渝珊，俞洪涛，黄雨峰，许泽众，徐雅静，叶鹏，张溢驰，张宁豫，郑国轴，陈华钧
-
+**浙江大学**: 张文，陈湘楠，姚祯，陈名杨，朱渝珊，俞洪涛，黄雨峰，许泽众，徐雅静，叶鹏，张溢弛，张宁豫，郑国轴，陈华钧
 

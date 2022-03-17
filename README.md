@@ -51,6 +51,7 @@ KGEs**. We provide [comprehensive documents](https://zjukg.github.io/NeuralKG/in
 
 ## Mar, 2022
 * We have provided [Google Colab Tutotials](https://drive.google.com/drive/folders/1OyuxvdjRNFzRuheNZaGGCsPe75T1pW1P?usp=sharing) help users use our library
+* We have provided a new blog about how to use NeuralKG on custom datasets
 
 ## Feb, 2022
 * We have released a paper [NeuralKG: An Open Source Library for Diverse Representation Learning of Knowledge Graphs](https://arxiv.org/abs/2202.12571)
@@ -233,5 +234,4 @@ Please cite our paper if you use NeuralKG in your work
 
 # NeuralKG Core Team 
 **Zhejiang University**: Wen Zhang, Xiangnan Chen, Zhen Yao, Mingyang Chen, Yushan Zhu, Hongtao Yu, Yufeng Huang, Zezhong Xu, Yajing Xu, Peng Ye, Yichi Zhang, Ningyu Zhang, Guozhou Zheng, Huajun Chen
-
 
