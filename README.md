@@ -9,6 +9,9 @@
     <a href="https://pypi.org/project/neuralkg/">
         <img alt="Pypi" src="https://img.shields.io/pypi/v/neuralkg">
     </a>
+    <a href="">
+        <img alt="Pypi" src="https://img.shields.io/badge/license-Apache--2.0-yellowgreen">
+    </a>
     <!-- <a href="">
         <img alt="LICENSE" src="https://img.shields.io/badge/license-MIT-brightgreen">
     </a> -->
