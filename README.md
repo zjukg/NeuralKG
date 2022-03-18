@@ -9,7 +9,7 @@
     <a href="https://pypi.org/project/neuralkg/">
         <img alt="Pypi" src="https://img.shields.io/pypi/v/neuralkg">
     </a>
-    <a href="">
+    <a href="https://github.com/zjukg/NeuralKG/blob/main/LICENSE">
         <img alt="Pypi" src="https://img.shields.io/badge/license-Apache--2.0-yellowgreen">
     </a>
     <!-- <a href="">
