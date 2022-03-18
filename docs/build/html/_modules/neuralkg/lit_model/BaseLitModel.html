@@ -43,6 +43,10 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../result.html">Results</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Basic Parameters Description</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Parameters.html">Description of basic parameters</a></li>
+</ul>
 <p class="caption" role="heading"><span class="caption-text">Package</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../neuralkg.html">NeuralKG</a></li>
@@ -141,6 +145,8 @@
             <span class="n">final_metric</span> <span class="o">=</span> <span class="s2">&quot;|&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">mode</span><span class="p">,</span> <span class="n">metric</span><span class="p">])</span>
             <span class="n">outputs</span><span class="p">[</span><span class="n">final_metric</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">o</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">results</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">count</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">outputs</span></div></div>
+    
+    
 </pre></div>
 
            </div>

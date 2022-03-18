@@ -33,6 +33,7 @@ KGEs**. We provide [comprehensive documents](https://zjukg.github.io/NeuralKG/in
 
 * [What's New](#whats-new)
 * [Overview](#Overview)
+* [Demo](#Demo)
 * [Implemented KGEs](#ImplementedKGEs)
 * [Quick Start](#quick-start)
     * [Installation](#Installation)
@@ -76,6 +77,13 @@ NeuralKG is built on [PyTorch Lightning](https://www.pytorchlightning.ai/). It p
 + **Support easy customization.** NeuralKG contains fine-grained decoupled modules that are commonly used in different KGEs, including KG Data Preprocessing, Sampler for negative sampling, Monitor for hyperparameter tuning, Trainer covering the training, and model validation.
 
 + **long-term technical maintenance.** The core team of NeuralKG will offer long-term technical maintenance. Other developers are welcome to pull requests.
+
+<br>
+
+# Demo
+
+There is a demonstration of NeuralKG.
+<img src="pics/demo.gif"  align=center>
 
 <br>
 

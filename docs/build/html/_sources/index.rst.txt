@@ -25,6 +25,12 @@ NeuralKG is a knowledge Graph Represent Learning toolkit.
    
    result
 
+.. toctree::
+   :glob
+   :maxdepth: 1
+   :caption: Basic Parameters Description
+   
+   Parameters
 
 .. toctree::
    :glob:
