@@ -86,9 +86,9 @@ NeuralKG is built on [PyTorch Lightning](https://www.pytorchlightning.ai/). It p
 # Demo
 
 There is a demonstration of NeuralKG.
-![框架](./pics/demo.gif)
+<!-- ![框架](./pics/demo.gif) -->
 <!-- <img src="pics/demo.gif"> -->
-<img src="pics/demo.gif" width="536" height="454" align=center>
+<img src="pics/demo.gif" width="900" height="476" align=center>
 
 <br>
 
