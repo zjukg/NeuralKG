@@ -46,7 +46,7 @@ class Adv_Loss(nn.Module):
 
         loss = (positive_sample_loss + negative_sample_loss) / 2
 
-        if self.args.model_name == 'ComplEx' or self.args.model_name == 'DistMult' or self.args.model_name == 'BoxE':
+        if self.args.model_name == 'ComplEx' or self.args.model_name == 'DistMult' or self.args.model_name == 'BoxE' or self.args.model_name=="IterE":
             #Use L3 regularization for ComplEx and DistMult
             regularization = self.args.regularization * (
                 self.model.ent_emb.weight.norm(p = 3)**3 + \

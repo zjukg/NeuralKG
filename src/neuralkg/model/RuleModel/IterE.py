@@ -706,8 +706,7 @@ class IterE(Model):
             inferencechain2_p, inferencechain3_p, inferencechain4_p = [np.reshape(np.asarray([]), [-1, 1]) for i in
                                                                            range(self.axiom_types)]
         updated_train_data=None
-        if epoch >= 20:
-        #if True:
+        if epoch >= 5:
             print("len(self.valid_reflexive2entailment):", len(self.valid_reflexive2entailment))
             print("len(self.valid_symmetric2entailment):", len(self.valid_symmetric2entailment))
             print("len(self.valid_transitive2entailment)", len(self.valid_transitive2entailment))
@@ -826,9 +825,17 @@ class IterE(Model):
         assert self.args.emb_dim % 4 == 0
         num_scalar = self.args.emb_dim // 2
         num_block = self.args.emb_dim // 4
-        embedding_scalar = embedding[:, 0:num_scalar]
-        embedding_x = embedding[:, num_scalar:-num_block]
-        embedding_y = embedding[:, -num_block:]
+        if len(embedding.size()) ==2:
+            embedding_scalar = embedding[:, 0:num_scalar]
+            embedding_x = embedding[:, num_scalar:-num_block]
+            embedding_y = embedding[:, -num_block:]
+        elif len(embedding.size()) ==3:
+            embedding_scalar = embedding[:, :, 0:num_scalar]
+            embedding_x = embedding[:, :, num_scalar:-num_block]
+            embedding_y = embedding[:, :, -num_block:]
+        else:
+            raise NotImplementedError
+
         return embedding_scalar, embedding_x, embedding_y
 
     
@@ -1124,18 +1131,6 @@ class IterE(Model):
 
         
 
-    """def score_func(self, head_emb, relation_emb, tail_emb, mode):
-        re_head, im_head = torch.chunk(head_emb, 2, dim=-1)
-        re_relation, im_relation = torch.chunk(relation_emb, 2, dim=-1)
-        re_tail, im_tail = torch.chunk(tail_emb, 2, dim=-1)
-
-        return torch.sum(
-            re_head * re_tail * re_relation
-            + im_head * im_tail * re_relation
-            + re_head * im_tail * im_relation
-            - im_head * re_tail * im_relation,
-            -1
-        )"""
         
     def score_func(self, head_emb, relation_emb, tail_emb, mode):
         """Calculating the score of triples.
@@ -1151,12 +1146,15 @@ class IterE(Model):
         Returns:
             score: The score of triples.
         """
-        if mode == 'head-batch':
-            score = head_emb * (relation_emb * tail_emb)
-        else:
-            score = (head_emb * relation_emb) * tail_emb
-
-        score = score.sum(dim = -1)
+        h_scalar, h_x ,h_y = self.split_embedding(head_emb)
+        r_scalar, r_x, r_y = self.split_embedding(relation_emb)
+        t_scalar, t_x, t_y = self.split_embedding(tail_emb)
+        score_scalar = torch.sum(h_scalar * r_scalar * t_scalar, axis=-1)
+        score_block = torch.sum(h_x * r_x * t_x
+										+ h_x * r_y * t_y
+										+ h_y * r_x * t_y
+										- h_y * r_y * t_x, axis=-1)
+        score = score_scalar + score_block
         return score
 
     def forward(self, triples, negs=None, mode='single'):

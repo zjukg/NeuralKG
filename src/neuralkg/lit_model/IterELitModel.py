@@ -43,18 +43,16 @@ class IterELitModel(BaseLitModel):
     def training_epoch_end(self, results):
         self.epoch+=1
         if self.epoch % self.args.update_axiom_per == 0 and self.epoch !=0:
-        #if True:
                 # axioms include probability for each axiom in axiom pool
                 # order: ref, sym, tran, inver, sub, equi, inferC
                 # update_axioms:
                 #            1) calculate probability for each axiom in axiom pool with current embeddings
                 #            2) update the valid_axioms
                 axioms_probability = self.update_axiom()
-                #self.model.update_train_triples(epoch = self.epoch, update_per= self.args.update_axiom_per)
                 updated_train_data = self.model.update_train_triples(epoch = self.epoch, update_per= self.args.update_axiom_per)
                 if updated_train_data:
                     self.trainer.datamodule.data_train=updated_train_data
-                #print('axiom_probability: %s' % (axioms_probability))
+                    self.trainer.datamodule.train_sampler.count = self.trainer.datamodule.train_sampler.count_frequency(updated_train_data)
 
 
     def update_axiom(self):
@@ -97,8 +95,8 @@ class IterELitModel(BaseLitModel):
 
     '''这里设置优化器和lr_scheduler'''
     def configure_optimizers(self):
-        milestones = int(self.args.max_epochs / 2)
+        milestones = [5,50]
         optimizer = self.optimizer_class(self.model.parameters(), lr=self.args.lr)
-        StepLR = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[milestones], gamma=0.1)
+        StepLR = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=milestones, gamma=0.1)
         optim_dict = {'optimizer': optimizer, 'lr_scheduler': StepLR}
         return optim_dict
