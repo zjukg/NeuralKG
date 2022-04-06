@@ -120,7 +120,7 @@ train_bs: 2048
 train_sampler_class: UniSampler
 update_axiom_per: 2
 use_wandb: false
-use_weight: false
+use_weight: true
 val_check_interval: 1.0
 weight_decay: 0.01
 weights_save_path: null
