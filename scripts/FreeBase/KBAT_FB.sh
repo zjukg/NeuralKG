@@ -15,8 +15,8 @@ MAX_EPOCHS=3400
 NUM_NEG=20
 LEARNING_RATE=0.001
 MARGIN=1.0
-LIMIT_VAL_BATCHES=0
-GPU=1
+CHECK_PER_EPOCH=3400
+GPU=2
 
 CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
     --dataset_name $DATASET_NAME \
@@ -34,7 +34,7 @@ CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
     --num_neg $NUM_NEG \
     --lr $LEARNING_RATE \
     --margin $MARGIN \
-    --limit_val_batches $LIMIT_VAL_BATCHES \
+    --check_per_epoch $CHECK_PER_EPOCH \
     --use_wandb \
     --save_config \
     

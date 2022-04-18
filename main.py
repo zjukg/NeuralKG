@@ -94,7 +94,8 @@ def main():
     '''保存参数到config'''
     if args.save_config:
         save_config(args)
-
+    if args.use_wandb:
+        logger.watch(lit_model)
     if not args.test_only:
         # train&valid
         trainer.fit(lit_model, datamodule=kgdata)

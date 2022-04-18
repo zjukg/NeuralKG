@@ -15,7 +15,7 @@ NUM_NEG=20
 MARGIN=1.0
 LEARNING_RATE=0.001
 NUM_WORKERS=16
-LIMIT_VAL_BATCHES=0
+CHECK_PER_EPOCH=3400
 GPU=2
 
 CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
@@ -35,6 +35,7 @@ CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
     --lr $LEARNING_RATE \
     --num_workers $NUM_WORKERS \
     --limit_val_batches $LIMIT_VAL_BATCHES \
+    --check_per_epoch $CHECK_PER_EPOCH \
     --use_wandb \
     --save_config \
     

@@ -124,6 +124,20 @@ class KBAT(nn.Module):
             score = self.forward_Con(triples, mode)
         return score
 
+    def get_score(self, batch, mode):
+        """The functions used in the testing phase
+
+        Args:
+            batch: A batch of data.
+            mode: Choose head-predict or tail-predict.
+
+        Returns:
+            score: The score of triples.
+        """
+        triples = batch["positive_sample"]
+        score = self.forward_Con(triples, mode)
+        return score
+
     def forward_Con(self, triples, mode):
         score = None
 
@@ -133,7 +147,7 @@ class KBAT(nn.Module):
             tail_emb = self.entity_embeddings[triples[:, 2]].unsqueeze(1)
             score = self.cal_Con_score(head_emb, rela_emb, tail_emb)
                 
-        elif mode == 'head-batch':
+        elif mode == 'head_predict':
             head_emb = self.entity_embeddings.unsqueeze(1)  # [1, num_ent, dim]
             for triple in triples:
                 rela_emb = self.relation_embeddings[triple[1]].\
@@ -148,7 +162,7 @@ class KBAT(nn.Module):
                     score = torch.cat((score, s), dim=0)
 
 
-        elif mode == 'tail-batch':
+        elif mode == 'tail_predict':
             tail_emb = self.entity_embeddings.unsqueeze(1)  # [1, num_ent, dim]
             for triple in triples:
                 head_emb = self.entity_embeddings[triple[0]].\
