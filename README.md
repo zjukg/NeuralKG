@@ -55,7 +55,7 @@ KGEs**. We provide [comprehensive documents](https://zjukg.github.io/NeuralKG/in
 
 ## Mar, 2022
 * We have provided [Google Colab Tutotials](https://drive.google.com/drive/folders/1OyuxvdjRNFzRuheNZaGGCsPe75T1pW1P?usp=sharing) help users use our library
-* We have provided a new [blog](http://neuralkg.zjukg.org/blog/) about how to use NeuralKG on custom datasets
+* We have provided a new [blog](http://neuralkg.zjukg.org/uncategorized/neuralkg-for-recommendation%ef%bf%bc/) about how to use NeuralKG on custom datasets
 
 ## Feb, 2022
 * We have released a paper [NeuralKG: An Open Source Library for Diverse Representation Learning of Knowledge Graphs](https://arxiv.org/abs/2202.12571)
