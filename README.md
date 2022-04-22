@@ -28,7 +28,7 @@
 </p>
 
 NeuralKG is a python-based library for diverse representation learning of knowledge graphs implementing **Conventional KGEs**, **GNN-based KGEs**, and **Rule-based
-KGEs**. We provide [comprehensive documents](https://zjukg.github.io/NeuralKG/index.html) for beginners and an [online website](http://neuralkg.zjukg.cn/) to organize an open and shared KG representation learning community.
+KGEs**. We provide [comprehensive documents](https://zjukg.github.io/NeuralKG/index.html) for beginners and an [online website](http://neuralkg.zjukg.org/) to organize an open and shared KG representation learning community.
 
 <br>
 
@@ -55,7 +55,7 @@ KGEs**. We provide [comprehensive documents](https://zjukg.github.io/NeuralKG/in
 
 ## Mar, 2022
 * We have provided [Google Colab Tutotials](https://drive.google.com/drive/folders/1OyuxvdjRNFzRuheNZaGGCsPe75T1pW1P?usp=sharing) help users use our library
-* We have provided a new [blog](http://neuralkg.zjukg.cn/index.php/blogs/) about how to use NeuralKG on custom datasets
+* We have provided a new [blog](http://neuralkg.zjukg.org/blog/) about how to use NeuralKG on custom datasets
 
 ## Feb, 2022
 * We have released a paper [NeuralKG: An Open Source Library for Diverse Representation Learning of Knowledge Graphs](https://arxiv.org/abs/2202.12571)
