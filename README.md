@@ -34,18 +34,23 @@ KGEs**. We provide [comprehensive documents](https://zjukg.github.io/NeuralKG/in
 
 # Table of Contents
 
-* [What's New](#whats-new)
-* [Overview](#Overview)
-* [Demo](#Demo)
-* [Implemented KGEs](#ImplementedKGEs)
-* [Quick Start](#quick-start)
-    * [Installation](#Installation)
-   * [Training](#Training)
-   * [Evaluation](#Evaluation)
-   * [Hyperparameter Tuning](#Hyperparameter-Tuning)
-* [Notebook Guide](#Notebook-Guide)
-* [Reproduced Results](#Reproduced-Results)
-* [Citation](#citation)
+- [Table of Contents](#table-of-contents)
+- [😃What's New](#whats-new)
+  - [Mar, 2022](#mar-2022)
+  - [Feb, 2022](#feb-2022)
+- [Overview](#overview)
+- [Demo](#demo)
+- [Implemented KGEs](#implemented-kges)
+- [Quick Start](#quick-start)
+  - [Installation](#installation)
+  - [Training](#training)
+  - [Evaluation](#evaluation)
+  - [Hyperparameter Tuning](#hyperparameter-tuning)
+- [Reproduced Results](#reproduced-results)
+- [Notebook Guide](#notebook-guide)
+- [Detailed Documentation](#detailed-documentation)
+- [Citation](#citation)
+- [NeuralKG Core Team](#neuralkg-core-team)
 <!-- * [To do](#to-do) -->
 
 
@@ -162,7 +167,7 @@ command:
   - ${program}
   - ${args}
 program: main.py
-method: grid
+method: bayes
 metric:
   goal: maximize
   name: Eval|hits@10

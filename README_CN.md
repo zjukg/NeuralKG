@@ -45,6 +45,7 @@ NeuralKG是一个支持多种知识图谱表示学习/知识图谱嵌入（Knowl
 - [Notebook教程](#notebook教程)
 - [详细文档](#详细文档)
 - [引用](#引用)
+- [NeuralKG核心团队](#neuralkg核心团队)
 <!-- * [To do](#to-do) -->
 
 <br>
@@ -159,7 +160,7 @@ command:
   - ${program}
   - ${args}
 program: main.py
-method: grid
+method: bayes
 metric:
   goal: maximize
   name: Eval|hits@10
