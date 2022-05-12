@@ -151,7 +151,7 @@ python main.py --test_only --checkpoint_dir <your-model-path>
 ## 超参调节
 NeuralKG使用[Weights&Biases](https://wandb.ai/site)进行超参数调节，支持多种超参优化例如网格搜索、随机搜索和贝叶斯优化。搜索类型和搜索空间可以通过配置（*.yaml）文件进行设置。
 
-下面展示了在FB15k-237上训练TransE，并使用网格搜索（grid search）进行超参数调节的配置文件：
+下面展示了在FB15k-237上训练TransE，并使用贝叶斯搜索（bayes search）进行超参数调节的配置文件：
 
 ```
 command:

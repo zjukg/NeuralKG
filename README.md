@@ -159,7 +159,7 @@ python main.py --test_only --checkpoint_dir <your-model-path>
 ## Hyperparameter Tuning
 NeuralKG utilizes [Weights&Biases](https://wandb.ai/site) supporting various forms of hyperparameter optimization such as grid search, Random search, and Bayesian optimization. The search type and search space are specified in the configuration file in the format "*.yaml" to perform hyperparameter optimization.
 
-The following config file displays hyperparameter optimization of the TransE on the FB15K-237 dataset using grid search:
+The following config file displays hyperparameter optimization of the TransE on the FB15K-237 dataset using bayes search:
 ```
 command:
   - ${env}
