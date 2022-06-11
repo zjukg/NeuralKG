@@ -8,3 +8,4 @@ from .SimplE import SimplE
 from .BoxE import BoxE
 from .ConvE import ConvE
 from .CrossE import CrossE
+from .HAKE import HAKE

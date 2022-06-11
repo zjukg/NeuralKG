@@ -750,7 +750,7 @@ class KBATSampler(BaseSampler):
             if source in self.neighbours.keys():
                 nhop_list = self.neighbours[source][nbd_size]
                 for i, tup in enumerate(nhop_list):
-                    if(i >= 2): 
+                    if(self.args.partial_2hop and i >= 2): 
                         break
                     batch_source_triples.append([source, 
                                                 tup[0][-1], 

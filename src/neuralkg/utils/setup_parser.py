@@ -65,6 +65,10 @@ def setup_parser():
     # parser only for ComplEx_NNE
     parser.add_argument('--mu', default=10, type=float, help='only on ComplEx_NNE,penalty coefficient for ComplEx_NNE')
     
+    # paerser only for KBAT
+    parser.add_argument('--epoch_GAT', default=3000, type=int, help='only on KBAT, the epoch of GAT model')
+    parser.add_argument("-p2hop", "--partial_2hop", default=False, action='store_true')
+
     # parser only for CrossE
     parser.add_argument('--dropout', default=0.5, type=float, help='only on CrossE,for Dropout')
     parser.add_argument('--neg_weight', default=50, type=int, help='only on CrossE, make up label')
@@ -84,6 +88,10 @@ def setup_parser():
     parser.add_argument("--axiom_weight", default=1.0, type=float, help="in IterE.py")
     parser.add_argument("--inject_triple_percent", default=1.0, type=float, help="in IterE.py")
     parser.add_argument("--update_axiom_per",default=2, type=int, help='in IterELitModel.py')
+
+    #parser only for HAKE
+    parser.add_argument("--phase_weight", default=1.0, type=float, help='only on HAKE,The weight of phase part')
+    parser.add_argument("--modulus_weight", default=1.0, type=float, help='only on HAKE,The weight of modulus part')
     
     # Get data, model, and LitModel specific arguments
     lit_model_group = parser.add_argument_group("LitModel Args")

@@ -31,6 +31,7 @@ NeuralKG是一个支持多种知识图谱表示学习/知识图谱嵌入（Knowl
 
 - [目录](#目录)
 - [😃最新消息](#最新消息)
+  - [2022年6月](#2022年6月)
   - [2022年3月](#2022年3月)
   - [2022年2月](#2022年2月)
 - [工具概览](#工具概览)
@@ -51,6 +52,9 @@ NeuralKG是一个支持多种知识图谱表示学习/知识图谱嵌入（Knowl
 <br>
 
 # 😃最新消息
+
+## 2022年6月
+* 我们添加了[HAKE](https://arxiv.org/abs/1911.09419)模型
 
 ## 2022年3月
 * 我们提供了一个[Google Colab教程](https://drive.google.com/drive/folders/1OyuxvdjRNFzRuheNZaGGCsPe75T1pW1P?usp=sharing)帮助用户使用我们的工具包
@@ -93,7 +97,7 @@ NeuralKG在自定义知识图谱demo_kg上运行的示例。
 
 |类别| 模型 |
 |:--:|:--------------:|
-|传统知识图谱嵌入（KGEModel）|[TransE](https://papers.nips.cc/paper/2013/hash/1cecc7a77928ca8133fa24680a88d2f9-Abstract.html), [TransH](https://ojs.aaai.org/index.php/AAAI/article/view/8870), [TransR](https://www.aaai.org/ocs/index.php/AAAI/AAAI15/paper/viewFile/9571/9523/), [ComplEx](http://proceedings.mlr.press/v48/trouillon16.pdf), [DistMult](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/ICLR2015_updated.pdf), [RotatE](https://arxiv.org/abs/1902.10197), [ConvE](https://arxiv.org/abs/1707.01476), [BoxE](https://arxiv.org/pdf/2007.06267.pdf), [CrossE](https://arxiv.org/abs/1903.04750), [SimplE](https://arxiv.org/abs/1802.04868)|
+|传统知识图谱嵌入（KGEModel）|[TransE](https://papers.nips.cc/paper/2013/hash/1cecc7a77928ca8133fa24680a88d2f9-Abstract.html), [TransH](https://ojs.aaai.org/index.php/AAAI/article/view/8870), [TransR](https://www.aaai.org/ocs/index.php/AAAI/AAAI15/paper/viewFile/9571/9523/), [ComplEx](http://proceedings.mlr.press/v48/trouillon16.pdf), [DistMult](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/ICLR2015_updated.pdf), [RotatE](https://arxiv.org/abs/1902.10197), [ConvE](https://arxiv.org/abs/1707.01476), [BoxE](https://arxiv.org/pdf/2007.06267.pdf), [CrossE](https://arxiv.org/abs/1903.04750), [SimplE](https://arxiv.org/abs/1802.04868), [HAKE]((https://arxiv.org/abs/1911.09419))|
 |基于图神经网络的知识图谱嵌入（GNNModel）|[RGCN](https://arxiv.org/abs/1703.06103), [KBAT](https://arxiv.org/abs/1906.01195), [CompGCN](https://arxiv.org/abs/1906.01195), [XTransE](https://link.springer.com/chapter/10.1007/978-981-15-3412-6_8)|
 |基于规则的知识图谱嵌入（RuleModel）|[ComplEx-NNE+AER](https://aclanthology.org/P18-1011/), [RUGE](https://arxiv.org/abs/1711.11231), [IterE](https://arxiv.org/abs/1903.08948)|
 
@@ -199,9 +203,10 @@ parameters:
 |ConvE|0.32|0.23|0.35|0.50|
 |RotatE|0.33|0.23|0.37|0.53|
 |BoxE|0.32|0.22|0.36|0.52|
+|HAKE|0.34|0.24|0.38|0.54|
 |XTransE|0.29|0.19|0.31|0.45|
 |RGCN|0.25|0.16|0.27|0.43|
-|KBAT*|0.19|0.11|0.22|0.38|
+|KBAT*|0.28|0.18|0.31|0.46|
 |CompGCN|0.34|0.25|0.38|0.52|
 |IterE|0.26|0.19|0.29|0.41|
 

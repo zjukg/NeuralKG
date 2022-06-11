@@ -16,7 +16,7 @@ NUM_NEG=20
 LEARNING_RATE=0.001
 MARGIN=1.0
 CHECK_PER_EPOCH=3400
-GPU=2
+GPU=3
 
 CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
     --dataset_name $DATASET_NAME \
@@ -35,6 +35,7 @@ CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
     --lr $LEARNING_RATE \
     --margin $MARGIN \
     --check_per_epoch $CHECK_PER_EPOCH \
+    --partial_2hop \
     --use_wandb \
     --save_config \
     

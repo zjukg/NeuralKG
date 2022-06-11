@@ -23,7 +23,7 @@ class KBATLitModel(BaseLitModel):
     
     def training_step(self, batch, batch_idx):
         num_epoch  = self.current_epoch
-        if num_epoch < 3000: 
+        if num_epoch < self.args.epoch_GAT: 
             model   = "GAT"
             adj     = batch['adj_matrix']
             n_hop   = batch['n_hop']
@@ -71,13 +71,13 @@ class KBATLitModel(BaseLitModel):
         
     '''这里设置优化器和lr_scheduler'''
     def configure_optimizers(self):
-        if self.current_epoch < 3000:
+        if self.current_epoch < self.args.epoch_GAT:
             optimizer = self.optimizer_class(self.model.parameters(), lr=self.args.lr, weight_decay=1e-6)
             StepLR = torch.optim.lr_scheduler.StepLR(optimizer, step_size=500, gamma=0.5, last_epoch=-1)
 
         else:
             optimizer = self.optimizer_class(self.model.parameters(), lr=self.args.lr, weight_decay=1e-5)
-            StepLR = torch.optim.lr_scheduler.StepLR(optimizer, step_size=25, gamma=0.5, last_epoch=-1)
+            StepLR = torch.optim.lr_scheduler.StepLR(optimizer, step_size=200, gamma=0.5, last_epoch=-1)
 
         optim_dict = {'optimizer': optimizer, 'lr_scheduler': StepLR}
         return optim_dict
