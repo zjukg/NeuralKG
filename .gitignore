@@ -291,5 +291,4 @@ wandb/
 __pycache__
 *.pyc
 docs/
-demo.py
 launch.json
