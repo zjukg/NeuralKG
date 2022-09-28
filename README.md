@@ -36,6 +36,7 @@ KGEs**. We provide [comprehensive documents](https://zjukg.github.io/NeuralKG/in
 
 - [Table of Contents](#table-of-contents)
 - [😃What's New](#whats-new)
+  - [Sep, 2022](#sep-2022)
   - [Jun, 2022](#jun-2022)
   - [Mar, 2022](#mar-2022)
   - [Feb, 2022](#feb-2022)
@@ -58,6 +59,9 @@ KGEs**. We provide [comprehensive documents](https://zjukg.github.io/NeuralKG/in
 <br>
 
 # 😃What's New
+
+## Sep, 2022
+* We add the [PairRE](https://arxiv.org/pdf/2011.03798.pdf) model for our library
 
 ## Jun, 2022
 * We add the [HAKE](https://arxiv.org/abs/1911.09419) model for our library
@@ -211,6 +215,7 @@ There are some reproduced model results on FB15K-237 dataset using NeuralKG as b
 |RotatE|0.33|0.23|0.37|0.53|
 |BoxE|0.32|0.22|0.36|0.52|
 |HAKE|0.34|0.24|0.38|0.54|
+|PairRE|0.35|0.25|0.38|0.54|
 |XTransE|0.29|0.19|0.31|0.45|
 |RGCN|0.25|0.16|0.27|0.43|
 |KBAT*|0.28|0.18|0.31|0.46|
