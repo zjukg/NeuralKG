@@ -51,7 +51,6 @@ def setup_parser():
     parser.add_argument('--test_only', default=False, action='store_true')
     parser.add_argument('--shuffle', default=True, action='store_false')
     parser.add_argument('--norm_flag', default=False, action='store_true')
-    parser.add_argument('--bern_flag', default=False, action='store_true')
 
     #parser only for Ruge
     parser.add_argument('--slackness_penalty', default=0.01, type=float)
@@ -92,6 +91,9 @@ def setup_parser():
     #parser only for HAKE
     parser.add_argument("--phase_weight", default=1.0, type=float, help='only on HAKE,The weight of phase part')
     parser.add_argument("--modulus_weight", default=1.0, type=float, help='only on HAKE,The weight of modulus part')
+
+    #parser only for DualE
+    parser.add_argument("--regularization_two", default=0, type=float, help='only on DualE, regularization_two')
     
     # Get data, model, and LitModel specific arguments
     lit_model_group = parser.add_argument_group("LitModel Args")

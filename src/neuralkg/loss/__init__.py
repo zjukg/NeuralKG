@@ -7,3 +7,4 @@ from .KBAT_Loss import KBAT_Loss
 from .CrossE_Loss import CrossE_Loss
 from .Margin_Loss import Margin_Loss
 from .RugE_Loss import RugE_Loss
+from .Softplus_Loss import Softplus_Loss

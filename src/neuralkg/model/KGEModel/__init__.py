@@ -10,3 +10,4 @@ from .ConvE import ConvE
 from .CrossE import CrossE
 from .HAKE import HAKE
 from .PairRE import PairRE
+from .DualE import DualE

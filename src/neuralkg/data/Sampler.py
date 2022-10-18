@@ -100,12 +100,14 @@ class BernSampler(BaseSampler):
         """
         neg_size_h = 0
         neg_size_t = 0
-        prob = self.rig_mean[r] / (self.rig_mean[r] + self.lef_mean[r]) if self.args.bern_flag else 0.5
+        prob = self.rig_mean[r] / (self.rig_mean[r] + self.lef_mean[r])
         for i in range(neg_size):
-            if random.random() < prob:
+            if random.random() > prob:
                 neg_size_h += 1
             else:
                 neg_size_t += 1
+
+        res = []
 
         neg_list_h = []
         neg_cur_size = 0
@@ -115,7 +117,10 @@ class BernSampler(BaseSampler):
             neg_cur_size += len(neg_tmp_h)
         if neg_list_h != []:
             neg_list_h = np.concatenate(neg_list_h)
-
+        
+        for hh in neg_list_h[:neg_size_h]:
+            res.append((hh, r, t))
+        
         neg_list_t = []
         neg_cur_size = 0
         while neg_cur_size < neg_size_t:
@@ -124,8 +129,11 @@ class BernSampler(BaseSampler):
             neg_cur_size += len(neg_tmp_t)
         if neg_list_t != []:
             neg_list_t = np.concatenate(neg_list_t)
+        
+        for tt in neg_list_t[:neg_size_t]:
+            res.append((h, r, tt))
 
-        return np.hstack((neg_list_h[:neg_size_h], neg_list_t[:neg_size_t]))
+        return res
 
     def sampling(self, data):
         """Using bernoulli distribution to select whether to replace the head entity or tail entity.
@@ -138,11 +146,15 @@ class BernSampler(BaseSampler):
         """
         batch_data = {}
         neg_ent_sample = []
+
         batch_data['mode'] = 'bern'
         for h, r, t in data:
-            neg_ent_sample = self.__normal_batch(h, r, t, self.args.num_neg)
+            neg_ent = self.__normal_batch(h, r, t, self.args.num_neg)
+            neg_ent_sample += neg_ent
+        
         batch_data["positive_sample"] = torch.LongTensor(np.array(data))
-        batch_data['negative_sample'] = torch.LongTensor(np.array(neg_ent_sample))
+        batch_data["negative_sample"] = torch.LongTensor(np.array(neg_ent_sample))
+
         return batch_data
     
     def calc_bern(self):
