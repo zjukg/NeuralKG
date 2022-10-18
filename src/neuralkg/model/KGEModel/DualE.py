@@ -13,7 +13,7 @@ class DualE(Model):
         ent_emb: Entity embedding, shape:[num_ent, emb_dim * 8].
         rel_emb: Relation embedding, shape:[num_rel, emb_dim * 8].
     
-    .. Dual Quaternion Knowledge Graph Embeddings: https://ojs.aaai.org/index.php/AAAI/article/view/16850/16657
+    .. Dual Quaternion Knowledge Graph Embeddings: https://ojs.aaai.org/index.php/AAAI/article/view/16850
     """
     def __init__(self, args):
         super(DualE, self).__init__(args)
