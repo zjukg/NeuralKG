@@ -5,7 +5,7 @@ DATASET_NAME=WN18RR
 DATA_PATH=$DATA_DIR/$DATASET_NAME
 LITMODEL_NAME=XTransELitModel
 TRAIN_SAMPLER_CLASS=XTransESampler
-LOSS_NAME=Margin_Loss
+LOSS_NAME=Adv_Loss
 ADV_TEMP=0.5
 MAX_EPOCHS=1000
 EMB_DIM=500
@@ -17,7 +17,7 @@ LEARNING_RATE=0.001
 REGULARIZATION=0
 CHECK_PER_EPOCH=10
 NUM_WORKERS=32
-GPU=1
+GPU=0
 
 CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
     --model_name $MODEL_NAME \
@@ -27,6 +27,7 @@ CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
     --train_sampler_class $TRAIN_SAMPLER_CLASS \
     --loss_name $LOSS_NAME \
     --adv_temp $ADV_TEMP \
+    --negative_adversarial_sampling \
     --max_epochs $MAX_EPOCHS \
     --emb_dim $EMB_DIM \
     --train_bs $TRAIN_BS \

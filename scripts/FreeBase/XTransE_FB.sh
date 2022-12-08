@@ -7,7 +7,7 @@ LITMODEL_NAME=XTransELitModel
 TRAIN_SAMPLER_CLASS=XTransESampler
 MAX_EPOCHS=1000
 EMB_DIM=500
-LOSS_NAME=Margin_Loss
+LOSS_NAME=Adv_Loss
 ADV_TEMP=0.5
 TRAIN_BS=4096
 EVAL_BS=128
@@ -29,6 +29,7 @@ CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
     --emb_dim $EMB_DIM \
     --loss_name $LOSS_NAME \
     --adv_temp $ADV_TEMP \
+    --negative_adversarial_sampling \
     --train_bs $TRAIN_BS \
     --eval_bs $EVAL_BS \
     --num_neg $NUM_NEG \
