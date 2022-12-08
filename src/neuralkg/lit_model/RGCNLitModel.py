@@ -1,8 +1,6 @@
 from logging import debug
 import pytorch_lightning as pl
 import torch
-import sys
-sys.path.append("../../src/neuralkg")   
 import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
