@@ -22,6 +22,14 @@ class KGDataModule(BaseDataModule):
         self.num_workers = self.args.num_workers
         self.train_sampler = train_sampler
         self.test_sampler = test_sampler
+        
+        #for SEGNN 
+        #TODO:SEGNN
+        if self.args.model_name == 'SEGNN':
+            self.data_train = self.train_sampler.get_train()
+            single_epoch_step = len(self.train_dataloader()) + 1
+            self.args.maxsteps = self.args.max_epochs * single_epoch_step
+            self.args.warm_up_steps = int(single_epoch_step * self.args.warmup_epoch)
 
 
     def get_data_config(self):
@@ -72,7 +80,7 @@ class KGDataModule(BaseDataModule):
             drop_last=True,
             collate_fn=self.train_sampler.sampling,
         )
-
+            
     def val_dataloader(self):
         return DataLoader(
             self.data_val,

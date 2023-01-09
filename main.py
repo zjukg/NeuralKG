@@ -40,9 +40,19 @@ def main():
         model = model_class(args, train_sampler, test_sampler)
     else:
         model = model_class(args)
+    
+    if args.model_name == 'SEGNN':
+        src_list = train_sampler.get_train_1.src_list
+        dst_list = train_sampler.get_train_1.dst_list
+        rel_list = train_sampler.get_train_1.rel_list
+       
     """set up lit_model"""
     litmodel_class = import_class(f"neuralkg.lit_model.{args.litmodel_name}")
-    lit_model = litmodel_class(model, args)
+    
+    if args.model_name =='SEGNN':
+        lit_model = litmodel_class(model, args, src_list, dst_list, rel_list)
+    else:
+        lit_model = litmodel_class(model, args)
     """set up logger"""
     logger = pl.loggers.TensorBoardLogger("training/logs")
     if args.use_wandb:

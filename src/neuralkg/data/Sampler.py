@@ -10,6 +10,8 @@ import dgl
 import torch.nn.functional as F
 import time
 import queue
+from os.path import join
+import math
 
 class UniSampler(BaseSampler):
     """Random negative sampling 
@@ -293,7 +295,7 @@ class CrossESampler(BaseSampler):
     def sampling_keys(self):
         return ["sample", "label"]
 
-class ConvSampler(RevSampler):
+class ConvSampler(RevSampler): #TODO:SEGNN
     """Merging triples which have same head and relation, all false tail entities are taken as negative samples.      
     
     The triples which have same head and relation are treated as one triple.
@@ -318,19 +320,24 @@ class ConvSampler(RevSampler):
             batch_data: The training data.
         """
         batch_data = {}
-
+        t_triples = []
         self.label = torch.zeros(self.args.train_bs, self.args.num_ent)
         self.triples  = torch.LongTensor([hr for hr , _ in pos_hr_t])
+        for hr, t in pos_hr_t:
+            t_triples.append(t)
+        
         for id, hr_sample in enumerate([t for _ ,t in pos_hr_t]):
             self.label[id][hr_sample] = 1
     
         batch_data["sample"] = self.triples
         batch_data["label"] = self.label
+        batch_data["t_triples"] = t_triples
         
         return batch_data
 
     def sampling_keys(self):
-        return ["sample", "label"]
+        return ["sample", "label", "t_triples"]
+
 
 class XTransESampler(RevSampler):
     """Random negative sampling and recording neighbor entities.
@@ -902,7 +909,6 @@ class TestSampler(object):
 
     def get_hr2t_rt2h_from_all(self):
         """Get the set of hr2t and rt2h from all datasets(train, valid, and test), the data type is tensor.
-
         Update:
             self.hr2t_all: The set of hr2t.
             self.rt2h_all: The set of rt2h.
@@ -1078,6 +1084,198 @@ class CompGCNTestSampler(object):
     def get_sampling_keys(self):
         return ["positive_sample", "head_label", "tail_label",\
              "graph", "rela", "norm", "entity"]
+
+
+class SEGNNTrainProcess(RevSampler):
+    def __init__(self, args):
+        super().__init__(args)
+        self.args = args
+        self.use_weight = self.args.use_weight
+        #Parameters when constructing graph
+        self.src_list = []
+        self.dst_list = []
+        self.rel_list = []
+        self.hr2eid = ddict(list)
+        self.rt2eid = ddict(list)
+
+        self.ent_head = []
+        self.ent_tail = []
+        self.rel = []
+
+        self.query = []
+        self.label = []
+        self.rm_edges = []
+        self.set_scaling_weight = []
+
+        self.hr2t_train_1 = ddict(set)
+        self.ht2r_train_1 = ddict(set)
+        self.rt2h_train_1 = ddict(set)
+        self.get_h2rt_t2hr_from_train()
+        self.construct_kg()
+        self.get_sampling()
+    
+    def get_h2rt_t2hr_from_train(self):
+        for h, r, t in self.train_triples:
+            if r <= self.args.num_rel:
+                self.ent_head.append(h)
+                self.rel.append(r)
+                self.ent_tail.append(t)
+                self.hr2t_train_1[(h, r)].add(t)
+                self.rt2h_train_1[(r, t)].add(h)
+        
+        for h, r in self.hr2t_train:
+            self.hr2t_train_1[(h, r)] = np.array(list(self.hr2t_train[(h, r)]))
+        for r, t in self.rt2h_train:
+            self.rt2h_train_1[(r, t)] = np.array(list(self.rt2h_train[(r, t)]))
+    def __len__(self):
+        return len(self.label)
+    
+    def __getitem__(self, item):
+        h, r, t = self.query[item]
+        label = self.get_onehot_label(self.label[item])
+
+        rm_edges = torch.tensor(self.rm_edges[item], dtype=torch.int64)
+        rm_num = math.ceil(rm_edges.shape[0] * self.args.rm_rate)
+        rm_inds = torch.randperm(rm_edges.shape[0])[:rm_num]
+        rm_edges = rm_edges[rm_inds]
+
+        return (h, r, t), label, rm_edges
+
+    def get_onehot_label(self, label):
+        onehot_label = torch.zeros(self.args.num_ent)
+        onehot_label[label] = 1
+        if self.args.label_smooth != 0.0:
+            onehot_label = (1.0 - self.args.label_smooth) * onehot_label + (1.0 / self.args.num_ent)
+
+        return onehot_label
+    
+
+    def get_sampling(self):
+        for k, v in self.hr2t_train_1.items():
+            self.query.append((k[0], k[1], -1))
+            self.label.append(list(v))
+            self.rm_edges.append(self.hr2eid[k])
+        
+        for k, v in self.rt2h_train_1.items():
+            self.query.append((k[1], k[0] + self.args.num_rel, -1))
+            self.label.append(list(v))
+            self.rm_edges.append(self.rt2eid[k])
+
+    def construct_kg(self, directed=False):
+        """
+        construct kg.
+        :param directed: whether add inverse version for each edge, to make a undirected graph.
+        False when training SE-GNN model, True for comuting SE metrics.
+        :return:
+        """
+
+        # eid: record the edge id of queries, for randomly removing some edges when training
+        eid = 0
+        for h, t, r in zip(self.ent_head, self.ent_tail, self.rel):
+            if directed:
+                self.src_list.extend([h])
+                self.dst_list.extend([t])
+                self.rel_list.extend([r])
+                self.hr2eid[(h, r)].extend([eid])
+                self.rt2eid[(r, t)].extend([eid])
+                eid += 1
+            else:
+                # include the inverse edges
+                # inverse rel id: original id + rel num
+                self.src_list.extend([h, t])
+                self.dst_list.extend([t, h])
+                self.rel_list.extend([r, r + self.args.num_rel])
+                self.hr2eid[(h, r)].extend([eid, eid + 1])
+                self.rt2eid[(r, t)].extend([eid, eid + 1])
+                eid += 2
+
+        self.src_list, self.dst_list,self.rel_list = torch.tensor(self.src_list), torch.tensor(self.dst_list), torch.tensor(self.rel_list)
+
+class SEGNNTrainSampler(object):
+    def __init__(self, args):
+        self.args = args
+        self.get_train_1 = SEGNNTrainProcess(args)
+        self.get_valid_1 = SEGNNTrainProcess(args).get_valid()
+        self.get_test_1 = SEGNNTrainProcess(args).get_test()
+    
+    def get_train(self):
+        return self.get_train_1
+    def get_valid(self):
+        return self.get_valid_1
+    def get_test(self):
+        return self.get_test_1
+    
+    def sampling(self, data):
+        src = [d[0][0] for d in data]
+        rel = [d[0][1] for d in data]
+        dst = [d[0][2] for d in data]
+        label = [d[1] for d in data]  # list of list
+        rm_edges = [d[2] for d in data]
+
+        src = torch.tensor(src, dtype=torch.int64)
+        rel = torch.tensor(rel, dtype=torch.int64)
+        dst = torch.tensor(dst, dtype=torch.int64)  
+        label = torch.stack(label, dim=0)  
+        rm_edges = torch.cat(rm_edges, dim=0)  
+
+        return (src, rel, dst), label, rm_edges
+
+
+
+class SEGNNTestSampler(Dataset):
+    def __init__(self, sampler):
+        super().__init__()
+        self.sampler = sampler
+        #Parameters when constructing graph
+        self.hr2t_all = ddict(set)
+        self.rt2h_all = ddict(set)
+        self.get_hr2t_rt2h_from_all()
+
+    def get_hr2t_rt2h_from_all(self):
+        """Get the set of hr2t and rt2h from all datasets(train, valid, and test), the data type is tensor.
+
+        Update:
+            self.hr2t_all: The set of hr2t.
+            self.rt2h_all: The set of rt2h.
+        """
+        for h, r, t in self.sampler.get_train_1.all_true_triples:
+            self.hr2t_all[(h, r)].add(t)
+            # self.rt2h_all[(r, t)].add(h)
+        for h, r in self.hr2t_all:
+            self.hr2t_all[(h, r)] = torch.tensor(list(self.hr2t_all[(h, r)]))
+        # for r, t in self.rt2h_all:
+        #     self.rt2h_all[(r, t)] = torch.tensor(list(self.rt2h_all[(r, t)]))
+
+    def sampling(self, data):
+        """Sampling triples and recording positive triples for testing.
+
+        Args:
+            data: The triples used to be sampled.
+
+        Returns:
+            batch_data: The data used to be evaluated.
+        """
+        batch_data = {}
+        head_label = torch.zeros(len(data), self.sampler.args.num_ent)
+        tail_label = torch.zeros(len(data), self.sampler.args.num_ent)
+        filter_head = torch.zeros(len(data), self.sampler.args.num_ent)
+        filter_tail = torch.zeros(len(data), self.sampler.args.num_ent)
+        for idx, triple in enumerate(data):
+            head, rel, tail = triple
+            filter_tail[idx][self.hr2t_all[(head, rel)]] = -float('inf')
+            filter_tail[idx][tail] = 0
+            
+            tail_label[idx][self.hr2t_all[(head, rel)]] = 1.0
+        batch_data["positive_sample"] = torch.tensor(data)
+       
+        batch_data["filter_tail"] = filter_tail
+       
+        batch_data["tail_label"] = tail_label
+        return batch_data
+
+    def get_sampling_keys(self):
+        return ["positive_sample", "filter_tail", "tail_label"]
+        
 
 '''继承torch.Dataset'''
 class KGDataset(Dataset):

@@ -36,6 +36,7 @@ KGEs**. We provide [comprehensive documents](https://zjukg.github.io/NeuralKG/in
 
 - [Table of Contents](#table-of-contents)
 - [😃What's New](#whats-new)
+  - [Jan, 2023](#jan-2023)
   - [Oct, 2022](#oct-2022)
   - [Sep, 2022](#sep-2022)
   - [Jun, 2022](#jun-2022)
@@ -60,6 +61,9 @@ KGEs**. We provide [comprehensive documents](https://zjukg.github.io/NeuralKG/in
 <br>
 
 # 😃What's New
+
+## Jan, 2023
+* We add the [SEGNN](https://arxiv.org/abs/2109.11800) model for our library
 
 ## Oct, 2022
 * We add the [DualE](https://ojs.aaai.org/index.php/AAAI/article/view/16850) model for our library
@@ -114,7 +118,7 @@ There is a demonstration of NeuralKG.
 |Components| Models |
 |:---|:--------------:|
 |KGEModel|[TransE](https://papers.nips.cc/paper/2013/hash/1cecc7a77928ca8133fa24680a88d2f9-Abstract.html), [TransH](https://ojs.aaai.org/index.php/AAAI/article/view/8870), [TransR](https://www.aaai.org/ocs/index.php/AAAI/AAAI15/paper/viewFile/9571/9523/), [ComplEx](http://proceedings.mlr.press/v48/trouillon16.pdf), [DistMult](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/ICLR2015_updated.pdf), [RotatE](https://arxiv.org/abs/1902.10197), [ConvE](https://arxiv.org/abs/1707.01476), [BoxE](https://arxiv.org/pdf/2007.06267.pdf), [CrossE](https://arxiv.org/abs/1903.04750), [SimplE](https://arxiv.org/abs/1802.04868), [HAKE](https://arxiv.org/abs/1911.09419), [PairRE](https://arxiv.org/pdf/2011.03798.pdf), [DualE](https://ojs.aaai.org/index.php/AAAI/article/view/16850)|
-|GNNModel|[RGCN](https://arxiv.org/abs/1703.06103), [KBAT](https://arxiv.org/abs/1906.01195), [CompGCN](https://arxiv.org/abs/1906.01195), [XTransE](https://link.springer.com/chapter/10.1007/978-981-15-3412-6_8)|
+|GNNModel|[RGCN](https://arxiv.org/abs/1703.06103), [KBAT](https://arxiv.org/abs/1906.01195), [CompGCN](https://arxiv.org/abs/1906.01195), [XTransE](https://link.springer.com/chapter/10.1007/978-981-15-3412-6_8), [SEGNN](https://arxiv.org/abs/2109.11800)||
 |RuleModel|[ComplEx-NNE+AER](https://aclanthology.org/P18-1011/), [RUGE](https://arxiv.org/abs/1711.11231), [IterE](https://arxiv.org/abs/1903.08948)|
 
 <br>
@@ -225,6 +229,7 @@ There are some reproduced model results on FB15K-237 dataset using NeuralKG as b
 |RGCN|0.25|0.16|0.27|0.43|
 |KBAT*|0.28|0.18|0.31|0.46|
 |CompGCN|0.34|0.25|0.38|0.52|
+|SEGNN|0.36|0.27|0.39|0.54|
 |IterE|0.26|0.19|0.29|0.41|
 
 *:There is a label leakage error in KBAT, so the corrected result is poor compared with the paper result. Details in https://github.com/deepakn97/relationPrediction/issues/28

@@ -3,6 +3,9 @@ from IPython import embed
 import os
 import time
 import yaml
+import torch
+from torch.nn import Parameter
+from torch.nn.init import xavier_normal_
 
 def import_class(module_and_class_name: str) -> type:
     """Import class from a module, e.g. 'model.TransE'"""
@@ -29,3 +32,8 @@ def load_config(args, config_path):
         config = yaml.safe_load(f)
         args.__dict__.update(config)
     return args
+
+def get_param(*shape):
+    param = Parameter(torch.zeros(shape))
+    xavier_normal_(param)
+    return param 

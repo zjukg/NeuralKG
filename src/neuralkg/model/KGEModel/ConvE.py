@@ -5,6 +5,10 @@ from IPython import embed
 from torch.autograd import Variable
 
 
+from inspect import stack
+
+#TODO: ConvE and SEGNN
+
 class ConvE(Model):
 
     """`Convolutional 2D Knowledge Graph Embeddings`_ (ConvE), which use a 2D convolution network for embedding representation.
@@ -46,13 +50,15 @@ class ConvE(Model):
         self.inp_drop = torch.nn.Dropout(self.args.inp_drop)
         self.hid_drop = torch.nn.Dropout(self.args.hid_drop)
         self.feg_drop = torch.nn.Dropout2d(self.args.fet_drop)
+        self.ent_drop = torch.nn.Dropout(self.args.ent_drop_pred)
+        self.fc_drop = torch.nn.Dropout(self.args.fc_drop)
         # Setting net model
-        self.conv1 = torch.nn.Conv2d(1, 32, (3, 3), 1, 0, bias=True)
+        self.conv1 = torch.nn.Conv2d(1, out_channels=self.args.out_channel, kernel_size=self.args.ker_sz, stride=1, padding=0, bias=False)
         self.bn0 = torch.nn.BatchNorm2d(1)
-        self.bn1 = torch.nn.BatchNorm2d(32)
+        self.bn1 = torch.nn.BatchNorm2d(self.args.out_channel)
         self.bn2 = torch.nn.BatchNorm1d(self.args.emb_dim)
         self.register_parameter('b', torch.nn.Parameter(torch.zeros(self.args.num_ent)))
-        self.fc = torch.nn.Linear(self.args.hid_size,self.args.emb_dim)
+        self.fc = torch.nn.Linear(self.args.hid_size,self.args.emb_dim, bias=False)
 
     def score_func(self, head_emb, relation_emb, choose_emb = None):
 
@@ -72,22 +78,38 @@ class ConvE(Model):
         Returns:
             score: Final score of the embedding.
         """
-
-        stacked_inputs = torch.cat([head_emb, relation_emb], 2)
+        if self.args.model_name == "SEGNN":
+            head_emb = head_emb.view(-1, 1, head_emb.shape[-1])
+            relation_emb = relation_emb.view(-1, 1, relation_emb.shape[-1])
+            stacked_inputs = torch.cat([head_emb, relation_emb], 1)
+            stacked_inputs = torch.transpose(stacked_inputs, 2, 1).reshape((-1, 1, 2 * self.args.k_h, self.args.k_w))
+        else:
+            stacked_inputs = torch.cat([head_emb, relation_emb], 2)
         stacked_inputs = self.bn0(stacked_inputs)
         x = self.inp_drop(stacked_inputs)
+        #print(x==stacked_inputs)
         x = self.conv1(x)
         x = self.bn1(x)
         x = torch.nn.functional.relu(x)
-        x = self.feg_drop(x)
+        if self.args.model_name == 'SEGNN':
+            x = self.fc_drop(x)
+        else:
+            x = self.feg_drop(x)
         x = x.view(x.shape[0], -1)
         x = self.fc(x)
-        x = self.hid_drop(x)
-        x = self.bn2(x)
-        x = torch.nn.functional.relu(x)
-        x = torch.mm(x, self.emb_ent.weight.transpose(1,0)) if choose_emb == None \
-            else torch.mm(x, choose_emb.transpose(1, 0)) 
-        x += self.b.expand_as(x)
+        if self.args.model_name == 'SEGNN':
+            x = self.bn2(x)
+            x = torch.nn.functional.relu(x)
+            x = self.hid_drop(x)
+            choose_emb = self.ent_drop(choose_emb)
+            x = torch.mm(x, choose_emb.transpose(1,0))
+        else:
+            x = self.hid_drop(x)
+            x = self.bn2(x)
+            x = torch.nn.functional.relu(x)
+            x = torch.mm(x, self.emb_ent.weight.transpose(1,0)) if choose_emb == None \
+                else torch.mm(x, choose_emb.transpose(1, 0)) 
+            x += self.b.expand_as(x)
         x = torch.sigmoid(x)
         return x
 
@@ -105,6 +127,7 @@ class ConvE(Model):
         head_emb = self.emb_ent(triples[:, 0]).view(-1, 1, self.emb_dim1, self.emb_dim2)
         rela_emb = self.emb_rel(triples[:, 1]).view(-1, 1, self.emb_dim1, self.emb_dim2)
         score = self.score_func(head_emb, rela_emb)
+        
         return score
 
     def get_score(self, batch, mode="tail_predict"):
@@ -123,5 +146,3 @@ class ConvE(Model):
         rela_emb = self.emb_rel(triples[:, 1]).view(-1, 1, self.emb_dim1, self.emb_dim2)
         score = self.score_func(head_emb, rela_emb)
         return score
-
-
