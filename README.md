@@ -260,11 +260,26 @@ https://zjukg.github.io/NeuralKG/neuralkg.html
 Please cite our paper if you use NeuralKG in your work
 
 ```bibtex
-@article{zhang2022neuralkg,
-      title={NeuralKG: An Open Source Library for Diverse Representation Learning of Knowledge Graphs}, 
-      author={Zhang, Wen and Chen, Xiangnan and Yao, Zhen and Chen, Mingyang and Zhu, Yushan and Yu, Hongtao and Huang, Yufeng and others},
-      journal={arXiv preprint arXiv:2202.12571},
-      year={2022},
+@inproceedings{neuralkg,
+  author    = {Wen Zhang and
+               Xiangnan Chen and
+               Zhen Yao and
+               Mingyang Chen and
+               Yushan Zhu and
+               Hongtao Yu and
+               Yufeng Huang and
+               Yajing Xu and
+               Ningyu Zhang and
+               Zezhong Xu and
+               Zonggang Yuan and
+               Feiyu Xiong and
+               Huajun Chen},
+  title     = {NeuralKG: An Open Source Library for Diverse Representation Learning
+               of Knowledge Graphs},
+  booktitle = {{SIGIR}},
+  pages     = {3323--3328},
+  publisher = {{ACM}},
+  year      = {2022}
 }
 
 ```
