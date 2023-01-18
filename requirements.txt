@@ -1,0 +1,4 @@
+pytorch_lightning==1.5.10
+PyYAML>=6.0
+wandb>=0.12.7
+dgl>=0.7.1

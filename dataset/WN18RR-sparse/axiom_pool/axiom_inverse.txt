@@ -1,0 +1,4 @@
+_also_see	_also_see
+_verb_group	_verb_group
+_derivationally_related_form	_derivationally_related_form
+_similar_to	_similar_to

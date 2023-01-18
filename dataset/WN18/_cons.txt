@@ -1,0 +1,17 @@
+-_synset_domain_region_of,_member_of_domain_region	0.990654206
+-_instance_hypernym,_instance_hyponym	0.975942549
+-_synset_domain_topic_of,_member_of_domain_topic	0.993850359
+-_instance_hyponym,_instance_hypernym	0.975942549
+_also_see,_also_see	0.883671291
+-_synset_domain_usage_of,_member_of_domain_usage	0.994940978
+-_member_of_domain_usage,_synset_domain_usage_of	0.993265993
+-_has_part,_part_of	0.978635274
+-_member_of_domain_region,_synset_domain_region_of	0.987194412
+-_member_holonym,_member_meronym	0.998839739
+-_member_of_domain_topic,_synset_domain_topic_of	0.993510929
+-_verb_group,_verb_group	0.980573543
+-_member_meronym,_member_holonym	0.999129552
+-_part_of,_has_part	0.980987762
+-_derivationally_related_form,_derivationally_related_form	0.95163008
+-_hypernym,_hyponym	0.996630625
+-_hyponym,_hypernym	0.996935993
