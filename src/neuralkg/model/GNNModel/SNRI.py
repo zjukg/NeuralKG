@@ -1,3 +1,4 @@
+import dgl
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -5,7 +6,6 @@ import torch.nn.functional as F
 from .Grail import RGCN
 from .layer import BatchGRU
 from .RGCN import RelGraphConv
-from dgl import mean_nodes
 from neuralkg.model import TransE, DistMult
 
 class SNRI(nn.Module):
@@ -145,7 +145,7 @@ class SNRI(nn.Module):
     def forward(self, data, is_return_emb=False, cor_graph=False):
         # Initialize the embedding of entities
         g, rel_labels = data
-
+        g = dgl.batch(g)
         # Neighboring Relational Feature Module
         ## Initialize the embedding of nodes by neighbor relations
         if self.args.init_nei_rels == 'no':
@@ -169,7 +169,7 @@ class SNRI(nn.Module):
         g.ndata['repr'] = F.relu(self.batch_gru(g.ndata['repr'].view(-1, out_dim), graph_sizes()))
         node_hiddens = F.relu(self.W_o(g.ndata['repr']))  # num_nodes x hidden 
         g.ndata['repr'] = self.dropout(node_hiddens)  # num_nodes x hidden
-        g_out = mean_nodes(g, 'repr').view(-1, out_dim)
+        g_out = dgl.mean_nodes(g, 'repr').view(-1, out_dim)
 
         # Get embedding of target nodes (i.e. head and tail nodes)
         head_ids = (g.ndata['id'] == 1).nonzero().squeeze(1)
