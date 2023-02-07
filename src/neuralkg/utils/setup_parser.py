@@ -110,7 +110,7 @@ def setup_parser():
     parser.add_argument("--pk_path", type=str, default=None, help='specify the path for pickle file')
     parser.add_argument("--test_db_path", type=str, default=None, help='specify the path for test subgraph db')
     #model
-    parser.add_argument("--num_bases", "-b", type=int, default=100, help="Number of basis functions to use for GCN weights") #TODO: set
+    parser.add_argument("--num_bases", "-b", type=int, default=100, help="Number of basis functions to use for GCN weights")
     parser.add_argument("--kge_model", type=str, default="TransE", help="Which KGE model to load entity embeddings from")
     parser.add_argument("--use_kge_embeddings", "-kge", type=bool, default=False, help='whether to use pretrained KGE embeddings')
     parser.add_argument('--add_traspose_rels', '-tr', type=bool, default=False, help='whether to append adj matrix list with symmetric relations')

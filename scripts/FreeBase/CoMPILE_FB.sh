@@ -6,10 +6,10 @@ DATA_PATH=${DATA_DIR}/${DATASET_NAME}
 DB_PATH=${DATA_DIR}/${DATASET_NAME}_subgraph
 PK_PATH=${DATA_DIR}/${DATASET_NAME}.pkl
 TEST_DB_PATH=${DATA_DIR}/${DATASET_NAME}_ind/test_subgraphs
-EVAL_TASK=link_prediction
+EVAL_TASK=triple_classification
 TRAIN_SAMPLER_CLASS=DglSampler
 VALID_SAMPLER_CLASS=ValidDglSampler
-TEST_SAMPLER_CLASS=TestDglSampler
+TEST_SAMPLER_CLASS=TestDglSampler_auc
 LITMODEL_NAME=indGNNLitModel
 LOSS=Margin_Loss
 MAX_EPOCHS=30
@@ -25,7 +25,8 @@ EARLY_STOP_PATIENCE=20
 NUM_WORKERS=20
 DROPOUT=0
 CALC_HITS=1,5,10
-GPU=2
+GPU=1
+CHECKPOINT_DIR='output/link_prediction/FB15K237_v4/CoMPILE/epoch=26-Eval|auc=0.955.ckpt'
 
 CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
     --model_name $MODEL_NAME \
@@ -54,3 +55,5 @@ CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
     --dropout $DROPOUT \
     --calc_hits $CALC_HITS \
     --inductive \
+    --checkpoint_dir $CHECKPOINT_DIR \
+    --test_only \

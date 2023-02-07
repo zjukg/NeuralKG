@@ -231,6 +231,10 @@ class GRData(Dataset):
         
         self.args = args
         self.max_dbs = 3
+
+        self.m_h2r = None
+        self.m_t2r = None
+        
         if db_name_pos == 'test_pos':
             self.main_env = lmdb.open(self.args.test_db_path, readonly=True, max_dbs=self.max_dbs, lock=False)
         else:
@@ -260,6 +264,7 @@ class GRData(Dataset):
         self.ssp_graph = ssp_graph
         self.id2entity = id2entity
         self.id2relation = id2relation
+        
         if self.args.model_name == 'SNRI':
             self.m_h2r = m_h2r
             self.m_t2r = m_t2r
@@ -483,7 +488,6 @@ class GRData(Dataset):
                                     shape=(len(train_ent2idx), len(train_ent2idx))))
 
         return adj_list, triplets, train_ent2idx, train_rel2idx, train_idx2ent, train_idx2rel, h2r, m_h2r, t2r, m_t2r
-
 
     def generate_train(self):
         self.db_pos = self.main_env.open_db('train_pos'.encode())
