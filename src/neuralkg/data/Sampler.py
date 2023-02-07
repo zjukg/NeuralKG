@@ -22,10 +22,6 @@ class DglSampler(BaseGraphSampler):
 
         graphs_neg = [item for sublist in graphs_negs for item in sublist]
         r_labels_neg = [item for sublist in r_labels_negs for item in sublist]
-
-        if self.args.model_name == 'SNRI' or self.args.model_name == 'Grail':  #TODO： 需要特判
-            graphs_pos = dgl.batch(graphs_pos)
-            graphs_neg = dgl.batch(graphs_neg)
         
         r_labels_pos = torch.LongTensor(r_labels_pos)
         r_labels_neg = torch.LongTensor(r_labels_neg)
@@ -982,10 +978,6 @@ class ValidDglSampler(object):
         g_labels_neg = [item for sublist in g_labels_negs for item in sublist]
         r_labels_neg = [item for sublist in r_labels_negs for item in sublist]
 
-        if self.args.model_name == 'SNRI' or self.args.model_name == 'Grail':
-            graphs_pos = dgl.batch(graphs_pos)
-            graphs_neg = dgl.batch(graphs_neg)
-
         r_labels_pos = torch.LongTensor(r_labels_pos)
         r_labels_neg = torch.LongTensor(r_labels_neg)
 
@@ -1052,9 +1044,6 @@ class TestDglSampler(object):
 
             subgraphs.append(subgraph)
             r_labels.append(rel)
-
-        if self.args.model_name == 'SNRI' or self.args.model_name == 'Grail':
-            subgraphs = dgl.batch(subgraphs)
             
         r_labels = torch.LongTensor(r_labels)
 
@@ -1136,10 +1125,9 @@ class TestSNRISampler(object):
             subgraphs.append(subgraph)
             r_labels.append(rel)
 
-        batched_graph = dgl.batch(subgraphs)
         r_labels = torch.LongTensor(r_labels)
 
-        return (batched_graph, r_labels)
+        return (subgraphs, r_labels)
 
     def prepare_features(self, subgraph, n_labels, max_n_label, n_feats=None):
         # One hot encode the node label feature and concat to n_featsure
@@ -1172,10 +1160,6 @@ class TestDglSampler_auc(object):
         graphs_neg = [item for sublist in graphs_negs for item in sublist]
         g_labels_neg = [item for sublist in g_labels_negs for item in sublist]
         r_labels_neg = [item for sublist in r_labels_negs for item in sublist]
-
-        if self.args.model_name == 'SNRI' or self.args.model_name == 'Grail':
-            graphs_pos = dgl.batch(graphs_pos)
-            graphs_neg = dgl.batch(graphs_neg)
 
         r_labels_pos = torch.LongTensor(r_labels_pos)
         r_labels_neg = torch.LongTensor(r_labels_neg)

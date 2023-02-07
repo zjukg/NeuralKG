@@ -9,7 +9,7 @@ TEST_DB_PATH=${DATA_DIR}/${DATASET_NAME}_ind/test_subgraphs
 EVAL_TASK=link_prediction
 TRAIN_SAMPLER_CLASS=DglSampler
 VALID_SAMPLER_CLASS=ValidDglSampler
-TEST_SAMPLER_CLASS=TestDglSampler
+TEST_SAMPLER_CLASS=TestSNRISampler
 LITMODEL_NAME=SNRILitModel
 LOSS=Margin_Loss
 NUM_LAYERS=3
@@ -26,7 +26,7 @@ EARLY_STOP_PATIENCE=20
 NUM_WORKERS=20
 DROPOUT=0
 CALC_HITS=1,5,10
-GPU=0
+GPU=1
 
 CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
     --model_name $MODEL_NAME \
@@ -56,3 +56,4 @@ CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
     --dropout $DROPOUT \
     --calc_hits $CALC_HITS \
     --inductive \
+    

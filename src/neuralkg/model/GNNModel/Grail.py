@@ -23,6 +23,7 @@ class Grail(nn.Module):
 
     def forward(self, data):
         g, rel_labels = data
+        g = dgl.batch(g)
         g.ndata['h'], _ = self.gnn(g)
 
         g_out = dgl.mean_nodes(g, 'repr')

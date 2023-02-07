@@ -1,3 +1,4 @@
+import dgl
 import torch
 from neuralkg.eval_task import *
 from .BaseLitModel import BaseLitModel
@@ -30,6 +31,7 @@ class SNRILitModel(BaseLitModel):
         pos_score, s_G_pos, s_g_pos = self.model((pos_sample, pos_label), is_return_emb=True)
         neg_score = self.model((neg_sample, neg_label))
         _, _, s_g_cor = self.model((pos_sample, pos_label), is_return_emb=True, cor_graph=True)
+        pos_sample = dgl.batch(pos_sample)
         lbl_1 = torch.ones(pos_sample.batch_size)
         lbl_2 = torch.zeros(pos_sample.batch_size)
         lbl = torch.cat((lbl_1, lbl_2)).type_as(pos_score)
