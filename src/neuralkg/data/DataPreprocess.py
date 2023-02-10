@@ -816,7 +816,7 @@ class RevSampler(KGData):
             neg_cur_size += len(neg_tmp)
         return np.concatenate(neg_list)[:neg_size]
 
-class BaseGraphSampler(object):
+class BaseGraph(object):
     def __init__(self, args):
         self.args = args
         self.train_triples = GRData(args, 'train_pos', 'train_neg')

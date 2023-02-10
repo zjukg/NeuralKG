@@ -10,7 +10,7 @@ import time
 import queue
 from neuralkg.utils.tools import subgraph_extraction_labeling
 
-class DglSampler(BaseGraphSampler):
+class SubSampler(BaseGraph):
 
     def __init__(self, args):
         super().__init__(args)
@@ -964,7 +964,7 @@ class TestSampler(object):
     def get_sampling_keys(self):
         return ["positive_sample", "head_label", "tail_label"]
 
-class ValidDglSampler(object):
+class ValidSampler(object):
     def __init__(self, sampler):
         self.sampler = sampler
         self.args = sampler.args
@@ -991,7 +991,7 @@ class ValidDglSampler(object):
     def get_sampling_keys(self):
         return ['positive_sample', 'negative_sample', 'graph_label_pos', 'graph_label_neg']
 
-class TestDglSampler(object):
+class TestSampler_hit(object):
     def __init__(self, sampler):
         self.sampler = sampler
         self.args = sampler.args
@@ -1073,7 +1073,7 @@ class TestDglSampler(object):
 
         return subgraph
 
-class TestDglSampler_auc(object):
+class TestSampler_auc(object):
     def __init__(self, sampler):
         self.sampler = sampler
         self.args = sampler.args
