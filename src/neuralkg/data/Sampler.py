@@ -1016,7 +1016,7 @@ class TestDglSampler(object):
     def get_sampling_keys(self):
         return ['head_sample', 'tail_sample', 'head_target', 'tail_target']
 
-    def get_subgraphs(self, all_links, adj_list, dgl_adj_list, max_node_label_value, m_h2r=None, m_t2r=None):
+    def get_subgraphs(self, all_links, adj_list, dgl_adj_list, max_node_label_value, m_h2r, m_t2r):
 
         subgraphs = []
         r_labels = []
@@ -1041,7 +1041,7 @@ class TestDglSampler(object):
                                         {'type': torch.LongTensor([rel]),
                                         'label': torch.LongTensor([rel])})
 
-            if self.m_h2r != None and self.m_t2r != None:
+            if len(m_h2r) != 0 and len(m_t2r) != 0:
                 subgraph.ndata['out_nei_rels'] = torch.LongTensor(m_h2r[subgraph.ndata[dgl.NID]])
                 subgraph.ndata['in_nei_rels'] = torch.LongTensor(m_t2r[subgraph.ndata[dgl.NID]])
                 subgraph.ndata['r_label'] = torch.LongTensor(np.ones(subgraph.number_of_nodes()) * rel)

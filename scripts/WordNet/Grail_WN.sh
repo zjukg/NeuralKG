@@ -1,5 +1,5 @@
 DATA_DIR=dataset
-DATASET_NAME=WN18RR_v4
+DATASET_NAME=WN18RR_v1
 MODEL_NAME=Grail
 
 DATA_PATH=${DATA_DIR}/${DATASET_NAME}
@@ -28,6 +28,7 @@ NUM_WORKERS=20
 DROPOUT=0
 CALC_HITS=1,5,10
 GPU=0
+CHECKPOINT_DIR='output/link_prediction/WN18RR_v1/Grail/epoch=23-Eval|auc=0.931.ckpt'
 
 CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
     --model_name $MODEL_NAME \
@@ -58,5 +59,8 @@ CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
     --dropout $DROPOUT \
     --calc_hits $CALC_HITS \
     --inductive \
+    --checkpoint_dir $CHECKPOINT_DIR \
+    --test_only \
+    
     
 

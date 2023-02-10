@@ -833,6 +833,7 @@ class BaseGraphSampler(object):
 
         if self.args.eval_task == 'link_prediction':
             self.test_triples = self.generate_ind_test()
+            
         elif self.args.eval_task == 'triple_classification':
             if args.test_db_path is not None and not os.path.exists(args.test_db_path):
                 gen_subgraph_datasets(args, splits=['test'],
