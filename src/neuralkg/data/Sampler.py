@@ -1321,3 +1321,44 @@ class KGDataset(Dataset):
 
     def __getitem__(self, idx):
         return self.triples[idx]
+
+class MetaTrainSampler(BaseMetaSampler):
+    def __init__(self, args):
+        super().__init__(args)
+    
+    def sampling(self, data):
+        return data
+
+    def get_sampling_keys(self):
+        return []
+
+class MetaValidSampler(object):
+    def __init__(self, sampler):
+        self.sampler = sampler
+        self.args = sampler.args
+    
+    def sampling(self, data):
+        return data
+
+    def get_sampling_keys(self):
+        return []
+
+class MetaTestSampler(object):
+    def __init__(self, sampler):
+        self.sampler = sampler
+        self.args = sampler.args
+    
+    def sampling(self, data):
+        batch_data = {}
+
+        pos_triple = torch.stack([_[0] for _ in data], dim=0)
+        tail_cand = torch.stack([_[1] for _ in data], dim=0)
+        head_cand = torch.stack([_[2] for _ in data], dim=0)
+
+        batch_data["positive_sample"] = pos_triple
+        batch_data["tail_cand"] = tail_cand
+        batch_data["head_cand"] =  head_cand
+        return batch_data
+
+    def get_sampling_keys(self):
+        return ["positive_sample", "tail_cand", "head_cand"]

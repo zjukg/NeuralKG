@@ -33,8 +33,11 @@ class Adv_Loss(nn.Module):
                         * F.logsigmoid(-neg_score)).sum(dim=1)  #shape:[bs]
         else:
             neg_score = F.logsigmoid(-neg_score).mean(dim = 1)
-
-        pos_score = F.logsigmoid(pos_score).view(neg_score.shape[0]) #shape:[bs]
+        
+        if self.args.model_name == 'MorsE':
+            pos_score = F.logsigmoid(pos_score).squeeze(dim=1)
+        else:
+            pos_score = F.logsigmoid(pos_score).view(neg_score.shape[0]) #shape:[bs]
         # from IPython import embed;embed();exit()
 
         if self.args.use_weight:

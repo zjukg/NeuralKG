@@ -73,7 +73,7 @@ class KGDataModule(BaseDataModule):
             shuffle=True,
             batch_size=self.train_bs,
             num_workers=self.num_workers,
-            pin_memory=True,
+            pin_memory=False,
             drop_last=True,
             collate_fn=self.train_sampler.sampling,
         )
@@ -84,7 +84,7 @@ class KGDataModule(BaseDataModule):
             shuffle=False,
             batch_size=self.eval_bs,
             num_workers=self.num_workers,
-            pin_memory=True,
+            pin_memory=False,
             collate_fn=self.valid_sampler.sampling,
         )
 
@@ -94,6 +94,6 @@ class KGDataModule(BaseDataModule):
             shuffle=False,
             batch_size=self.test_bs,
             num_workers=self.num_workers,
-            pin_memory=True,
+            pin_memory=False,
             collate_fn=self.test_sampler.sampling,
         )

@@ -140,7 +140,14 @@ def setup_parser():
     parser.add_argument('--coef_dgi_loss', type=float, default=5, help='Coefficient of MI loss')
     parser.add_argument('--nei_rel_path', action='store_false', help='whether to consider neighboring relational paths')
     parser.add_argument('--path_agg', type=str, choices=['mean', 'att'], default='att', help='the manner of aggreating neighboring relational paths.')
-    
+    #MorsE
+    parser.add_argument("--meta_learning", default=False, action='store_true', help='using the meta_learning setting')
+    parser.add_argument('--num_train_subgraph', type=int, default=10000, help='the number of train subgraph')
+    parser.add_argument('--num_valid_subgraph', type=int, default=200, help='the number of valid subgraph')
+    parser.add_argument('--rw_0', default=10, type=int, help='the times of random walk')
+    parser.add_argument('--rw_1', default=10, type=int, help='the number of paths')
+    parser.add_argument('--rw_2', default=5, type=int, help='the length of random walk')
+    parser.add_argument('--num_sample_cand', default=5, type=int)
     # Get data, model, and LitModel specific arguments
     lit_model_group = parser.add_argument_group("LitModel Args")
     lit_model.BaseLitModel.add_to_argparse(lit_model_group)

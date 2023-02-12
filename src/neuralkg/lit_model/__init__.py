@@ -12,3 +12,4 @@ from .RugELitModel import RugELitModel
 
 from .indGNNLitModel import indGNNLitModel
 from .SNRILitModel import SNRILitModel
+from .MetaGNNLitModel import MetaGNNLitModel
