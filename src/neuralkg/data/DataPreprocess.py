@@ -10,7 +10,7 @@ from scipy.sparse import csc_matrix
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 from collections import defaultdict as ddict
-from neuralkg.utils import deserialize, ssp_multigraph_to_dgl, gen_subgraph_datasets, get_indtest_test_dataset_and_train_g
+from neuralkg.utils import deserialize, deserialize_RMPI, ssp_multigraph_to_dgl, gen_subgraph_datasets, get_indtest_test_dataset_and_train_g
 
 class KGData(object):
     """Data preprocessing of kg data.
@@ -231,7 +231,7 @@ class GRData(Dataset):
     def __init__(self, args, db_name_pos, db_name_neg):
         
         self.args = args
-        self.max_dbs = 3
+        self.max_dbs = 5
         if db_name_pos == 'test_pos':
             self.main_env = lmdb.open(self.args.test_db_path, readonly=True, max_dbs=self.max_dbs, lock=False)
         else:
@@ -269,21 +269,21 @@ class GRData(Dataset):
         with self.main_env.begin() as txn:
             self.max_n_label[0] = int.from_bytes(txn.get('max_n_label_sub'.encode()), byteorder='little')
             self.max_n_label[1] = int.from_bytes(txn.get('max_n_label_obj'.encode()), byteorder='little')
+            if self.args.model_name != 'RMPI':
+                self.avg_subgraph_size = struct.unpack('f', txn.get('avg_subgraph_size'.encode()))
+                self.min_subgraph_size = struct.unpack('f', txn.get('min_subgraph_size'.encode()))
+                self.max_subgraph_size = struct.unpack('f', txn.get('max_subgraph_size'.encode()))
+                self.std_subgraph_size = struct.unpack('f', txn.get('std_subgraph_size'.encode()))
 
-            self.avg_subgraph_size = struct.unpack('f', txn.get('avg_subgraph_size'.encode()))
-            self.min_subgraph_size = struct.unpack('f', txn.get('min_subgraph_size'.encode()))
-            self.max_subgraph_size = struct.unpack('f', txn.get('max_subgraph_size'.encode()))
-            self.std_subgraph_size = struct.unpack('f', txn.get('std_subgraph_size'.encode()))
+                self.avg_enc_ratio = struct.unpack('f', txn.get('avg_enc_ratio'.encode()))
+                self.min_enc_ratio = struct.unpack('f', txn.get('min_enc_ratio'.encode()))
+                self.max_enc_ratio = struct.unpack('f', txn.get('max_enc_ratio'.encode()))
+                self.std_enc_ratio = struct.unpack('f', txn.get('std_enc_ratio'.encode()))
 
-            self.avg_enc_ratio = struct.unpack('f', txn.get('avg_enc_ratio'.encode()))
-            self.min_enc_ratio = struct.unpack('f', txn.get('min_enc_ratio'.encode()))
-            self.max_enc_ratio = struct.unpack('f', txn.get('max_enc_ratio'.encode()))
-            self.std_enc_ratio = struct.unpack('f', txn.get('std_enc_ratio'.encode()))
-
-            self.avg_num_pruned_nodes = struct.unpack('f', txn.get('avg_num_pruned_nodes'.encode()))
-            self.min_num_pruned_nodes = struct.unpack('f', txn.get('min_num_pruned_nodes'.encode()))
-            self.max_num_pruned_nodes = struct.unpack('f', txn.get('max_num_pruned_nodes'.encode()))
-            self.std_num_pruned_nodes = struct.unpack('f', txn.get('std_num_pruned_nodes'.encode()))
+                self.avg_num_pruned_nodes = struct.unpack('f', txn.get('avg_num_pruned_nodes'.encode()))
+                self.min_num_pruned_nodes = struct.unpack('f', txn.get('min_num_pruned_nodes'.encode()))
+                self.max_num_pruned_nodes = struct.unpack('f', txn.get('max_num_pruned_nodes'.encode()))
+                self.std_num_pruned_nodes = struct.unpack('f', txn.get('std_num_pruned_nodes'.encode()))
 
         logging.info(f"Max distance from sub : {self.max_n_label[0]}, Max distance from obj : {self.max_n_label[1]}")
 
@@ -299,20 +299,34 @@ class GRData(Dataset):
     def __getitem__(self, index):
         with self.main_env.begin(db=self.db_pos) as txn:
             str_id = '{:08}'.format(index).encode('ascii')
-            nodes_pos, r_label_pos, g_label_pos, n_labels_pos = deserialize(txn.get(str_id)).values()
-            subgraph_pos = self.prepare_subgraphs(nodes_pos, r_label_pos, n_labels_pos)
+            if self.args.model_name == 'RMPI':
+                en_nodes_pos, r_label_pos, g_label_pos, en_n_labels_pos, dis_nodes_pos, dis_n_labels_pos = deserialize_RMPI(txn.get(str_id)).values()
+                subgraph_pos = self.prepare_subgraphs(en_nodes_pos, r_label_pos, en_n_labels_pos)
+                dis_subgraph_pos = self.prepare_subgraphs(dis_nodes_pos, r_label_pos, dis_n_labels_pos)
+            else:
+                nodes_pos, r_label_pos, g_label_pos, n_labels_pos = deserialize(txn.get(str_id)).values()
+                subgraph_pos = self.prepare_subgraphs(nodes_pos, r_label_pos, n_labels_pos)
         subgraphs_neg = []
+        dis_subgraphs_neg = []
         r_labels_neg = []
         g_labels_neg = []
         with self.main_env.begin(db=self.db_neg) as txn:
             for i in range(self.args.num_neg_samples_per_link):
                 str_id = '{:08}'.format(index + i * (self.num_graphs_pos)).encode('ascii')
-                nodes_neg, r_label_neg, g_label_neg, n_labels_neg = deserialize(txn.get(str_id)).values()
-                subgraphs_neg.append(self.prepare_subgraphs(nodes_neg, r_label_neg, n_labels_neg))
+                if self.args.model_name == 'RMPI':
+                    en_nodes_neg, r_label_neg, g_label_neg, en_n_labels_neg, dis_nodes_neg, dis_n_labels_neg = deserialize_RMPI(txn.get(str_id)).values()
+                    subgraphs_neg.append(self.prepare_subgraphs(en_nodes_neg, r_label_neg, en_n_labels_neg))
+                    dis_subgraphs_neg.append(self.prepare_subgraphs(dis_nodes_neg, r_label_neg, dis_n_labels_neg))
+                else:
+                    nodes_neg, r_label_neg, g_label_neg, n_labels_neg = deserialize(txn.get(str_id)).values()
+                    subgraphs_neg.append(self.prepare_subgraphs(nodes_neg, r_label_neg, n_labels_neg))
                 r_labels_neg.append(r_label_neg)
                 g_labels_neg.append(g_label_neg)
 
-        return subgraph_pos, g_label_pos, r_label_pos, subgraphs_neg, g_labels_neg, r_labels_neg
+        if self.args.model_name == 'RMPI':
+            return subgraph_pos, dis_subgraph_pos, g_label_pos, r_label_pos, subgraphs_neg, dis_subgraphs_neg, g_labels_neg, r_labels_neg
+        else:
+            return subgraph_pos, g_label_pos, r_label_pos, subgraphs_neg, g_labels_neg, r_labels_neg
 
     def __len__(self):
         return self.num_graphs_pos
@@ -528,6 +542,9 @@ class GRData(Dataset):
             e_ids = np.zeros(subgraph.number_of_edges())
             e_ids[edges_btw_roots] = 1  # target edge
         
+        if self.args.model_name == 'RMPI':
+            subgraph.edata['id'] = torch.FloatTensor(e_ids)
+
         if  self.args.model_name == 'SNRI':
             subgraph = self.prepare_features_new(subgraph, n_labels, r_label)
         else:

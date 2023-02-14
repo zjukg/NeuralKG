@@ -73,7 +73,7 @@ class MetaGNNLitModel(BaseLitModel):
                 results['mrr'] += torch.sum(1.0 / ranks).item()
                 for k in self.args.calc_hits:
                     results['hits@{}'.format(k)] += torch.numel(ranks[ranks <= k])
-            
+                    
         results["count"] += count
         return results
     
@@ -90,7 +90,8 @@ class MetaGNNLitModel(BaseLitModel):
 
 
     def test_step(self, batch, batch_idx):
-        ent_emb = self.model.get_ent_emb(self.model.indtest_train_g)
+        indtest_train_g = self.model.get_intest_train_g()
+        ent_emb = self.model.get_ent_emb(indtest_train_g)
 
         batch_new = {}
         results = ddict(float)

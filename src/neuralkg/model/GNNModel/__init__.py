@@ -8,3 +8,4 @@ from .Grail import Grail
 from .CoMPILE import CoMPILE
 from .SNRI import SNRI
 from .MorsE import *
+from .RMPI import RMPI

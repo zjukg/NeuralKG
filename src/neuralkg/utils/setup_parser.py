@@ -34,6 +34,7 @@ def setup_parser():
     parser.add_argument('--num_ent', default=None, type=int, help='The number of entity, autogenerate.')
     parser.add_argument('--num_rel', default=None, type=int, help='The number of relation, autogenerate.')
     parser.add_argument('--check_per_epoch', default=5, type=int, help='Evaluation per n epoch of training.')
+    parser.add_argument('--check_per_step', default=10, type=int, help='Evaluation per n step of training.')
     parser.add_argument('--early_stop_patience', default=5, type=int, help='If the number of consecutive bad results is n, early stop.')
     parser.add_argument("--num_layers", default=2, type=int, help='The number of layers in some GNN model.')
     parser.add_argument('--regularization', '-r', default=0.0, type=float)
@@ -140,8 +141,12 @@ def setup_parser():
     parser.add_argument('--coef_dgi_loss', type=float, default=5, help='Coefficient of MI loss')
     parser.add_argument('--nei_rel_path', action='store_false', help='whether to consider neighboring relational paths')
     parser.add_argument('--path_agg', type=str, choices=['mean', 'att'], default='att', help='the manner of aggreating neighboring relational paths.')
+    #RMPI
+    parser.add_argument('--target2nei_atten', action='store_true', help='apply target-aware attention for 2-hop neighbors')
+    parser.add_argument('--conc', action='store_true', help='apply target-aware attention for 2-hop neighbors')
+    parser.add_argument('--ablation', type=int, default=0, help='0,1 correspond to base, NE')
+    parser.add_argument("--l2", type=float, default=5e-4, help="Regularization constant for GNN weights")
     #MorsE
-    parser.add_argument("--meta_learning", default=False, action='store_true', help='using the meta_learning setting')
     parser.add_argument('--num_train_subgraph', type=int, default=10000, help='the number of train subgraph')
     parser.add_argument('--num_valid_subgraph', type=int, default=200, help='the number of valid subgraph')
     parser.add_argument('--rw_0', default=10, type=int, help='the times of random walk')

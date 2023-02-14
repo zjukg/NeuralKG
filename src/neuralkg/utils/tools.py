@@ -51,6 +51,11 @@ def deserialize(data):
     keys = ('nodes', 'r_label', 'g_label', 'n_label')
     return dict(zip(keys, data_tuple))
 
+def deserialize_RMPI(data): 
+    data_tuple = pickle.loads(data)
+    keys = ('en_nodes', 'r_label', 'g_label', 'en_n_labels', 'dis_nodes', 'dis_n_labels')
+    return dict(zip(keys, data_tuple))
+
 def set_logger(args):
     '''
     Write logs to checkpoint and console
@@ -313,8 +318,12 @@ def load_data_grail(args, add_traspose_rels=False):
 def get_average_subgraph_size(sample_size, links, A, params):
     total_size = 0
     for (n1, n2, r_label) in links[np.random.choice(len(links), sample_size)]:
-        nodes, n_labels, subgraph_size, enc_ratio, num_pruned_nodes, _, _ = subgraph_extraction_labeling((n1, n2), r_label, A, params.hop, params.enclosing_sub_graph, params.max_nodes_per_hop)
-        datum = {'nodes': nodes, 'r_label': r_label, 'g_label': 0, 'n_labels': n_labels, 'subgraph_size': subgraph_size, 'enc_ratio': enc_ratio, 'num_pruned_nodes': num_pruned_nodes}
+        if params.model_name == 'RMPI':
+            en_nodes, en_n_labels, subgraph_size, enc_ratio, num_pruned_nodes, dis_nodes, dis_n_labels = subgraph_extraction_labeling((n1, n2), r_label, A, params.hop, params.enclosing_sub_graph, params.max_nodes_per_hop)
+            datum = {'en_nodes': en_nodes, 'r_label': r_label, 'g_label': 0, 'en_n_labels': en_n_labels, 'dis_nodes':dis_nodes, 'dis_n_labels':dis_n_labels}
+        else:
+            nodes, n_labels, subgraph_size, enc_ratio, num_pruned_nodes, _, _ = subgraph_extraction_labeling((n1, n2), r_label, A, params.hop, params.enclosing_sub_graph, params.max_nodes_per_hop)
+            datum = {'nodes': nodes, 'r_label': r_label, 'g_label': 0, 'n_labels': n_labels, 'subgraph_size': subgraph_size, 'enc_ratio': enc_ratio, 'num_pruned_nodes': num_pruned_nodes}
         total_size += len(serialize(datum))
     return total_size / sample_size
 
@@ -387,7 +396,10 @@ def extract_save_subgraph(args_):
     if max_label_value_ is not None:
         n_labels = np.array([np.minimum(label, max_label_value_).tolist() for label in n_labels])
         dis_n_labels = np.array([np.minimum(label, max_label_value_).tolist() for label in dis_n_labels])
-    datum = {'nodes': nodes, 'r_label': r_label, 'g_label': g_label, 'n_labels': n_labels, 'subgraph_size': subgraph_size, 'enc_ratio': enc_ratio, 'num_pruned_nodes': num_pruned_nodes}
+    if params_.model_name == 'RMPI':
+        datum = {'en_nodes': nodes, 'r_label': r_label, 'g_label': g_label, 'en_n_labels': n_labels, 'dis_nodes':dis_nodes, 'dis_n_labels':dis_n_labels}
+    else:
+        datum = {'nodes': nodes, 'r_label': r_label, 'g_label': g_label, 'n_labels': n_labels, 'subgraph_size': subgraph_size, 'enc_ratio': enc_ratio, 'num_pruned_nodes': num_pruned_nodes}
     str_id = '{:08}'.format(idx).encode('ascii')
 
     return (str_id, datum)
@@ -400,7 +412,10 @@ def links2subgraphs(A, graphs, params, max_label_value=None, testing=False):
     subgraph_sizes = []
     enc_ratios = []
     num_pruned_nodes = []
-    BYTES_PER_DATUM = get_average_subgraph_size(100, list(graphs.values())[0]['pos'], A, params) * 1.5
+    if params.model_name == 'RMPI':
+        BYTES_PER_DATUM = get_average_subgraph_size(100, list(graphs.values())[0]['pos'], A, params) * 10
+    else:
+        BYTES_PER_DATUM = get_average_subgraph_size(100, list(graphs.values())[0]['pos'], A, params) * 1.5
     links_length = 0
     for split_name, split in graphs.items():
         links_length += (len(split['pos']) + len(split['neg'])) * 2
@@ -419,10 +434,13 @@ def links2subgraphs(A, graphs, params, max_label_value=None, testing=False):
         with mp.Pool(processes=None, initializer=intialize_worker, initargs=(A, params, max_label_value)) as p:
             args_ = zip(range(len(links)), links, g_labels)
             for (str_id, datum) in tqdm(p.imap(extract_save_subgraph, args_), total=len(links)):
-                max_n_label['value'] = np.maximum(np.max(datum['n_labels'], axis=0), max_n_label['value'])
-                subgraph_sizes.append(datum['subgraph_size'])
-                enc_ratios.append(datum['enc_ratio'])
-                num_pruned_nodes.append(datum['num_pruned_nodes'])
+                if params.model_name == 'RMPI':
+                    max_n_label['value'] = np.maximum(np.max(datum['en_n_labels'], axis=0), max_n_label['value'])
+                else:
+                    max_n_label['value'] = np.maximum(np.max(datum['n_labels'], axis=0), max_n_label['value'])
+                    subgraph_sizes.append(datum['subgraph_size'])
+                    enc_ratios.append(datum['enc_ratio'])
+                    num_pruned_nodes.append(datum['num_pruned_nodes'])
 
                 with env.begin(write=True, db=split_env) as txn:
                     txn.put(str_id, serialize(datum))
@@ -447,20 +465,22 @@ def links2subgraphs(A, graphs, params, max_label_value=None, testing=False):
         bit_len_label_obj = int.bit_length(int(max_n_label['value'][1]))
         txn.put('max_n_label_sub'.encode(), (int(max_n_label['value'][0])).to_bytes(bit_len_label_sub, byteorder='little'))
         txn.put('max_n_label_obj'.encode(), (int(max_n_label['value'][1])).to_bytes(bit_len_label_obj, byteorder='little'))
-        txn.put('avg_subgraph_size'.encode(), struct.pack('f', float(np.mean(subgraph_sizes))))
-        txn.put('min_subgraph_size'.encode(), struct.pack('f', float(np.min(subgraph_sizes))))
-        txn.put('max_subgraph_size'.encode(), struct.pack('f', float(np.max(subgraph_sizes))))
-        txn.put('std_subgraph_size'.encode(), struct.pack('f', float(np.std(subgraph_sizes))))
 
-        txn.put('avg_enc_ratio'.encode(), struct.pack('f', float(np.mean(enc_ratios))))
-        txn.put('min_enc_ratio'.encode(), struct.pack('f', float(np.min(enc_ratios))))
-        txn.put('max_enc_ratio'.encode(), struct.pack('f', float(np.max(enc_ratios))))
-        txn.put('std_enc_ratio'.encode(), struct.pack('f', float(np.std(enc_ratios))))
+        if params.model_name != 'RMPI':
+            txn.put('avg_subgraph_size'.encode(), struct.pack('f', float(np.mean(subgraph_sizes))))
+            txn.put('min_subgraph_size'.encode(), struct.pack('f', float(np.min(subgraph_sizes))))
+            txn.put('max_subgraph_size'.encode(), struct.pack('f', float(np.max(subgraph_sizes))))
+            txn.put('std_subgraph_size'.encode(), struct.pack('f', float(np.std(subgraph_sizes))))
 
-        txn.put('avg_num_pruned_nodes'.encode(), struct.pack('f', float(np.mean(num_pruned_nodes))))
-        txn.put('min_num_pruned_nodes'.encode(), struct.pack('f', float(np.min(num_pruned_nodes))))
-        txn.put('max_num_pruned_nodes'.encode(), struct.pack('f', float(np.max(num_pruned_nodes))))
-        txn.put('std_num_pruned_nodes'.encode(), struct.pack('f', float(np.std(num_pruned_nodes))))
+            txn.put('avg_enc_ratio'.encode(), struct.pack('f', float(np.mean(enc_ratios))))
+            txn.put('min_enc_ratio'.encode(), struct.pack('f', float(np.min(enc_ratios))))
+            txn.put('max_enc_ratio'.encode(), struct.pack('f', float(np.max(enc_ratios))))
+            txn.put('std_enc_ratio'.encode(), struct.pack('f', float(np.std(enc_ratios))))
+
+            txn.put('avg_num_pruned_nodes'.encode(), struct.pack('f', float(np.mean(num_pruned_nodes))))
+            txn.put('min_num_pruned_nodes'.encode(), struct.pack('f', float(np.min(num_pruned_nodes))))
+            txn.put('max_num_pruned_nodes'.encode(), struct.pack('f', float(np.max(num_pruned_nodes))))
+            txn.put('std_num_pruned_nodes'.encode(), struct.pack('f', float(np.std(num_pruned_nodes))))
 
 def subgraph_extraction_labeling(ind, rel, A_list, h=1, enclosing_sub_graph=False, max_nodes_per_hop=None, max_node_label_value=None):
     # extract the h-hop enclosing subgraphs around link 'ind'
