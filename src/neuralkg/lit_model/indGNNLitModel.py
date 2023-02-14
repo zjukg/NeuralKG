@@ -91,7 +91,7 @@ class indGNNLitModel(BaseLitModel):
             optim_dict: Record the optimizer and lr_scheduler, type: dict.   
         """
         milestones = int(self.args.max_epochs)
-        optimizer = self.optimizer_class(self.model.parameters(), lr=self.args.lr, weight_decay=5e-4)
+        optimizer = self.optimizer_class(self.model.parameters(), lr=self.args.lr, weight_decay=self.args.l2)
         StepLR = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[milestones], gamma=0.1)
         optim_dict = {'optimizer': optimizer, 'lr_scheduler': StepLR}
         return optim_dict

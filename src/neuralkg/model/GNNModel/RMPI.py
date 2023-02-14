@@ -41,7 +41,7 @@ class RMPI(nn.Module):
 
 
         self.leakyrelu = nn.LeakyReLU(0.2)
-        self.drop = torch.nn.Dropout(0.5)
+        self.drop = torch.nn.Dropout(self.params.edge_dropout)
 
 
     def rel_aggr(self, graph, u_node, v_node, num_nodes, num_edges, aggr_flag, is_drop):
@@ -194,7 +194,7 @@ class RMPI(nn.Module):
         neighbor_edges = torch.unique(neighbor_edges, sorted=False)
 
         neighbor_edges2rels = [edge2rel[eid] for eid in neighbor_edges.cpu().numpy().tolist()]
-        neighbor_edges2rels = torch.Tensor(neighbor_edges2rels).long()
+        neighbor_edges2rels = torch.Tensor(neighbor_edges2rels).type_as(self.h0).long()
 
         neighbor_u_nodes = en_g.edges()[0][neighbor_edges]
         neighbor_v_nodes = en_g.edges()[1][neighbor_edges]

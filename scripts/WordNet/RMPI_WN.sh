@@ -18,12 +18,11 @@ EVAL_BS=16
 TEST_BS=1
 MARGIN=10.0
 LR=1e-3
-DROPOUT=0
-CHECK_PER_EPOCH=2
+CHECK_PER_STEP=455
 EARLY_STOP_PATIENCE=20
 NUM_WORKERS=20
 CALC_HITS=1,5,10
-GPU=0
+GPU=1
 NUM_LAYERS=3
 NUM_BASES=4
 HOP=2
@@ -51,10 +50,9 @@ CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
     --test_bs $TEST_BS \
     --margin $MARGIN \
     --lr $LR \
-    --check_per_epoch $CHECK_PER_EPOCH \
+    --check_per_step $CHECK_PER_STEP \
     --early_stop_patience $EARLY_STOP_PATIENCE \
     --num_workers $NUM_WORKERS \
-    --dropout $DROPOUT \
     --calc_hits $CALC_HITS \
     --num_layers $NUM_LAYERS \
     --num_bases $NUM_BASES \

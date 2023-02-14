@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # from torch._C import T
 # from train import Trainer
+
 import pytorch_lightning as pl
 from pytorch_lightning import seed_everything
 from neuralkg.utils import setup_parser
@@ -20,8 +21,12 @@ def main():
         if not os.path.exists(args.pk_path):
             data2pkl(args.dataset_name)
 
-        if not os.path.exists(args.db_path):
-            gen_subgraph_datasets(args) # [头， 尾， 关系]
+        if args.model_name == 'MorsE':
+            if not os.path.exists(args.db_path):
+                gen_meta_subgraph_datasets(args)
+        else:
+            if not os.path.exists(args.db_path): 
+                gen_subgraph_datasets(args) # [头， 尾， 关系]
     
     if args.init_checkpoint:
         override_config(args) #TODO: set checkpoint autoloading
@@ -40,7 +45,7 @@ def main():
     for key, value in args.__dict__.items():
         logging.info("Parameter "+key+":  "+str(value))
     logging.info("++++++++++++++++++++++++++++++++over loading+++++++++++++++++++++++++++++++")
-
+    
     """set up sampler to datapreprocess""" #设置数据处理的采样过程
     train_sampler_class = import_class(f"neuralkg.data.{args.train_sampler_class}")
     train_sampler = train_sampler_class(args)  # 这个sampler是可选择的
@@ -81,7 +86,7 @@ def main():
         log_name = "_".join([args.model_name, args.dataset_name, str(args.lr)])
         logger = pl.loggers.WandbLogger(name=log_name, project="NeuralKG")
         logger.log_hyperparams(vars(args))
-    if args.inductive:
+    if args.inductive and args.model_name != 'MorsE':
         """early stopping"""
         early_callback = pl.callbacks.EarlyStopping(
             monitor="Eval|auc",
@@ -132,6 +137,15 @@ def main():
             gpus="0,",
             check_val_every_n_epoch=args.check_per_epoch, 
             reload_dataloaders_every_n_epochs=1 # IterE
+        )
+    elif args.model_name == "MorsE" or args.model_name == 'RMPI':
+        trainer = pl.Trainer.from_argparse_args(
+            args,
+            callbacks=callbacks,
+            logger=logger,
+            default_root_dir="training/logs",
+            gpus="0,",
+            val_check_interval=args.check_per_step,
         )
     else:
         trainer = pl.Trainer.from_argparse_args(

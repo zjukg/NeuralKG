@@ -625,41 +625,6 @@ class MetaValidGRData(Dataset):
 
         return torch.tensor(sup_tri), que_dataloader
 
-class KGETrainData(Dataset):
-    def __init__(self, args, train_triples, num_ent, num_neg, hr2t, rt2h):
-        self.args = args
-        self.triples = train_triples
-        self.num_ent = num_ent
-        self.num_neg = num_neg
-        self.hr2t = hr2t
-        self.rt2h = rt2h
-
-    def __len__(self):
-        return len(self.triples)
-
-    def __getitem__(self, idx):
-        pos_triple = self.triples[idx]
-        h, r, t = pos_triple
-
-        neg_tail_ent = np.random.choice(np.delete(np.arange(self.num_ent), self.hr2t[(h, r)]),
-                                        self.num_neg)
-
-        neg_head_ent = np.random.choice(np.delete(np.arange(self.num_ent), self.rt2h[(r, t)]),
-                                        self.num_neg)
-
-        pos_triple = torch.LongTensor(pos_triple)
-        neg_tail_ent = torch.from_numpy(neg_tail_ent)
-        neg_head_ent = torch.from_numpy(neg_head_ent)
-
-        return pos_triple, neg_tail_ent, neg_head_ent
-
-    @staticmethod
-    def collate_fn(data):
-        pos_triple = torch.stack([_[0] for _ in data], dim=0)
-        neg_tail_ent = torch.stack([_[1] for _ in data], dim=0)
-        neg_head_ent = torch.stack([_[2] for _ in data], dim=0)
-        return pos_triple, neg_tail_ent, neg_head_ent
-
 class KGEEvalData(Dataset):
     def __init__(self, args, eval_triples, num_ent, hr2t, rt2h):
         self.args = args

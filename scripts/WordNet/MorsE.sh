@@ -11,6 +11,7 @@ VALID_SAMPLER_CLASS=MetaValidSampler
 TEST_SAMPLER_CLASS=MetaTestSampler
 LITMODEL_NAME=MetaGNNLitModel
 LOSS=Adv_Loss
+KGE_MODEL=TransE
 NUM_LAYERS=3
 NUM_BASES=4
 MAX_EPOCHS=10
@@ -21,7 +22,7 @@ TEST_BS=512
 NUM_NEG=32
 MARGIN=10.0
 LR=1e-2
-CHECK_PER_EPOCH=1
+CHECK_PER_STEP=10
 EARLY_STOP_PATIENCE=1000
 NUM_WORKERS=20
 DROPOUT=0
@@ -50,10 +51,11 @@ CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
     --num_neg $NUM_NEG \
     --margin $MARGIN \
     --lr $LR \
-    --check_per_epoch $CHECK_PER_EPOCH \
+    --check_per_step $CHECK_PER_STEP \
     --early_stop_patience $EARLY_STOP_PATIENCE \
     --num_workers $NUM_WORKERS \
     --dropout $DROPOUT \
     --calc_hits $CALC_HITS \
+    --kge_model $KGE_MODEL \
     --inductive \
 

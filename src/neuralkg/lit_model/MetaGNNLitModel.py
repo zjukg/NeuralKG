@@ -42,7 +42,7 @@ class MetaGNNLitModel(BaseLitModel):
 
         self.log("Train|loss", loss,  on_step=True, on_epoch=False)
 
-        logging.info("Train|loss: %.4f at s %d" %(loss, self.global_step+1))  #TODO: 把logging改到BaseLitModel里面
+        logging.info("Train|loss: %.4f at step %d" %(loss, self.global_step+1))  #TODO: 把logging改到BaseLitModel里面
         return loss
     
     def validation_step(self, batch, batch_idx):
@@ -80,10 +80,10 @@ class MetaGNNLitModel(BaseLitModel):
     def validation_epoch_end(self, results) -> None:
         outputs = self.get_results(results, "Eval")
         
-        if self.current_epoch!=0:
-            logging.info("++++++++++++++++++++++++++start validating++++++++++++++++++++++++++")
-            log_metrics(self.current_epoch+1, outputs)
-            logging.info("++++++++++++++++++++++++++over validating+++++++++++++++++++++++++++")
+        logging.info("++++++++++++++++++++++++++start validating++++++++++++++++++++++++++")
+        for metric in outputs:
+            logging.info('%s: %.4f at step %d' % (metric, outputs[metric], self.global_step + 1))
+        logging.info("++++++++++++++++++++++++++over validating+++++++++++++++++++++++++++")
 
         self.log_dict(outputs, prog_bar=True, on_epoch=True)
     
@@ -93,35 +93,21 @@ class MetaGNNLitModel(BaseLitModel):
         indtest_train_g = self.model.get_intest_train_g()
         ent_emb = self.model.get_ent_emb(indtest_train_g)
 
-        batch_new = {}
         results = ddict(float)
         pos_triple = batch['positive_sample']
-        tail_cand = batch['tail_cand']
-        head_cand = batch['head_cand']
         batch['cand'] = None
         batch['ent_emb'] = ent_emb
-        # head_label = torch.FloatTensor(np.zeros([tail_cand.shape[0], tail_cand.shape[1]], dtype=np.float32))
-        # tail_label = torch.FloatTensor(np.zeros([head_cand.shape[0], head_cand.shape[1]], dtype=np.float32))
-
-        # batch_new['positive_sample'] = pos_triple
-        # batch_new['cand'] = None
-        # batch_new['head_label'] = head_label
-        # batch_new['tail_label'] = tail_label
-        # batch_new['head_cand'] = head_cand
-        # batch_new['tail_cand'] = tail_cand
-        # batch_new['ent_emb'] = ent_emb
-        # ranks = link_predict(batch_new, self.model, prediction='all')
 
         b_range = torch.arange(pos_triple.size()[0], device=self.args.gpu)
         target_idx = torch.zeros(pos_triple.size()[0], device=self.args.gpu, dtype=torch.int64)
-        # tail prediction
         pred = self.model.get_score(batch, mode='tail_predict')
         tail_ranks = 1 + torch.argsort(torch.argsort(pred, dim=1, descending=True),
                                         dim=1, descending=False)[b_range, target_idx]
-        # head prediction
+
         pred = self.model.get_score(batch, mode='head_predict')
         head_ranks = 1 + torch.argsort(torch.argsort(pred, dim=1, descending=True),
                                         dim=1, descending=False)[b_range, target_idx]
+
         ranks = torch.cat([tail_ranks, head_ranks])
         ranks = ranks.float()
         results["count"] = torch.numel(ranks)
@@ -134,10 +120,10 @@ class MetaGNNLitModel(BaseLitModel):
     def test_epoch_end(self, results) -> None:
         outputs = self.get_results(results, "Eval")
 
-        if self.current_epoch!=0:
-            logging.info("++++++++++++++++++++++++++start Test++++++++++++++++++++++++++")
-            log_metrics(self.current_epoch+1, outputs)
-            logging.info("++++++++++++++++++++++++++over Test+++++++++++++++++++++++++++")
+        logging.info("++++++++++++++++++++++++++start Test++++++++++++++++++++++++++")
+        for metric in outputs:
+            logging.info('%s: %.4f at step %d' % (metric, outputs[metric], self.global_step))
+        logging.info("++++++++++++++++++++++++++over Test+++++++++++++++++++++++++++")
 
         self.log_dict(outputs, prog_bar=True, on_epoch=True)
 
@@ -148,7 +134,7 @@ class MetaGNNLitModel(BaseLitModel):
             optim_dict: Record the optimizer and lr_scheduler, type: dict.   
         """
         milestones = int(self.args.max_epochs)
-        optimizer = self.optimizer_class(self.model.parameters(), lr=self.args.lr, weight_decay=5e-4)
+        optimizer = self.optimizer_class(self.model.parameters(), lr=self.args.lr)
         StepLR = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[milestones], gamma=0.1)
         optim_dict = {'optimizer': optimizer, 'lr_scheduler': StepLR}
         return optim_dict

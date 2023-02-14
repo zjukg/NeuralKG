@@ -110,6 +110,7 @@ def setup_parser():
     parser.add_argument("--db_path", type=str, default=None, help='specify the path for subgraph db')
     parser.add_argument("--pk_path", type=str, default=None, help='specify the path for pickle file')
     parser.add_argument("--test_db_path", type=str, default=None, help='specify the path for test subgraph db')
+    parser.add_argument("--l2", type=float, default=5e-4, help="Regularization constant for GNN weights")
     #model
     parser.add_argument("--num_bases", "-b", type=int, default=100, help="Number of basis functions to use for GCN weights") #TODO: set
     parser.add_argument("--kge_model", type=str, default="TransE", help="Which KGE model to load entity embeddings from")
@@ -145,7 +146,6 @@ def setup_parser():
     parser.add_argument('--target2nei_atten', action='store_true', help='apply target-aware attention for 2-hop neighbors')
     parser.add_argument('--conc', action='store_true', help='apply target-aware attention for 2-hop neighbors')
     parser.add_argument('--ablation', type=int, default=0, help='0,1 correspond to base, NE')
-    parser.add_argument("--l2", type=float, default=5e-4, help="Regularization constant for GNN weights")
     #MorsE
     parser.add_argument('--num_train_subgraph', type=int, default=10000, help='the number of train subgraph')
     parser.add_argument('--num_valid_subgraph', type=int, default=200, help='the number of valid subgraph')
