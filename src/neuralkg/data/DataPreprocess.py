@@ -232,6 +232,10 @@ class GRData(Dataset):
         
         self.args = args
         self.max_dbs = 5
+
+        self.m_h2r = None
+        self.m_t2r = None
+        
         if db_name_pos == 'test_pos':
             self.main_env = lmdb.open(self.args.test_db_path, readonly=True, max_dbs=self.max_dbs, lock=False)
         else:
@@ -261,6 +265,7 @@ class GRData(Dataset):
         self.ssp_graph = ssp_graph
         self.id2entity = id2entity
         self.id2relation = id2relation
+        
         if self.args.model_name == 'SNRI':
             self.m_h2r = m_h2r
             self.m_t2r = m_t2r
@@ -498,7 +503,6 @@ class GRData(Dataset):
                                     shape=(len(train_ent2idx), len(train_ent2idx))))
 
         return adj_list, triplets, train_ent2idx, train_rel2idx, train_idx2ent, train_idx2rel, h2r, m_h2r, t2r, m_t2r
-
 
     def generate_train(self):
         self.db_pos = self.main_env.open_db('train_pos'.encode())
@@ -929,7 +933,7 @@ class RevSampler(KGData):
             neg_cur_size += len(neg_tmp)
         return np.concatenate(neg_list)[:neg_size]
 
-class BaseGraphSampler(object):
+class BaseGraph(object):
     def __init__(self, args):
         self.args = args
         self.train_triples = GRData(args, 'train_pos', 'train_neg')
@@ -946,6 +950,7 @@ class BaseGraphSampler(object):
 
         if self.args.eval_task == 'link_prediction':
             self.test_triples = self.generate_ind_test()
+            
         elif self.args.eval_task == 'triple_classification':
             if args.test_db_path is not None and not os.path.exists(args.test_db_path):
                 gen_subgraph_datasets(args, splits=['test'],
@@ -964,7 +969,7 @@ class BaseGraphSampler(object):
         return self.test_triples
     
     def generate_ind_test(self):
-        adj_list, dgl_adj_list, triplets, entity2id, relation2id, id2entity, id2relation, m_h2r, m_t2r = self.load_data_grail_ind()
+        adj_list, dgl_adj_list, triplets, m_h2r, m_t2r = self.load_data_grail_ind()
         neg_triplets = self.get_neg_samples_replacing_head_tail(triplets['test'], adj_list)
         
         self.adj_list = adj_list
@@ -983,13 +988,13 @@ class BaseGraphSampler(object):
         for split_name in splits:
             triplets[split_name] = np.array(data['ind_test_graph'][split_name])[:, [0, 2, 1]]
 
-        rel2idx = data['ind_test_graph']['rel2idx']
-        ent2idx = data['ind_test_graph']['ent2idx']
-        idx2rel = {i: r for r, i in rel2idx.items()}
-        idx2ent = {i: e for e, i in ent2idx.items()}
+        self.rel2id = data['ind_test_graph']['rel2idx']
+        self.ent2id = data['ind_test_graph']['ent2idx']
+        self.id2rel = {i: r for r, i in self.rel2id.items()}
+        self.id2ent = {i: e for e, i in self.ent2id.items()}
 
-        num_rels = len(idx2rel)
-        num_ents = len(idx2ent)
+        num_rels = len(self.id2rel)
+        num_ents = len(self.id2ent)
         h2r = {}
         h2r_len = {}
         t2r = {}
@@ -1038,11 +1043,11 @@ class BaseGraphSampler(object):
                     m_t2r[ent][: rels.shape[0]] = rels   
 
         adj_list = []
-        for i in range(len(rel2idx)):
+        for i in range(len(self.rel2id)):
             idx = np.argwhere(triplets['train'][:, 2] == i)
             adj_list.append(csc_matrix((np.ones(len(idx), dtype=np.uint8),
                                         (triplets['train'][:, 0][idx].squeeze(1), triplets['train'][:, 1][idx].squeeze(1))),
-                                    shape=(len(ent2idx), len(ent2idx))))
+                                    shape=(len(self.ent2id), len(self.ent2id))))
 
         adj_list_aug = adj_list
         if self.args.add_traspose_rels:
@@ -1051,7 +1056,7 @@ class BaseGraphSampler(object):
         
         dgl_adj_list = ssp_multigraph_to_dgl(adj_list_aug)
 
-        return adj_list, dgl_adj_list, triplets, ent2idx, rel2idx, idx2ent, idx2rel, m_h2r, m_t2r
+        return adj_list, dgl_adj_list, triplets, m_h2r, m_t2r
 
     def get_neg_samples_replacing_head_tail(self, test_links, adj_list, num_samples=50):
         n, r = adj_list[0].shape[0], len(adj_list)
@@ -1084,7 +1089,7 @@ class BaseGraphSampler(object):
 
         return neg_triplets
 
-class BaseMetaSampler(object):
+class BaseMeta(object):
     def __init__(self, args):
         self.args = args
         self.train_triples = MetaTrainGRData(args)

@@ -23,28 +23,24 @@ def link_predict(batch, model, prediction="all", model_name=None):
     elif prediction == "tail":
         ranks = tail_predict(batch, model)
     elif prediction == "ind":
-        ranks = ind_predict(batch, model, model_name)
+        ranks = ind_predict(batch, model)
 
     return ranks.float()
 
-def ind_predict(batch, model, model_name=None):
+def ind_predict(batch, model):
     head_triple = batch["head_sample"]
     head_scores = model(head_triple).squeeze(1).detach().cpu().numpy()
     head_target = batch["head_target"]
-    if head_target != 10000:  
-        head_rank = np.argwhere(np.argsort(head_scores)[::-1] == head_target) + 1
-        head_rank = torch.tensor(head_rank).squeeze(0)
-    else:
-        head_rank = torch.tensor([10000])
+    head_rank = np.argwhere(np.argsort(head_scores)[::-1] == head_target) + 1
+    head_rank = torch.tensor(head_rank).squeeze(0)
+
 
     tail_triple = batch["tail_sample"]
     tail_scores = model(tail_triple).squeeze(1).detach().cpu().numpy()
     tail_target = batch["tail_target"]
-    if tail_target != 10000:
-        tail_rank = np.argwhere(np.argsort(tail_scores)[::-1] == tail_target) + 1
-        tail_rank = torch.tensor(tail_rank).squeeze(0)
-    else:
-        tail_rank = torch.tensor([10000])
+    tail_rank = np.argwhere(np.argsort(tail_scores)[::-1] == tail_target) + 1
+    tail_rank = torch.tensor(tail_rank).squeeze(0)
+
     return torch.cat([head_rank, tail_rank])
 
 

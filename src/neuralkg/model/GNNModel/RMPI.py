@@ -6,10 +6,10 @@ import numpy as np
 
 
 class RMPI(nn.Module):
-    def __init__(self, params):  # in_dim, h_dim, rel_emb_dim, out_dim, num_rels, num_bases):
+    def __init__(self, args):
         super().__init__()
 
-        self.params = params
+        self.args = args
         # self.relation2id = relation2id
         # self.relation_list = list(self.relation2id.values())
         self.link_mode = 6
@@ -17,35 +17,29 @@ class RMPI(nn.Module):
         # self.is_big_dataset = True if self.params.dataset in ['wikidata_small'] else False
 
 
-        self.rel_emb = nn.Embedding(self.params.num_rel, self.params.rel_emb_dim, sparse=False)
+        self.rel_emb = nn.Embedding(self.args.num_rel, self.args.rel_emb_dim, sparse=False)
 
         torch.nn.init.normal_(self.rel_emb.weight)
 
-        self.fc_reld1 = nn.ModuleList([nn.Linear(self.params.rel_emb_dim, self.params.rel_emb_dim, bias=True)
+        self.fc_reld1 = nn.ModuleList([nn.Linear(self.args.rel_emb_dim, self.args.rel_emb_dim, bias=True)
                                       for _ in range(6)
                                       ])
-        self.fc_reld2 = nn.ModuleList([nn.Linear(self.params.rel_emb_dim, self.params.rel_emb_dim, bias=True)
+        self.fc_reld2 = nn.ModuleList([nn.Linear(self.args.rel_emb_dim, self.args.rel_emb_dim, bias=True)
                                       for _ in range(6)
                                       ])
-        self.fc_reld = nn.Linear(self.params.rel_emb_dim, self.params.rel_emb_dim, bias=True)
+        self.fc_reld = nn.Linear(self.args.rel_emb_dim, self.args.rel_emb_dim, bias=True)
 
-        self.fc_layer = nn.Linear(self.params.rel_emb_dim, 1)
+        self.fc_layer = nn.Linear(self.args.rel_emb_dim, 1)
 
-        if self.params.conc:
-            self.conc = nn.Linear(self.params.rel_emb_dim*2, self.params.rel_emb_dim)
-
-        # if self.params.gpu >= 0:
-        #     self.device = torch.device('cuda:%d' % self.params.gpu)
-        # else:
-        #     self.device = torch.device('cpu')
+        if self.args.conc:
+            self.conc = nn.Linear(self.args.rel_emb_dim*2, self.args.rel_emb_dim)
 
 
         self.leakyrelu = nn.LeakyReLU(0.2)
-        self.drop = torch.nn.Dropout(self.params.edge_dropout)
+        self.drop = torch.nn.Dropout(self.args.edge_dropout)
 
 
     def rel_aggr(self, graph, u_node, v_node, num_nodes, num_edges, aggr_flag, is_drop):
-        # print("node pair:", u_node, v_node)
         u_in_edge = graph.in_edges(u_node, 'all')
         u_out_edge = graph.out_edges(u_node, 'all')
         v_in_edge = graph.in_edges(v_node, 'all')
@@ -103,7 +97,7 @@ class RMPI(nn.Module):
         elif aggr_flag == 2:
             edge_connect_l = [in_edge_out, out_edge_out, in_edge_in, out_edge_in, edge_mode_5, edge_mode_6]
 
-            if self.params.target2nei_atten:
+            if self.args.target2nei_atten:
                 xxx = self.rel_emb(self.neighbor_edges2rels)
                 rel_2directed_atten = torch.einsum('bd,nd->bn', [xxx, self.h0])
                 rel_2directed_atten = self.leakyrelu(rel_2directed_atten)
@@ -232,10 +226,10 @@ class RMPI(nn.Module):
 
 
 
-        if self.params.ablation == 0: # RMP base
+        if self.args.ablation == 0: # RMP base
             final_embed = h2
             g_rep = F.normalize(final_embed, p=2, dim=-1)
-        elif self.params.ablation == 1:  # RMP NE
+        elif self.args.ablation == 1:  # RMP NE
             # # entity aggregation begin
             dis_head_ids = (dis_g.ndata['id'] == 1).nonzero().squeeze(1)
             dis_tail_ids = (dis_g.ndata['id'] == 2).nonzero().squeeze(1)
@@ -246,7 +240,7 @@ class RMPI(nn.Module):
                                              aggr_flag=0, is_drop=True)
             one_hop_nei_embd = F.relu(one_hop_nei_embd)
             # #
-            if self.params.conc:
+            if self.args.conc:
                 h2 = F.normalize(h2, p=2, dim=-1)
                 one_hop_nei_embd = F.normalize(one_hop_nei_embd, p=2, dim=-1)
                 g_rep = self.conc(torch.cat([h2, one_hop_nei_embd], dim=1))
@@ -263,7 +257,7 @@ class RMPI(nn.Module):
     def sparse_dense_mul(s, d):
         i = s._indices()
         v = s._values()
-        dv = d[i[0, :], i[1, :]].type_as(v).float()  # get values from relevant entries of dense matrix
+        dv = d[i[0, :], i[1, :]].to(device=torch.device("cuda:0"))  # get values from relevant entries of dense matrix
         return torch.sparse.FloatTensor(i, v * dv, s.size())
 
     @staticmethod

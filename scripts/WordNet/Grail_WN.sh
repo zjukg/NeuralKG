@@ -5,7 +5,7 @@ MODEL_NAME=Grail
 DATA_PATH=${DATA_DIR}/${DATASET_NAME}
 DB_PATH=${DATA_DIR}/${DATASET_NAME}_subgraph
 PK_PATH=${DATA_DIR}/${DATASET_NAME}.pkl
-TEST_DB_PATH=${DATA_DIR}/${DATASET_NAME}_ind/test_subgraphs
+TEST_DB_PATH=${DATA_DIR}/${DATASET_NAME}_triple
 EVAL_TASK=link_prediction
 TRAIN_SAMPLER_CLASS=DglSampler
 VALID_SAMPLER_CLASS=ValidDglSampler
@@ -27,7 +27,8 @@ EARLY_STOP_PATIENCE=20
 NUM_WORKERS=20
 DROPOUT=0
 CALC_HITS=1,5,10
-GPU=1
+GPU=0
+CHECKPOINT_DIR='output/link_prediction/WN18RR_v1/Grail/epoch=23-Eval|auc=0.931.ckpt'
 
 CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
     --model_name $MODEL_NAME \
@@ -58,5 +59,8 @@ CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
     --dropout $DROPOUT \
     --calc_hits $CALC_HITS \
     --inductive \
+    --checkpoint_dir $CHECKPOINT_DIR \
+    --test_only \
+    
     
 

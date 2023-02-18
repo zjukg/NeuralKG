@@ -88,6 +88,13 @@ def log_metrics(epoch, metrics):
     for metric in metrics:
         logging.info('%s: %.4f at epoch %d' % (metric, metrics[metric], epoch))
 
+def log_step_metrics(step, metrics):
+    '''
+    Print the evaluation logs
+    '''
+    for metric in metrics:
+        logging.info('%s: %.4f at step %d' % (metric, metrics[metric], step))
+
 def override_config(args):
     '''
     Override model and data configuration
@@ -186,7 +193,7 @@ def data2pkl(dataset_name):
                                     'rel2idx': fix_rel_reidx, 'ent2idx': ent_reidx_ind}}
 
     pickle.dump(save_data, open(f'./dataset/{dataset_name}.pkl', 'wb'))
-
+    
 def gen_subgraph_datasets(args, splits=['train', 'valid'], saved_relation2id=None, max_label_value=None):
     testing = 'test' in splits
     if testing:

@@ -34,7 +34,7 @@ def setup_parser():
     parser.add_argument('--num_ent', default=None, type=int, help='The number of entity, autogenerate.')
     parser.add_argument('--num_rel', default=None, type=int, help='The number of relation, autogenerate.')
     parser.add_argument('--check_per_epoch', default=5, type=int, help='Evaluation per n epoch of training.')
-    parser.add_argument('--check_per_step', default=10, type=int, help='Evaluation per n step of training.')
+    parser.add_argument('--check_per_step', default=0, type=int, help='Evaluation per n step of training.')
     parser.add_argument('--early_stop_patience', default=5, type=int, help='If the number of consecutive bad results is n, early stop.')
     parser.add_argument("--num_layers", default=2, type=int, help='The number of layers in some GNN model.')
     parser.add_argument('--regularization', '-r', default=0.0, type=float)
@@ -112,7 +112,7 @@ def setup_parser():
     parser.add_argument("--test_db_path", type=str, default=None, help='specify the path for test subgraph db')
     parser.add_argument("--l2", type=float, default=5e-4, help="Regularization constant for GNN weights")
     #model
-    parser.add_argument("--num_bases", "-b", type=int, default=100, help="Number of basis functions to use for GCN weights") #TODO: set
+    parser.add_argument("--num_bases", "-b", type=int, default=100, help="Number of basis functions to use for GCN weights")
     parser.add_argument("--kge_model", type=str, default="TransE", help="Which KGE model to load entity embeddings from")
     parser.add_argument("--use_kge_embeddings", "-kge", type=bool, default=False, help='whether to use pretrained KGE embeddings')
     parser.add_argument('--add_traspose_rels', '-tr', type=bool, default=False, help='whether to append adj matrix list with symmetric relations')
@@ -152,7 +152,6 @@ def setup_parser():
     parser.add_argument('--rw_0', default=10, type=int, help='the times of random walk')
     parser.add_argument('--rw_1', default=10, type=int, help='the number of paths')
     parser.add_argument('--rw_2', default=5, type=int, help='the length of random walk')
-    parser.add_argument('--num_sample_cand', default=5, type=int)
     # Get data, model, and LitModel specific arguments
     lit_model_group = parser.add_argument_group("LitModel Args")
     lit_model.BaseLitModel.add_to_argparse(lit_model_group)

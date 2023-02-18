@@ -1,5 +1,5 @@
 DATA_DIR=dataset
-DATASET_NAME=FB15K237_v2
+DATASET_NAME=FB15K237_v4
 MODEL_NAME=Grail
 
 DATA_PATH=${DATA_DIR}/${DATASET_NAME}
@@ -28,6 +28,7 @@ NUM_WORKERS=20
 DROPOUT=0
 CALC_HITS=1,5,10
 GPU=0
+CHECKPOINT_DIR='output/link_prediction/FB15K237_v4/Grail/epoch=75-Eval|auc=0.925.ckpt'
 
 CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
     --model_name $MODEL_NAME \
@@ -58,4 +59,6 @@ CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
     --dropout $DROPOUT \
     --calc_hits $CALC_HITS \
     --inductive \
+    --checkpoint_dir $CHECKPOINT_DIR \
+    --test_only \
 

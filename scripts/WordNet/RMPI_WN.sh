@@ -1,10 +1,10 @@
 DATA_DIR=dataset
 
 MODEL_NAME=RMPI
-DATASET_NAME=WN18RR_v2
+DATASET_NAME=WN18RR_v4
 DATA_PATH=${DATA_DIR}/${DATASET_NAME}
-DB_PATH=${DATA_DIR}/${DATASET_NAME}_RMPI_subgraph
-PK_PATH=$DATA_DIR/${DATASET_NAME}.pkl
+DB_PATH=${DATA_DIR}/${DATASET_NAME}_RMPI_subgraph_new
+PK_PATH=${DATA_DIR}/${DATASET_NAME}.pkl
 TRAIN_SAMPLER_CLASS=RMPISampler
 VALID_SAMPLER_CLASS=ValidRMPISampler
 TEST_SAMPLER_CLASS=TestRMPISampler
@@ -18,18 +18,15 @@ EVAL_BS=16
 TEST_BS=1
 MARGIN=10.0
 LR=1e-3
-CHECK_PER_STEP=455
+CHECK_PER_EPOCH=1
 EARLY_STOP_PATIENCE=20
 NUM_WORKERS=20
 CALC_HITS=1,5,10
 GPU=1
-NUM_LAYERS=3
-NUM_BASES=4
 HOP=2
 ENCLOSING_SUB_GRAPH=False
 ABLATION=1
 L2=5e-2
-
 
 CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
     --model_name $MODEL_NAME \
@@ -50,17 +47,18 @@ CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
     --test_bs $TEST_BS \
     --margin $MARGIN \
     --lr $LR \
-    --check_per_step $CHECK_PER_STEP \
+    --check_per_epoch $CHECK_PER_EPOCH \
     --early_stop_patience $EARLY_STOP_PATIENCE \
     --num_workers $NUM_WORKERS \
     --calc_hits $CALC_HITS \
-    --num_layers $NUM_LAYERS \
-    --num_bases $NUM_BASES \
     --hop $HOP \
     --enclosing_sub_graph $ENCLOSING_SUB_GRAPH \
     --ablation $ABLATION \
     --l2 $L2 \
+    --target2nei_atten \
     --inductive \
     --conc \
+    
+
 
 

@@ -69,7 +69,7 @@ class SNRILitModel(BaseLitModel):
 
         results = dict()
         if self.args.eval_task == 'link_prediction':
-            ranks = link_predict(batch, self.model, prediction='ind', model_name=self.args.model_name)
+            ranks = link_predict(batch, self.model, prediction='ind')
             results["count"] = torch.numel(ranks)
             results["mrr"] = torch.sum(1.0 / ranks).item()
             for k in self.args.calc_hits:

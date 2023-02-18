@@ -1,5 +1,5 @@
 DATA_DIR=dataset
-DATASET_NAME=FB15K237_v2
+DATASET_NAME=FB15K237_v3
 MODEL_NAME=SNRI
 
 DATA_PATH=${DATA_DIR}/${DATASET_NAME}
@@ -27,7 +27,8 @@ EARLY_STOP_PATIENCE=20
 NUM_WORKERS=20
 DROPOUT=0
 CALC_HITS=1,5,10
-GPU=2
+GPU=0
+CHECKPOINT_DIR='output/link_prediction/FB15K237_v3/SNRI/epoch=23-Eval|auc=0.910.ckpt'
 
 CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
     --model_name $MODEL_NAME \
@@ -58,4 +59,5 @@ CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
     --dropout $DROPOUT \
     --calc_hits $CALC_HITS \
     --inductive \
-
+    --checkpoint_dir $CHECKPOINT_DIR \
+    --test_only \

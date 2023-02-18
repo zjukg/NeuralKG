@@ -28,7 +28,7 @@ class Grail(nn.Module):
 
         g_out = dgl.mean_nodes(g, 'repr')
 
-        head_ids = (g.ndata['id'] == 1).nonzero().squeeze(1)  # NOTE: 尝试把特征值在graph中拿出来
+        head_ids = (g.ndata['id'] == 1).nonzero().squeeze(1)
         head_embs = g.ndata['repr'][head_ids]
 
         tail_ids = (g.ndata['id'] == 2).nonzero().squeeze(1)
