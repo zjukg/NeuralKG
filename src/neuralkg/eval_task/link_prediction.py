@@ -28,6 +28,15 @@ def link_predict(batch, model, prediction="all", model_name=None):
     return ranks.float()
 
 def ind_predict(batch, model):
+    """Getting the ranking of positive samples in the other 50 negative samples.
+        
+    Args:
+        batch: The batch of sample for test.
+        model: The inductive model for training.
+
+    Returns:
+        ranks: The rank of the triple to be predicted.
+    """
     head_triple = batch["head_sample"]
     head_scores = model(head_triple).squeeze(1).detach().cpu().numpy()
     head_target = batch["head_target"]

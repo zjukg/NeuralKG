@@ -4,6 +4,8 @@ from .BaseLitModel import BaseLitModel
 from neuralkg.utils.tools import logging, log_metrics
 
 class indGNNLitModel(BaseLitModel):
+    """Processing of inductive training, evaluation and testing.
+    """
 
     def __init__(self, model, args):
         super().__init__(model, args)
@@ -19,7 +21,15 @@ class indGNNLitModel(BaseLitModel):
         return parser
     
     def training_step(self, batch, batch_idx):
+        """Getting samples, labels and training in inductive model.
+        
+        Args:
+            batch: The training data.
+            batch_idx: The dict_key in batch, type: list.
 
+        Returns:
+            loss: The training loss for back propagation.
+        """
         pos_sample = batch["positive_sample"]
         neg_sample = batch["negative_sample"]
         pos_label = batch["positive_label"]
@@ -36,7 +46,15 @@ class indGNNLitModel(BaseLitModel):
         return loss
     
     def validation_step(self, batch, batch_idx):
+        """Getting samples and validating in inductive model.
+        
+        Args:
+            batch: The evalutaion data.
+            batch_idx: The dict_key in batch, type: list.
 
+        Returns:
+            results: auc and auc_pr.
+        """
         results = dict()
         score = classification(batch, self.model)
         results.update(score)
@@ -55,7 +73,15 @@ class indGNNLitModel(BaseLitModel):
         self.log_dict(outputs, prog_bar=True, on_epoch=True)
     
     def test_step(self, batch, batch_idx):
+        """Getting samples and test in inductive model.
+        
+        Args:
+            batch: The evaluation data.
+            batch_idx: The dict_key in batch, type: list.
 
+        Returns:
+            results: mrr and hits@1,5,10.
+        """
         results = dict()
         if self.args.eval_task == 'link_prediction':
             ranks = link_predict(batch, self.model, prediction='ind')

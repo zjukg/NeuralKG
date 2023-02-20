@@ -9,6 +9,18 @@ from .RGCN import RelGraphConv
 from neuralkg.model import TransE, DistMult
 
 class SNRI(nn.Module):
+    """`Subgraph Neighboring Relations Infomax for Inductive Link Prediction on Knowledge Graphs`_ (SNRI), which sufficiently 
+        exploits complete neighboring relationsfrom two aspects and apply mutual information (MI) maximization for knowledge graph.
+
+    Attributes:
+        args: Model configuration parameters.
+        gnn: RGCN model.
+        rel_emb: Relation embedding, shape: [num_rel + 1, inp_dim].
+        ent_padding: Entity padding, shape: [1, sem_dim].
+        w_rel2ent: Weight matrix of relation to entity.
+
+    .. _Subgraph Neighboring Relations Infomax for Inductive Link Prediction on Knowledge Graphs: https://arxiv.org/abs/2208.00850
+    """
     def __init__(self, args):
         super().__init__()
         self.args = args
@@ -50,7 +62,11 @@ class SNRI(nn.Module):
         self.W_o = nn.Linear(self.args.num_layers * self.args.emb_dim * 2, self.args.num_layers * self.args.emb_dim)
 
     def init_ent_emb_matrix(self, g):
-        """ Initialize feature of entities by matrix form """
+        """ Initialize feature of entities by matrix form.
+
+        Args:
+            g: The dgl graph of meta task.
+        """
         out_nei_rels = g.ndata['out_nei_rels']
         in_nei_rels = g.ndata['in_nei_rels']
         
@@ -74,6 +90,15 @@ class SNRI(nn.Module):
         g.ndata['init'] = torch.cat([g.ndata['feat'], ent_sem_feats], dim=1)  # [B, self.inp_dim]
 
     def comp_ht_emb(self, head_embs, tail_embs):
+        """combining embedding of head and tail.
+
+        Args:
+            head_embs: Embedding of heads.
+            tail_embs: Embedding of tails.
+
+        Returns:
+            ht_embs: Embedding of head and tail.
+        """
         if self.args.comp_ht == 'mult':
             ht_embs = head_embs * tail_embs
         elif self.args.comp_ht == 'mlp':
@@ -86,6 +111,16 @@ class SNRI(nn.Module):
         return ht_embs
 
     def comp_hrt_emb(self, head_emb, tail_emb, rel_emb):
+        """combining embedding of head, relation and tail.
+
+        Args:
+            head_emb: Embedding of head.
+            relation_emb: Embedding of relation.
+            tail_emb: Embedding of tail.
+
+        Returns:
+            hrt_embs: Embedding of head, relation and tail.
+        """
         rel_emb = rel_emb.repeat(1, self.args.num_layers)
         if self.args.decoder_model.lower() == 'transe':
             hrt_embs = TransE.score_embedding(self, head_emb, rel_emb, tail_emb)
@@ -96,8 +131,18 @@ class SNRI(nn.Module):
         return hrt_embs
 
     def nei_rel_path(self, g, rel_labels, r_emb_out):
-        """ Neighboring relational path module """
-        # Only consider in-degree relations first.
+        """Neighboring relational path module.
+
+        Only consider in-degree relations first.
+
+        Args:
+            g: Subgraph of corresponding triple.
+            rel_labels: Labels of relation.
+            r_emb_out: Embedding of relation.
+
+        Returns:
+            output: Aggregate paths.
+        """
         nei_rels = g.ndata['in_nei_rels']
         head_ids = (g.ndata['id'] == 1).nonzero().squeeze(1)
         tail_ids = (g.ndata['id'] == 2).nonzero().squeeze(1)
@@ -138,11 +183,23 @@ class SNRI(nn.Module):
         
         return output # [B, inp_dim]
 
-    def get_logits(self, s_G, s_g_pos, s_g_cor): 
+    def get_logits(self, s_G, s_g_pos, s_g_cor):
         ret = self.disc(s_G, s_g_pos, s_g_cor)
         return ret
     
     def forward(self, data, is_return_emb=False, cor_graph=False):
+        """Getting the subgraph-level embedding.
+
+        Args:
+            data: Subgraphs and relation labels.
+            is_return_emb: Whether return embedding.
+            cor_graph: Whether corrupt the node feature.
+
+        Returns:
+            output: Representaion of subgraph.
+            s_G: Global Subgraph embeddings.
+            s_g: Local Subgraph embeddings.   
+        """
         # Initialize the embedding of entities
         g, rel_labels = data
         g = dgl.batch(g)
@@ -205,11 +262,27 @@ class SNRI(nn.Module):
         if not is_return_emb:
             return output
         else:
-            # Get the subgraph-level embedding
             s_G = s_g.mean(0)
             return output, s_G, s_g
 
 class RelCompGraphConv(RelGraphConv):
+    """Basic layer of RGCN for SNRI.
+
+    Attributes:
+        args: Model configuration parameters.
+        bias: Weight bias.
+        inp_dim: Dimension of input.
+        out_dim: Dimension of output.
+        num_rels: The number of relations.
+        num_bases: The number of bases.
+        has_attn: Whether there is attention mechanism.
+        is_input_layer: Whether it is input layer.
+        aggregator: Type of aggregator.
+        weight: Weight matrix.
+        w_comp: Bases matrix.
+        self_loop_weight: Self-loop weight.
+        edge_dropout: Dropout of edge.
+    """
     def __init__(self, args, inp_dim, out_dim, aggregator, attn_rel_emb_dim, num_rels, num_bases=-1, bias=None,
                  activation=None, dropout=0.0, edge_dropout=0.0, is_input_layer=False, has_attn=False):
         super().__init__(args, inp_dim, out_dim, 0, None, 0, bias=False, activation=activation, 
@@ -249,6 +322,14 @@ class RelCompGraphConv(RelGraphConv):
         nn.init.xavier_uniform_(self.w_rel, gain=nn.init.calculate_gain('relu'))
 
     def propagate(self, g, attn_rel_emb=None):
+        """Message propagate function.
+
+        Propagate messages and perform calculations according to the graph traversal order.
+
+        Args:
+            g: Subgraph of triple.
+            attn_rel_emb: Relation attention embedding.
+        """
         weight = self.weight.view(self.num_bases, self.inp_dim * self.out_dim)
         weight = torch.matmul(self.w_comp, weight).view(self.num_rels, self.inp_dim, self.out_dim)
         g.edata['w'] = self.edge_dropout(torch.ones(g.number_of_edges(), 1)).type_as(weight)
@@ -287,6 +368,16 @@ class RelCompGraphConv(RelGraphConv):
         g.update_all(msg_func, self.aggregator, None)
 
     def forward(self, g, rel_emb, attn_rel_emb=None):
+        """Update node representation.
+
+        Args:
+            graph: Subgraph of corresponding triple.
+            rel_emb: Embedding of relation.
+            attn_rel_emb: Embedding of relation attention.
+
+        Returns:
+            rel_emb_out: Embedding of relation.
+        """
         self.rel_emb = rel_emb
         self.propagate(g, attn_rel_emb)
 
@@ -312,13 +403,13 @@ class RelCompGraphConv(RelGraphConv):
         return rel_emb_out
 
 class Discriminator(nn.Module):
-    r""" Discriminator module for calculating MI"""
-    
+    """Discriminator module for calculating MI.
+
+    Attributes:
+        n_e: dimension of edge embedding.
+        n_g: dimension of graph embedding.
+    """
     def __init__(self, n_e, n_g):
-        """
-        param: n_e: dimension of edge embedding
-        param: n_g: dimension of graph embedding
-        """
         super(Discriminator, self).__init__()
         self.f_k = nn.Bilinear(n_e, n_g, 1)
 
@@ -326,12 +417,26 @@ class Discriminator(nn.Module):
             self.weights_init(m)
 
     def weights_init(self, m):
+        """Init weights of layers.
+
+        Args:
+            m: Model layer.
+        """
         if isinstance(m, nn.Bilinear):
             torch.nn.init.xavier_uniform_(m.weight.data)
             if m.bias is not None:
                 m.bias.data.fill_(0.0)
 
     def forward(self, c, h_pl, h_mi, s_bias1=None, s_bias2=None):
+        """For calculating MI loss.
+
+        Attributes:
+            c: Global Subgraph embeddings.
+            h_pl: Positive local Subgraph embeddings.
+            h_mi: Negative local Subgraph embeddings.
+            s_bias1: Bias of sc_1.
+            s_bias2: Bias of sc_2.
+        """
         c_x = torch.unsqueeze(c, 0) # [1, F]
         c_x = c_x.expand_as(h_pl)   #[B, F]
 

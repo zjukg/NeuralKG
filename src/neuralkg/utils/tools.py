@@ -90,7 +90,7 @@ def log_metrics(epoch, metrics):
 
 def log_step_metrics(step, metrics):
     '''
-    Print the evaluation logs
+    Print the evaluation logs for check_per_step
     '''
     for metric in metrics:
         logging.info('%s: %.4f at step %d' % (metric, metrics[metric], step))
@@ -152,6 +152,7 @@ def reidx_withr(tri, rel_reidx):
     return tri_reidx, dict(ent_reidx)
 
 def data2pkl(dataset_name):
+    '''Store data in pickle'''
     train_tri = []
     file = open('./dataset/{}/train.txt'.format(dataset_name))
     train_tri.extend([l.strip().split() for l in file.readlines()])

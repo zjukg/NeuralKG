@@ -6,6 +6,8 @@ from collections import defaultdict as ddict
 from neuralkg.utils.tools import logging, log_metrics, get_g_bidir
 
 class MetaGNNLitModel(BaseLitModel):
+    """Processing of meta task training, evaluation and testing.
+    """
 
     def __init__(self, model, args):
         super().__init__(model, args)
@@ -21,6 +23,15 @@ class MetaGNNLitModel(BaseLitModel):
         return parser
     
     def training_step(self, batch, batch_idx):
+        """Getting meta tasks batch and training in meta model.
+        
+        Args:
+            batch: The training data.
+            batch_idx: The dict_key in batch, type: list.
+
+        Returns:
+            loss: The training loss for back propagation.
+        """
         batch_loss = 0
 
         batch_sup_g = dgl.batch([get_g_bidir(d[0], self.args) for d in batch])
@@ -46,6 +57,15 @@ class MetaGNNLitModel(BaseLitModel):
         return loss
     
     def validation_step(self, batch, batch_idx):
+        """Getting meta tasks batch and validating in meta model.
+        
+        Args:
+            batch: The evalutaion data.
+            batch_idx: The dict_key in batch, type: list.
+
+        Returns:
+            results: mrr and hits@1,5,10.
+        """
         batch_sup_g = dgl.batch([get_g_bidir(d[0], self.args) for d in batch])
         self.model.get_ent_emb(batch_sup_g)
         sup_g_list = dgl.unbatch(batch_sup_g)
@@ -86,10 +106,17 @@ class MetaGNNLitModel(BaseLitModel):
         logging.info("++++++++++++++++++++++++++over validating+++++++++++++++++++++++++++")
 
         self.log_dict(outputs, prog_bar=True, on_epoch=True)
-    
-
 
     def test_step(self, batch, batch_idx):
+        """Getting meta tasks batch and test in meta model.
+        
+        Args:
+            batch: The evaluation data.
+            batch_idx: The dict_key in batch, type: list.
+
+        Returns:
+            results: mrr and hits@1,5,10.
+        """
         indtest_train_g = self.model.get_intest_train_g()
         ent_emb = self.model.get_ent_emb(indtest_train_g)
 

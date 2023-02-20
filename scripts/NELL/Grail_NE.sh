@@ -1,15 +1,15 @@
 DATA_DIR=dataset
-DATASET_NAME=NELL_v4
+DATASET_NAME=NELL_v1
 MODEL_NAME=Grail
 
 DATA_PATH=${DATA_DIR}/${DATASET_NAME}
 DB_PATH=${DATA_DIR}/${DATASET_NAME}_subgraph
 PK_PATH=${DATA_DIR}/${DATASET_NAME}.pkl
-TEST_DB_PATH=${DATA_DIR}/${DATASET_NAME}_triple
-EVAL_TASK=link_prediction
-TRAIN_SAMPLER_CLASS=DglSampler
-VALID_SAMPLER_CLASS=ValidDglSampler
-TEST_SAMPLER_CLASS=TestDglSampler
+TEST_DB_PATH=${DATA_DIR}/${DATASET_NAME}_triple_new
+EVAL_TASK=triple_classification
+TRAIN_SAMPLER_CLASS=SubSampler
+VALID_SAMPLER_CLASS=ValidSampler
+TEST_SAMPLER_CLASS=TestSampler_auc
 LITMODEL_NAME=indGNNLitModel
 LOSS=Margin_Loss
 NUM_LAYERS=3
@@ -22,12 +22,13 @@ TEST_BS=1
 NUM_NEG=100
 MARGIN=10.0
 LR=1e-2
-CHECK_PER_EPOCH=2
+CHECK_PER_EPOCH=1
 EARLY_STOP_PATIENCE=20
 NUM_WORKERS=20
 DROPOUT=0
 CALC_HITS=1,5,10
 GPU=0
+CHECKPOINT_DIR=/home/lli/NeuralKG/output/link_prediction/NELL_v1/Grail/epoch\=2-Eval\|auc\=0.915.ckpt
 
 CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
     --model_name $MODEL_NAME \
@@ -57,5 +58,7 @@ CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
     --num_workers $NUM_WORKERS \
     --dropout $DROPOUT \
     --calc_hits $CALC_HITS \
+    --checkpoint_dir $CHECKPOINT_DIR \
     --inductive \
+    --test_only \
     

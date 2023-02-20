@@ -7,6 +7,20 @@ import numpy as np
 from .layer import BatchGRU
 
 class CoMPILE(nn.Module):
+    """`Communicative Message Passing for Inductive Relation Reasoning`_ (CoMPILE), which reasons over 
+        local directed subgraph structures and strengthens the message interactions between edges and 
+        entitles through a communicative kernel.
+
+    Attributes:
+        args: Model configuration parameters.
+        latent_dim: Latent dimension.
+        output_dim: Output dimension.
+        node_emb: Dimension of node embedding.
+        relation_emb: Dimension of relation embedding.
+        hidden_size: Size of hidden layer.
+
+    .. _Communicative Message Passing for Inductive Relation Reasoning: https://arxiv.org/pdf/2012.08911
+    """
     def __init__(self, args):
         super(CoMPILE, self).__init__()  
         self.args = args
@@ -66,6 +80,14 @@ class CoMPILE(nn.Module):
             self._modules['W_h_node_{}'.format(depth)] = nn.Linear(self.hidden_size, self.hidden_size, bias=self.bias)
 
     def forward(self, subgraph):
+        """calculating subgraphs score.
+
+        Args:
+            subgraph: Subgraph of triple.
+
+        Returns:
+            out_conv: The output of convolution layer.
+        """
         subgraph = subgraph[0]
         target_relation = []
         for i in range(len(subgraph)):
@@ -81,7 +103,16 @@ class CoMPILE(nn.Module):
         return out_conv
 
     def batch_subgraph(self, subgraph):
-    
+        """calculating subgraphs score.
+
+        Args:
+            subgraph: Subgraph of triple.
+
+        Returns:
+            graph_embed: Embedding of subgraph.
+            source_embed: Embedding of source entities.
+            target_embed: Embedding of target entities.
+        """
         graph_sizes = []; node_feat = []
         list_num_nodes = np.zeros((len(subgraph), ), dtype=np.int32)
         list_num_edges = np.zeros((len(subgraph), ), dtype=np.int32)
@@ -165,7 +196,27 @@ class CoMPILE(nn.Module):
         return graph_embed, source_embed, target_embed
 
     def gnn(self, node_feat, edge_feat, e2n_sp, e2n_sp2, graph_sizes, target_relation, total_source, total_target, source_node, target_node, edge_sizes = None, node_degs=None):
-      
+        """calculating graph embedding, source embedding and target embedding.
+
+        Args:
+            node_feat: Feature of nodes.
+            edge_feat: Feature of edges.
+            e2n_sp: Sparse matrix of edges to source nodes.
+            e2n_sp2: Sparse matrix of edges to target nodes.
+            graph_sizes: The number of each graph nodes.
+            target_relation: Target relation label.
+            total_source: Total source nodes.
+            total_target: Total target nodes.
+            source_node: Source node of triple.
+            target_node: Target node of triple.
+            edge_sizes: The sizes of edges.
+            node_degs: The degrees of nodes.
+
+        Returns:
+            gmol_vecs: Graph embedding.
+            source_embed: source node embedding.
+            target_embed: target node embedding. 
+        """
         input_node = self.W_i_node(node_feat)  # num_nodes x hidden_size
         input_node = self.act_func(input_node)
         message_node = input_node.clone()
@@ -233,7 +284,6 @@ class CoMPILE(nn.Module):
         target_embed = node_hiddens[target_node, :]
 
         return mol_vecs, source_embed, target_embed         
-       
 
 class MySpMM(torch.autograd.Function):
 

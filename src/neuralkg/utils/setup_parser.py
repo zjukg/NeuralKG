@@ -111,6 +111,7 @@ def setup_parser():
     parser.add_argument("--pk_path", type=str, default=None, help='specify the path for pickle file')
     parser.add_argument("--test_db_path", type=str, default=None, help='specify the path for test subgraph db')
     parser.add_argument("--l2", type=float, default=5e-4, help="Regularization constant for GNN weights")
+    parser.add_argument("--reduction", type=str, choices=['mean', 'sum', 'none'], default='mean', help="specify the reduction to apply to the output")
     #model
     parser.add_argument("--num_bases", "-b", type=int, default=100, help="Number of basis functions to use for GCN weights")
     parser.add_argument("--kge_model", type=str, default="TransE", help="Which KGE model to load entity embeddings from")
@@ -138,7 +139,7 @@ def setup_parser():
     parser.add_argument('--max_nei_rels', type=int, default=10, help='the maximum num of neighbor relations of each node when initialzing the node embedding.')
     parser.add_argument('--nei_rels_dropout', type=float, default=0.4, help='Dropout rate in aggregating relation embeddings.')
     parser.add_argument('--is_comp', type=str, default='mult', choices=['mult', 'sub'], help='The composition manner of node and relation')
-    parser.add_argument('--comp_ht', type=str, choices=['mult, mlp, sum'], default='sum', help='The composition operator of head and tail embedding')
+    parser.add_argument('--comp_ht', type=str, choices=['mult', 'mlp', 'sum'], default='sum', help='The composition operator of head and tail embedding')
     parser.add_argument('--coef_dgi_loss', type=float, default=5, help='Coefficient of MI loss')
     parser.add_argument('--nei_rel_path', action='store_false', help='whether to consider neighboring relational paths')
     parser.add_argument('--path_agg', type=str, choices=['mean', 'att'], default='att', help='the manner of aggreating neighboring relational paths.')

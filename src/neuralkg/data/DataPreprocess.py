@@ -63,7 +63,7 @@ class KGData(object):
             self.count = self.count_frequency(self.train_triples)
 
     def get_id(self):
-        """Get entity/relation id, and entity/relation number.
+        """Getting entity/relation id, and entity/relation number.
 
         Update:
             self.ent2id: Entity to id.
@@ -89,7 +89,7 @@ class KGData(object):
         self.args.num_rel = len(self.rel2id)
 
     def get_triples_id(self):
-        """Get triples id, save in the format of (h, r, t).
+        """Getting triples id, save in the format of (h, r, t).
 
         Update:
             self.train_triples: Train dataset triples id.
@@ -158,7 +158,7 @@ class KGData(object):
         )
 
     def get_hr2t_rt2h_from_train(self):
-        """Get the set of hr2t and rt2h from train dataset, the data type is numpy.
+        """Getting the set of hr2t and rt2h from train dataset, the data type is numpy.
 
         Update:
             self.hr2t_train: The set of hr2t.
@@ -175,7 +175,7 @@ class KGData(object):
 
     @staticmethod
     def count_frequency(triples, start=4):
-        '''Get frequency of a partial triple like (head, relation) or (relation, tail).
+        '''Getting frequency of a partial triple like (head, relation) or (relation, tail).
         
         The frequency will be used for subsampling like word2vec.
         
@@ -201,7 +201,7 @@ class KGData(object):
         
 
     def get_h2rt_t2hr_from_train(self):
-        """Get the set of h2rt and t2hr from train dataset, the data type is numpy.
+        """Getting the set of h2rt and t2hr from train dataset, the data type is numpy.
 
         Update:
             self.h2rt_train: The set of h2rt.
@@ -226,7 +226,19 @@ class KGData(object):
         self.train_triples = [ (hr, list(t)) for (hr,t) in self.hr2t_train.items()]
 
 class GRData(Dataset):
-    """Extracted, labeled, subgraph dataset -- DGL Only"""
+    """Data preprocessing of subgraph. -- DGL Only
+
+    Attributes:
+        args: Some pre-set parameters, such as dataset path, etc. 
+        db_name_pos: Database name of positive sample, type: str.
+        db_name_neg: Database name of negative sample, type: str.
+        m_h2r: The matrix of head to rels, type: NDArray[signedinteger].
+        m_t2r: The matrix of tail to rels, type: NDArray[signedinteger].
+        ssp_graph: The collect of head to tail csc_matrix. type: list. 
+        graph: Dgl graph of train or test, type: DGLHeteroGraph.
+        id2entity: Record the id to entity. type: dict.
+        id2relation: Record the id to relation. type: dict.
+    """
 
     def __init__(self, args, db_name_pos, db_name_neg):
         
@@ -302,6 +314,21 @@ class GRData(Dataset):
         self.__getitem__(0)
 
     def __getitem__(self, index):
+        '''Getting the subgraph corresponding to the index and prepare subgraph features. 
+        
+        Args:
+            index: Index of triple, which can obtain corresponding subgraph nodes from lmdb.
+
+        Returns:
+            subgraph_pos: Enclosing subgraph corresponding to positive sample.
+            dis_subgraph_pos: Disclosing subgraph corresponding to positive sample.
+            g_label_pos: The label of positive sample subgraph.
+            r_labels_pos: The label of positive sample triple relation. 
+            subgraphs_neg: Enclosing subgraph corresponding to negative sample.
+            dis_subgraph_neg: Disclosing subgraph corresponding to negative sample.
+            g_label_neg: The label of negative sample subgraph.
+            r_labels_neg: The label of negative sample triple relation. 
+        '''
         with self.main_env.begin(db=self.db_pos) as txn:
             str_id = '{:08}'.format(index).encode('ascii')
             if self.args.model_name == 'RMPI':
@@ -334,9 +361,28 @@ class GRData(Dataset):
             return subgraph_pos, g_label_pos, r_label_pos, subgraphs_neg, g_labels_neg, r_labels_neg
 
     def __len__(self):
+        '''Getting number of subgraph.
+
+        Returns:
+            num_graphs_pos: number of positive sample subgraph.
+        '''
         return self.num_graphs_pos
 
     def load_data_grail(self):
+        '''Load train dataset, adj_list, ent2idx, etc.
+
+        Returns:
+            adj_list: The collect of head to tail csc_matrix. type: list. 
+            triplets: Triple of train-train and train-validation.
+            train_ent2idx: Entity to idx of train graph.
+            train_rel2idx: Relation to idx of train graph.
+            train_idx2ent: idx to entity of train graph.
+            train_idx2rel: idx to relation of train graph.
+            h2r: Head to relation of train-train triple.
+            m_h2r: The matrix of head to rels.
+            t2r: Tail to relation of train-train triple.
+            m_t2r: The matrix of tail to rels
+        '''
         data = pickle.load(open(self.args.pk_path, 'rb'))
 
         splits = ['train', 'valid']
@@ -421,6 +467,20 @@ class GRData(Dataset):
         return adj_list, triplets, train_ent2idx, train_rel2idx, train_idx2ent, train_idx2rel, h2r, m_h2r, t2r, m_t2r
     
     def load_ind_data_grail(self):
+        '''Load test dataset, adj_list, ent2idx, etc.
+
+        Returns:
+            adj_list: The collect of head to tail csc_matrix. type: list. 
+            triplets: Triple of test-train and test-test.
+            train_ent2idx: Entity to idx of test graph.
+            train_rel2idx: Relation to idx of test graph.
+            train_idx2ent: idx to entity of test graph.
+            train_idx2rel: idx to relation of test graph.
+            h2r: Head to relation of test-train triple.
+            m_h2r: The matrix of head to rels.
+            t2r: Tail to relation of test-train triple.
+            m_t2r: The matrix of tail to rels
+        '''
         data = pickle.load(open(self.args.pk_path, 'rb'))
 
         splits = ['train', 'test']
@@ -527,6 +587,16 @@ class GRData(Dataset):
         return self.__getitem__(0)
 
     def prepare_subgraphs(self, nodes, r_label, n_labels):
+        '''Initialize subgraph nodes and relation characteristics.
+        
+        Args:
+            nodes: The nodes of subgraph.
+            r_label: The label of relation in subgraph corresponding triple.
+            n_labels: The label of node in subgraph.
+
+        Returns:
+            subgraph: Subgraph after processing.
+        '''
         subgraph = self.graph.subgraph(nodes)
         subgraph.edata['type'] = self.graph.edata['type'][subgraph.edata[dgl.EID]]
         subgraph.edata['label'] = torch.tensor(r_label * np.ones(subgraph.edata['type'].shape), dtype=torch.long)
@@ -561,6 +631,17 @@ class GRData(Dataset):
         return subgraph
 
     def prepare_features_new(self, subgraph, n_labels, r_label=None):
+        '''prepare subgraph node features
+
+        Args:
+            subgraph: Extract subgraph.
+            r_label: The label of relation in subgraph corresponding triple.
+            n_labels: The label of node in subgraph.
+
+        Returns:
+            subgraph: Subgraph after initialize node label.
+        
+        '''
         n_nodes = subgraph.number_of_nodes()
         label_feats = np.zeros((n_nodes, self.max_n_label[0] + 1 + self.max_n_label[1] + 1))
         label_feats[np.arange(n_nodes), n_labels[:, 0]] = 1
@@ -581,6 +662,11 @@ class GRData(Dataset):
         return subgraph
 
 class MetaTrainGRData(Dataset):
+    """Data preprocessing of meta train task.
+
+    Attributes:
+        subgraphs_db: database of train subgraphs.
+    """
     def __init__(self, args):
         self.args = args
         self.env = lmdb.open(args.db_path, readonly=True, max_dbs=5, lock=False)
@@ -590,6 +676,17 @@ class MetaTrainGRData(Dataset):
         return self.args.num_train_subgraph
 
     def __getitem__(self, idx):
+        '''Getting the train meta task corresponding to the index. 
+        
+        Args:
+            index: Index of train subgraph, which can obtain corresponding task triple from lmdb.
+
+        Returns:
+            sup_tri: Support triple in train task.
+            que_tri: Query triple in train task.
+            que_neg_tail_ent: Negative sample for query tail entity.
+            que_neg_head_ent: Negative sample for query head entity.
+        '''
         with self.env.begin(db=self.subgraphs_db) as txn:
             str_id = '{:08}'.format(idx).encode('ascii')
             sup_tri, que_tri, hr2t, rt2h = pickle.loads(txn.get(str_id))
@@ -606,6 +703,11 @@ class MetaTrainGRData(Dataset):
                torch.tensor(np.array(que_neg_tail_ent)), torch.tensor(np.array(que_neg_head_ent))
 
 class MetaValidGRData(Dataset):
+    """Data preprocessing of meta valid task.
+
+    Attributes:
+        subgraphs_db: database of valid subgraphs.
+    """
     def __init__(self, args):
         self.args = args
         self.env = lmdb.open(args.db_path, readonly=True, max_dbs=5, lock=False)
@@ -617,6 +719,15 @@ class MetaValidGRData(Dataset):
         return num
 
     def __getitem__(self, idx):
+        '''Getting the valid meta task corresponding to the index. 
+        
+        Args:
+            index: Index of valid subgraph, which can obtain corresponding task triple from lmdb.
+
+        Returns:
+            sup_tri: Support triple in valid task.
+            que_dataloader: Dataloader of query triple in valid task.
+        '''
         with self.env.begin(db=self.subgraphs_db) as txn:
             str_id = '{:08}'.format(idx).encode('ascii')
             sup_tri, que_tri, hr2t, rt2h = pickle.loads(txn.get(str_id))
@@ -630,6 +741,15 @@ class MetaValidGRData(Dataset):
         return torch.tensor(sup_tri), que_dataloader
 
 class KGEEvalData(Dataset):
+    """Data processing for kge evaluate.
+
+    Attributes: 
+        triples: Evaluate triples. type: list.
+        num_ent: The number of entity. type: int.
+        hr2t: Head and raltion to tails. type: dict.
+        rt2h: Relation and tail to heads. type: dict.
+        num_cand: The number of candidate entities. type: str or int.
+    """
     def __init__(self, args, eval_triples, num_ent, hr2t, rt2h):
         self.args = args
         self.triples = eval_triples
@@ -642,6 +762,16 @@ class KGEEvalData(Dataset):
         return len(self.triples)
 
     def __getitem__(self, idx):
+        '''Sample negative candidate entities corresponding to the index. 
+        
+        Args:
+            index: Index of triple.
+
+        Returns:
+            pos_triple: Positive triple.
+            tail_cand: Candidate of tail entities.
+            head_cand: Candidate of head entities.
+        '''
         pos_triple = self.triples[idx]
         h, r, t = pos_triple
         if self.num_cand == 'all':
@@ -663,6 +793,16 @@ class KGEEvalData(Dataset):
             return pos_triple, tail_cand, head_cand
 
     def get_label(self, true_tail, true_head):
+        '''Filter head and tail entities.
+
+        Args:
+            true_tail: Existing tail entities in dataset.
+            true_head: Existing head entities in dataset.
+
+        Returns:
+            y_tail: Label of tail entities.
+            y_head: Label of head entities.
+        '''
         y_tail = np.zeros([self.num_ent], dtype=np.float32)
         for e in true_tail:
             y_tail[e] = 1.0
@@ -793,7 +933,7 @@ class RevSampler(KGData):
         self.get_hr2t_rt2h_from_train()
 
     def add_reverse_relation(self):
-        """Get entity/relation/reverse relation id, and entity/relation number.
+        """Getting entity/relation/reverse relation id, and entity/relation number.
 
         Update:
             self.ent2id: Entity id.
@@ -934,6 +1074,10 @@ class RevSampler(KGData):
         return np.concatenate(neg_list)[:neg_size]
 
 class BaseGraph(object):
+    '''Base subgraph class
+
+    collect train, valid, test dataset for inductive.
+    '''
     def __init__(self, args):
         self.args = args
         self.train_triples = GRData(args, 'train_pos', 'train_neg')
@@ -969,6 +1113,11 @@ class BaseGraph(object):
         return self.test_triples
     
     def generate_ind_test(self):
+        '''generate inductive test triples.
+
+        Returns:
+            neg_triplets: Negative triplets.
+        '''
         adj_list, dgl_adj_list, triplets, m_h2r, m_t2r = self.load_data_grail_ind()
         neg_triplets = self.get_neg_samples_replacing_head_tail(triplets['test'], adj_list)
         
@@ -980,6 +1129,15 @@ class BaseGraph(object):
         return neg_triplets
 
     def load_data_grail_ind(self):
+        '''Load train dataset, adj_list, ent2idx, etc.
+
+        Returns:
+            adj_list: The collect of head to tail csc_matrix.
+            dgl_adj_list: The collect of undirected head to tail csc_matrix.
+            triplets: Triple of test-train and test-test.
+            m_h2r: The matrix of head to rels.
+            m_t2r: The matrix of tail to rels
+        '''
         data = pickle.load(open(self.args.pk_path, 'rb'))
 
         splits = ['train', 'test']
@@ -1059,6 +1217,16 @@ class BaseGraph(object):
         return adj_list, dgl_adj_list, triplets, m_h2r, m_t2r
 
     def get_neg_samples_replacing_head_tail(self, test_links, adj_list, num_samples=50):
+        '''Sample negative triplets by relacing head or tail.
+        
+        Args:
+            test_links: test-test triplets.
+            adj_list: The collect of head to tail csc_matrix.
+            num_samples: The number of candidates.
+
+        Returns:
+            neg_triplets: Sampled negative triplets.
+        '''
         n, r = adj_list[0].shape[0], len(adj_list)
         heads, tails, rels = test_links[:, 0], test_links[:, 1], test_links[:, 2]
 
@@ -1090,6 +1258,10 @@ class BaseGraph(object):
         return neg_triplets
 
 class BaseMeta(object):
+    """Base meta class
+
+    collect train, valid, test dataset for meta task.
+    """
     def __init__(self, args):
         self.args = args
         self.train_triples = MetaTrainGRData(args)

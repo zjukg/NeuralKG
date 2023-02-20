@@ -1,5 +1,5 @@
 DATA_DIR=dataset
-DATASET_NAME=WN18RR_v1
+DATASET_NAME=WN18RR_v2
 MODEL_NAME=SNRI
 
 DATA_PATH=${DATA_DIR}/${DATASET_NAME}
@@ -7,9 +7,9 @@ DB_PATH=${DATA_DIR}/${DATASET_NAME}_subgraph
 PK_PATH=${DATA_DIR}/${DATASET_NAME}.pkl
 TEST_DB_PATH=${DATA_DIR}/${DATASET_NAME}_triple
 EVAL_TASK=link_prediction
-TRAIN_SAMPLER_CLASS=DglSampler
-VALID_SAMPLER_CLASS=ValidDglSampler
-TEST_SAMPLER_CLASS=TestDglSampler
+TRAIN_SAMPLER_CLASS=SubSampler
+VALID_SAMPLER_CLASS=ValidSampler
+TEST_SAMPLER_CLASS=TestSampler_hit
 LITMODEL_NAME=SNRILitModel
 LOSS=Margin_Loss
 NUM_LAYERS=3
@@ -22,13 +22,13 @@ TEST_BS=1
 NUM_NEG=100
 MARGIN=10.0
 LR=1e-3
-CHECK_PER_EPOCH=3
+CHECK_PER_STEP=300
 EARLY_STOP_PATIENCE=20
 NUM_WORKERS=20
 DROPOUT=0
 CALC_HITS=1,5,10
-GPU=2
-CHECKPOINT_DIR='output/link_prediction/WN18RR_v1/SNRI/epoch=23-Eval|auc=0.978.ckpt'
+GPU=1
+CHECKPOINT_DIR=/home/lli/NeuralKG/output/link_prediction/WN18RR_v2/SNRI/epoch\=0-Eval\|auc\=0.987.ckpt
 
 CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
     --model_name $MODEL_NAME \
@@ -52,12 +52,12 @@ CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
     --test_bs $TEST_BS \
     --margin $MARGIN \
     --lr $LR \
-    --check_per_epoch $CHECK_PER_EPOCH \
+    --check_per_step $CHECK_PER_STEP \
     --early_stop_patience $EARLY_STOP_PATIENCE \
     --num_workers $NUM_WORKERS \
     --dropout $DROPOUT \
     --calc_hits $CALC_HITS \
-    --inductive \
     --checkpoint_dir $CHECKPOINT_DIR \
+    --inductive \
     --test_only \
     

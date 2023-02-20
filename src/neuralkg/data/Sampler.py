@@ -11,11 +11,22 @@ import queue
 from neuralkg.utils.tools import subgraph_extraction_labeling
 
 class SubSampler(BaseGraph):
-
+    """Sampling subgraphs. 
+    
+    Prepare subgraphs and collect batch of subgraphs. 
+    """
     def __init__(self, args):
         super().__init__(args)
 
     def sampling(self, data):
+        """Sampling function to collect batch of subgraph for training.
+        
+        Args:
+            data: List of train data.
+        
+        Returns:
+            batch_data: batch of train data.
+        """
         batch_data = {}
 
         graphs_pos, g_labels_pos, r_labels_pos, graphs_negs, g_labels_negs, r_labels_negs = map(list, zip(*data))
@@ -36,11 +47,20 @@ class SubSampler(BaseGraph):
         return ['positive_sample', 'negative_sample', 'positive_label', 'negative_label']
 
 class RMPISampler(BaseGraph): 
-
+    """Sampling subgraphs for RMPI training, which add disclosing subgraph.
+    """
     def __init__(self, args):
         super().__init__(args)
 
     def sampling(self, data):
+        """Sampling function to collect batch of subgraph for RMPI training.
+        
+        Args:
+            data: List of RMPI train data.
+        
+        Returns:
+            batch_data: batch of RMPI train data.
+        """
         batch_data = {}
 
         en_graphs_pos, dis_graphs_pos, g_labels_pos, r_labels_pos, en_graphs_negs, dis_graphs_negs, g_labels_negs, r_labels_negs = map(list, zip(*data))
@@ -997,11 +1017,25 @@ class TestSampler(object):
         return ["positive_sample", "head_label", "tail_label"]
 
 class ValidSampler(object):
+    """Sampling subgraphs for validation.
+
+    Attributes:
+        sampler: The function of training sampler.
+        args: Model configuration parameters.
+    """
     def __init__(self, sampler):
         self.sampler = sampler
         self.args = sampler.args
 
     def sampling(self, data):
+        """Sampling function to collect batch of subgraph for validation.
+
+        Args:
+            data: List of subgraph data for validation.
+
+        Returns:
+            batch_data: The batch of validating data.
+        """
         batch_data = {}
 
         graphs_pos, g_labels_pos, r_labels_pos, graphs_negs, g_labels_negs, r_labels_negs = map(list, zip(*data))
@@ -1024,11 +1058,25 @@ class ValidSampler(object):
         return ['positive_sample', 'negative_sample', 'graph_label_pos', 'graph_label_neg']
 
 class ValidRMPISampler(object): 
+    """Sampling subgraphs for RMPI validation.
+    
+    Attributes:
+        sampler: The function of training sampler.
+        args: Model configuration parameters.
+    """
     def __init__(self, sampler):
         self.sampler = sampler
         self.args = sampler.args
 
     def sampling(self, data):
+        """Sampling function to collect batch of RMPI subgraph(enclosing and disclosing) for validation.
+
+        Args:
+            data: List of subgraph data for RMPI validation.
+
+        Returns:
+            batch_data: The batch of RMPI validating data.
+        """
         batch_data = {}
 
         en_graphs_pos, dis_graphs_pos, g_labels_pos, r_labels_pos, en_graphs_negs, dis_graphs_negs, g_labels_negs, r_labels_negs = map(list, zip(*data))
@@ -1057,6 +1105,14 @@ class ValidRMPISampler(object):
         return ['positive_sample', 'negative_sample', 'graph_label_pos', 'graph_label_neg']
 
 class TestSampler_hit(object):
+    """Sampling subgraphs for testing link prediction.
+    
+    Attributes:
+        sampler: The function of training sampler.
+        args: Model configuration parameters.
+        m_h2r: The matrix of head to rels.
+        m_t2r: The matrix of tail to rels.
+    """
     def __init__(self, sampler):
         self.sampler = sampler
         self.args = sampler.args
@@ -1064,6 +1120,14 @@ class TestSampler_hit(object):
         self.m_t2r = sampler.m_t2r
 
     def sampling(self, data): # NOTE: data or test  固定test_bs为1 每次只取一个
+        """Sampling function to collect batch of subgraph for testing mrr and hit@1,5,10.
+
+        Args:
+            data: List of subgraph data for testing.
+
+        Returns:
+            batch_data: The batch of testing data.
+        """
         batch_data = {}
 
         test = data[0]
@@ -1082,7 +1146,20 @@ class TestSampler_hit(object):
         return ['head_sample', 'tail_sample', 'head_target', 'tail_target']
 
     def get_subgraphs(self, all_links, adj_list, dgl_adj_list, max_node_label_value, m_h2r, m_t2r):
+        """Extracting and labeling subgraphs.
 
+        Args:
+            all_links: All head or tail entities link to corresponding triple.
+            adj_list: List of adjacency matrix.
+            dgl_adj_list: List of undirected head to tail matrix.
+            max_node_label_value: Max value of node label.
+            m_h2r: The matrix of head to rels.
+            m_t2r: The matrix of tail to rels.
+
+        Returns:
+            subgraphs: Subgraphs for testing.
+            r_labels: Labels of relation.
+        """
         subgraphs = []
         r_labels = []
 
@@ -1121,7 +1198,17 @@ class TestSampler_hit(object):
         return (subgraphs, r_labels)
 
     def prepare_features(self, subgraph, n_labels, max_n_label, n_feats=None):
-        # One hot encode the node label feature and concat to n_featsure
+        """One hot encode the node label feature and concat to n_featsure.
+
+        Args:
+            subgraph: Subgraph for processing.
+            n_labels: Node labels.
+            max_n_label: Max value of node label.
+            n_feats: node features.
+
+        Returns:
+            subgraph: Subgraph after processing.
+        """
         n_nodes = subgraph.number_of_nodes()
         label_feats = np.zeros((n_nodes, max_n_label[0] + 1 + max_n_label[1] + 1))
         label_feats[np.arange(n_nodes), n_labels[:, 0]] = 1
@@ -1138,12 +1225,26 @@ class TestSampler_hit(object):
 
         return subgraph
 
-class TestRMPISampler(object): 
+class TestRMPISampler_hit(object): 
+    """Sampling subgraphs for RMPI testing link prediction.
+    
+    Attributes:
+        sampler: The function of training sampler.
+        args: Model configuration parameters.
+    """
     def __init__(self, sampler):
         self.sampler = sampler
         self.args = sampler.args
 
     def sampling(self, data): # NOTE: data or test 
+        """Sampling function to collect batch of subgraph for RMPI testing.
+
+        Args:
+            data: List of subgraph data for RMPI sting.
+
+        Returns:
+            batch_data: The batch of RMPI testing data.
+        """
         batch_data = {}
 
         test = data[0]
@@ -1162,6 +1263,18 @@ class TestRMPISampler(object):
         return ['head_sample', 'tail_sample', 'head_target', 'tail_target']
 
     def prepare_subgraph(self, dgl_adj_list, nodes, rel, node_labels, max_node_label_value):
+        """Prepare enclosing or disclosing subgraph. 
+
+        Args:
+            dgl_adj_list: List of undirected head to tail matrix.
+            nodes: Nodes of subgraph.
+            rel: Relation idx.
+            node_labels: Node labels.
+            max_node_label_value: Max value of node label. 
+
+        Returns:
+            subgraph: Subgraph for testing.
+        """
         subgraph = dgl_adj_list.subgraph(nodes)
         subgraph.edata['type'] = dgl_adj_list.edata['type'][subgraph.edata[dgl.EID]]
         subgraph.edata['label'] = torch.tensor(rel * np.ones(subgraph.edata['type'].shape), dtype=torch.long)
@@ -1188,8 +1301,18 @@ class TestRMPISampler(object):
         return subgraph
 
     def get_subgraphs(self, all_links, adj_list, dgl_adj_list, max_node_label_value):
-        # dgl_adj_list = ssp_multigraph_to_dgl(adj_list)
+        """Extracting and labeling subgraphs.
 
+        Args:
+            all_links: All head or tail entities link to corresponding triple.
+            adj_list: List of adjacency matrix.
+            dgl_adj_list: List of undirected head to tail matrix.
+            max_node_label_value: Max value of node label.
+
+        Returns:
+            subgraphs: Subgraphs for testing.
+            r_labels: Labels of relation.
+        """
         en_subgraphs = []
         dis_subgraphs = []
         r_labels = []
@@ -1214,7 +1337,17 @@ class TestRMPISampler(object):
         return ((batched_en_graph, batched_dis_graph), r_labels)
 
     def prepare_features(self, subgraph, n_labels, max_n_label, n_feats=None):
-        # One hot encode the node label feature and concat to n_featsure
+        """One hot encode the node label feature and concat to n_featsure for RMPI.
+
+        Args:
+            subgraph: Subgraph for processing.
+            n_labels: Node labels.
+            max_n_label: Max value of node label.
+            n_feats: node features.
+
+        Returns:
+            subgraph: Subgraph after processing.
+        """
         n_nodes = subgraph.number_of_nodes()
         label_feats = np.zeros((n_nodes, max_n_label[0] + 1 + max_n_label[1] + 1))
         label_feats[np.arange(n_nodes), n_labels[:, 0]] = 1
@@ -1232,11 +1365,25 @@ class TestRMPISampler(object):
         return subgraph
 
 class TestSampler_auc(object):
+    """Sampling subgraphs for testing triple classification.
+    
+    Attributes:
+        sampler: The function of training sampler.
+        args: Model configuration parameters.
+    """
     def __init__(self, sampler):
         self.sampler = sampler
         self.args = sampler.args
 
     def sampling(self, data):
+        """Sampling function to collect batch of subgraph for testing auc and auc_pr.
+
+        Args:
+            data: List of subgraph data for testing.
+
+        Returns:
+            batch_data: The batch of testing data.
+        """
         batch_data = {}
 
         graphs_pos, g_labels_pos, r_labels_pos, graphs_negs, g_labels_negs, r_labels_negs = map(list, zip(*data))
@@ -1255,33 +1402,114 @@ class TestSampler_auc(object):
 
         return batch_data
 
+class TestRMPISampler_auc(object):
+    """Sampling subgraphs for testing RMPI triple classification.
+    
+    Attributes:
+        sampler: The function of training sampler.
+        args: Model configuration parameters.
+    """
+    def __init__(self, sampler):
+        self.sampler = sampler
+        self.args = sampler.args
+
+    def sampling(self, data):
+        """Sampling function to collect batch of subgraph for RMPI testing auc and auc_pr.
+
+        Args:
+            data: List of subgraph data for RMPI testing.
+
+        Returns:
+            batch_data: The batch of RMPI testing data.
+        """
+        batch_data = {}
+
+        en_graphs_pos, dis_graphs_pos, g_labels_pos, r_labels_pos, en_graphs_negs, dis_graphs_negs, g_labels_negs, r_labels_negs = map(list, zip(*data))
+        batched_en_graph_pos = dgl.batch(en_graphs_pos)
+        batched_dis_graph_pos = dgl.batch(dis_graphs_pos)
+
+        en_graphs_neg = [item for sublist in en_graphs_negs for item in sublist]
+        dis_graphs_neg = [item for sublist in dis_graphs_negs for item in sublist]
+        g_labels_neg = [item for sublist in g_labels_negs for item in sublist]
+        r_labels_neg = [item for sublist in r_labels_negs for item in sublist]
+        
+        batched_en_graph_neg = dgl.batch(en_graphs_neg)
+        batched_dis_graph_neg = dgl.batch(dis_graphs_neg)
+
+        r_labels_pos = torch.LongTensor(r_labels_pos)
+        r_labels_neg = torch.LongTensor(r_labels_neg)
+
+        batch_data["positive_sample"] = ((batched_en_graph_pos, batched_dis_graph_pos), r_labels_pos)
+        batch_data["negative_sample"] = ((batched_en_graph_neg, batched_dis_graph_neg), r_labels_neg)
+        
+        batch_data["graph_pos_label"] =  g_labels_pos
+        batch_data["graph_neg_label"] =  g_labels_neg
+
+        return batch_data
+
+    def get_sampling_keys(self):
+        return ['positive_sample', 'negative_sample', 'graph_label_pos', 'graph_label_neg']
+
 class MetaSampler(BaseMeta):
+    """Sampling meta task and collecting train data for training.
+
+    """
     def __init__(self, args):
         super().__init__(args)
     
     def sampling(self, data):
+        """Sampling function to collect batch of meta task for training, which is default.
+
+        Args:
+            data: List of task for training.
+
+        Returns:
+            data: List of task for training.
+        """
         return data
 
     def get_sampling_keys(self):
         return []
 
 class ValidMetaSampler(object):
+    """Collecting task for validating.
+
+    """
     def __init__(self, sampler):
         self.sampler = sampler
         self.args = sampler.args
     
     def sampling(self, data):
+        """Sampling function to collect batch of meta task for validating, which is default.
+
+        Args:
+            data: List of task for validating.
+
+        Returns:
+            data: List of task for validating.
+        """
         return data
 
     def get_sampling_keys(self):
         return []
 
 class TestMetaSampler(object):
+    """Collecting task for testing.
+
+    """
     def __init__(self, sampler):
         self.sampler = sampler
         self.args = sampler.args
     
     def sampling(self, data):
+        """Sampling function to collect batch of meta task for testing.
+
+        Args:
+            data: List of task for testing.
+
+        Returns:
+            batch_data: Batch of task for validating.
+        """
         batch_data = {}
 
         pos_triple = torch.stack([_[0] for _ in data], dim=0)

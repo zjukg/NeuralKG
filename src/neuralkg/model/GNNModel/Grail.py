@@ -7,6 +7,15 @@ from .RGCN import RelGraphConv
 from neuralkg.utils.tools import *
 
 class Grail(nn.Module):
+    """`Inductive Relation Prediction by Subgraph Reasoning`_ (Grail), which reasons over local subgraph structures.
+
+    Attributes:
+        args: Model configuration parameters.
+        rel_emb: Entity embedding, shape: [num_rel, rel_emb_dim].
+        gnn: RGCN model.
+    
+    .. _Inductive Relation Prediction by Subgraph Reasoning: https://arxiv.org/abs/1911.06962
+    """
     def __init__(self, args):
         super().__init__()
         self.args = args
@@ -22,6 +31,14 @@ class Grail(nn.Module):
             self.fc_layer = nn.Linear(self.args.num_layers * self.args.emb_dim + self.args.rel_emb_dim, 1)
 
     def forward(self, data):
+        """calculating subgraphs score.
+
+        Args:
+            data: Tuple of subgraphs and relation labels.
+
+        Returns:
+            output: The score of subgraphs.
+        """
         g, rel_labels = data
         g = dgl.batch(g)
         g.ndata['h'], _ = self.gnn(g)
@@ -46,6 +63,17 @@ class Grail(nn.Module):
         return output
 
 class RGCN(Model):
+    """RGCN model
+
+    Attributes:
+        args: Model configuration parameters.
+        basiclayer: Layer of RGCN model.
+        inp_dim: Dimension of input.
+        emb_dim: Dimension of embedding.
+        has_attn: Whether there is attention mechanism.
+        attn_rel_emb: Embedding of relation attention.
+        attn_rel_emb_dim: Dimension of relation attention Embedding.
+    """
     def __init__(self, args, basiclayer):
         super(RGCN, self).__init__(args)
 
@@ -63,7 +91,8 @@ class RGCN(Model):
         self.build_model()
 
     def init_emb(self):
-
+        """Initialize the relation attention embedding, aggregator and features.
+        """
         if self.has_attn:
             self.attn_rel_emb = nn.Embedding(self.args.num_rel, self.attn_rel_emb_dim, sparse=False)
 
@@ -75,6 +104,14 @@ class RGCN(Model):
         self.features = torch.arange(self.inp_dim)
 
     def build_hidden_layer(self, idx): 
+        """build hidden layer of RGCN.
+
+        Args:
+            idx: The idx of layer.
+
+        Returns:
+            output: Build a basic layer according to whether it is the first layer.
+        """
         input_flag = True if idx == 0 else False
         input_emb = self.inp_dim if idx == 0 else self.emb_dim
         return self.basiclayer(self.args, input_emb, self.emb_dim, self.aggregator, self.attn_rel_emb_dim, self.args.aug_num_rels,
@@ -82,11 +119,38 @@ class RGCN(Model):
                         is_input_layer=input_flag, has_attn=self.has_attn)
 
     def forward(self, graph, rela=None):
+        """Getting node and relation embedding.
+
+        Args:
+            graph: Subgraph of corresponding triple.
+            rela: Embedding of relation.
+
+        Returns:
+            graph.ndata.pop('h'): Node embedding.
+            rela: Relation embedding.
+        """
         for layer in self.layers:
             rela = layer(graph, rela, self.attn_rel_emb)
         return graph.ndata.pop('h'), rela
 
 class RelAttGraphConv(RelGraphConv):
+    """Basic layer of RGCN.
+
+    Attributes:
+        args: Model configuration parameters.
+        bias: Weight bias.
+        inp_dim: Dimension of input.
+        out_dim: Dimension of output.
+        num_rels: The number of relations.
+        num_bases: The number of bases.
+        has_attn: Whether there is attention mechanism.
+        is_input_layer: Whether it is input layer.
+        aggregator: Type of aggregator.
+        weight: Weight matrix.
+        w_comp: Bases matrix.
+        self_loop_weight: Self-loop weight.
+        edge_dropout: Dropout of edge.
+    """
     def __init__(self, args, inp_dim, out_dim, aggregator, attn_rel_emb_dim, num_rels, num_bases=-1, bias=None,
                  activation=None, dropout=0.0, edge_dropout=0.0, is_input_layer=False, has_attn=False):
         super().__init__(args, inp_dim, out_dim, 0, None, 0, bias=False, activation=activation, 
@@ -124,6 +188,14 @@ class RelAttGraphConv(RelGraphConv):
         nn.init.xavier_uniform_(self.w_comp, gain=nn.init.calculate_gain('relu'))
 
     def propagate(self, g, attn_rel_emb=None):
+        """Message propagate function.
+
+        Propagate messages and perform calculations according to the graph traversal order.
+
+        Args:
+            g: Subgraph of triple.
+            attn_rel_emb: Relation attention embedding.
+        """
         weight = self.weight.view(self.num_bases, self.inp_dim * self.out_dim)
         weight = torch.matmul(self.w_comp, weight).view(self.num_rels, self.inp_dim, self.out_dim)
         g.edata['w'] = self.edge_dropout(torch.ones(g.number_of_edges(), 1)).type_as(weight)
@@ -143,6 +215,16 @@ class RelAttGraphConv(RelGraphConv):
         g.update_all(message, self.aggregator, None)
 
     def forward(self, g, rel_emb=None, attn_rel_emb=None):
+        """Update node representation.
+
+        Args:
+            graph: Subgraph of corresponding triple.
+            rel_emb: Embedding of relation.
+            attn_rel_emb: Embedding of relation attention.
+
+        Returns:
+            rel_emb: Embedding of relation.
+        """
         self.propagate(g, attn_rel_emb)
 
         # apply bias and activation

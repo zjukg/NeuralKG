@@ -11,6 +11,17 @@ from neuralkg.model import TransE, DistMult, ComplEx, RotatE
 from neuralkg.utils import get_indtest_test_dataset_and_train_g, get_g_bidir
 
 class MorsE(nn.Module):
+    """`Meta-Knowledge Transfer for Inductive Knowledge Graph Embedding`_ (MorsE), which learns transferable meta-knowledge that
+        can be used to produce entity embeddings.
+
+    Attributes:
+        args: Model configuration parameters.
+        ent_init: Relation embedding init class.
+        rgcn: RGCN model.
+        KGEModel: KGE model.
+
+    .. _Meta-Knowledge Transfer for Inductive Knowledge Graph Embedding: https://arxiv.org/abs/2110.14170
+    """
     def __init__(self, args):
         super().__init__()
         self.args = args
@@ -27,21 +38,52 @@ class MorsE(nn.Module):
         self.kge_model = KGEModel(args)
 
     def forward(self, sample, ent_emb, mode='single'):
+        """Calculating triple score.
+
+        Args:
+            sample: Sampled triplets.
+            ent_emb: Embedding of entities.
+            mode: This arg indicates that negative entity will replace the head or tail entity.
+
+        Returns:
+            score: Score of triple.
+        """
         return self.kge_model(sample, ent_emb, mode)
 
     def get_intest_train_g(self):
+        """Getting inductive test-train graph.
+
+        Returns:
+            indtest_train_g: test-train graph.
+        """
         data, _, _ , _ = get_indtest_test_dataset_and_train_g(self.args)
         self.indtest_train_g = get_g_bidir(torch.LongTensor(data['train']), self.args)
         self.indtest_train_g = self.indtest_train_g.to(self.args.gpu)
         return self.indtest_train_g
 
     def get_ent_emb(self, sup_g_bidir):
+        """Getting entities embedding.
+
+        Args:
+            sup_g_bidir: Undirected supporting graph.
+
+        Returns:
+            ent_emb: Embedding of entities.
+        """
         self.ent_init(sup_g_bidir)
         ent_emb = self.rgcn(sup_g_bidir)
 
         return ent_emb
     
     def get_score(self, batch, mode):
+        """Getting score of triplets.
+
+        Args:
+            batch: Including positive sample, entities embedding, etc.
+
+        Returns:
+            score: Score of positive or negative sample.
+        """
         pos_triple = batch["positive_sample"]
         ent_emb = batch["ent_emb"]
 
@@ -56,17 +98,31 @@ class MorsE(nn.Module):
                 return self.kge_model((pos_triple, head_cand), ent_emb, mode)
     
     def get_num_rel(self, args):
+        """Getting number of relation.
+
+        Args:
+            args: Model configuration parameters.
+
+        Returns:
+            num_rel: The number of relation.
+        """
         data = pickle.load(open(args.pk_path, 'rb'))
         num_rel = len(np.unique(np.array(data['train_graph']['train'])[:, 1]))
 
         return num_rel   
 
 class EntInit(nn.Module):
+    """Class of initializing entities.
+
+    Attributes:
+        args: Model configuration parameters.
+        rel_head_emb: Embedding of relation to head.
+        rel_tail_emb: Embedding of relation to tail.
+    """
     def __init__(self, args):
         super(EntInit, self).__init__()
         self.args = args
 
-        
         self.rel_head_emb = nn.Parameter(torch.Tensor(args.num_rel, args.ent_dim))
         self.rel_tail_emb = nn.Parameter(torch.Tensor(args.num_rel, args.ent_dim))
 
@@ -74,6 +130,11 @@ class EntInit(nn.Module):
         nn.init.xavier_normal_(self.rel_tail_emb, gain=nn.init.calculate_gain('relu'))
 
     def forward(self, g_bidir):
+        """Initialize entities in graph.
+
+        Args:
+            g_bidir: Undirected graph.
+        """
         num_edge = g_bidir.num_edges()
         etypes = g_bidir.edata['type']
         g_bidir.edata['ent_e'] = torch.zeros(num_edge, self.args.ent_dim).type_as(etypes).float()
@@ -88,10 +149,27 @@ class EntInit(nn.Module):
         g_bidir.edata.pop('ent_e')
 
 class RelMorsGraphConv(RelGraphConv):
-    def __init__(self, args, inp_dim, out_dim, aggregator, num_rels, num_bases=-1, bias=None,
+    """Basic layer of RGCN.
+
+    Attributes:
+        args: Model configuration parameters.
+        bias: Weight bias.
+        inp_dim: Dimension of input.
+        out_dim: Dimension of output.
+        num_rels: The number of relations.
+        num_bases: The number of bases.
+        has_attn: Whether there is attention mechanism.
+        is_input_layer: Whether it is input layer.
+        aggregator: Type of aggregator.
+        weight: Weight matrix.
+        w_comp: Bases matrix.
+        self_loop_weight: Self-loop weight.
+        edge_dropout: Dropout of edge.
+    """
+    def __init__(self, args, inp_dim, out_dim, aggregator, num_rels, num_bases=-1, bias=False,
                  activation=None, dropout=0.0, edge_dropout=0.0, is_input_layer=False, has_attn=False):
-        super().__init__(args, inp_dim, out_dim, 0, None, 0, bias=False, activation=activation, 
-                        self_loop=False, dropout=0.0, layer_norm=False,)
+        super().__init__(args, inp_dim, out_dim, 0, None, 0, bias=bias, activation=activation, 
+                        self_loop=True, dropout=0.0, layer_norm=False)
         self.in_dim = inp_dim
         self.out_dim = out_dim
         self.num_rels = num_rels
@@ -100,44 +178,52 @@ class RelMorsGraphConv(RelGraphConv):
         if self.num_bases is None or self.num_bases > self.num_rels or self.num_bases <= 0:
             self.num_bases = self.num_rels
 
-        # for msg_func
         self.rel_weight = None
         self.input_ = None
 
-        self.has_bias = bias
         self.activation = activation
 
         self.is_input_layer = is_input_layer
 
-        # add basis weights
         self.weight = nn.Parameter(torch.Tensor(self.num_bases, self.in_dim, self.out_dim))
         self.w_comp = nn.Parameter(torch.Tensor(self.num_rels*2, self.num_bases))
-        self.self_loop_weight = nn.Parameter(torch.Tensor(self.in_dim, self.out_dim))
 
         nn.init.xavier_uniform_(self.weight, gain=nn.init.calculate_gain('relu'))
         nn.init.xavier_uniform_(self.w_comp, gain=nn.init.calculate_gain('relu'))
-        nn.init.xavier_uniform_(self.self_loop_weight, gain=nn.init.calculate_gain('relu'))
 
         self.aggregator = self.aggregator
 
-        # bias
-        if self.has_bias:
-            self.bias = nn.Parameter(torch.Tensor(self.out_dim))
-            nn.init.zeros_(self.bias)
-
     def message(self, edges):
+        """Message function for propagating.
+
+        Args:
+            edges: Edges in graph.
+
+        Returns:
+            curr_emb: Embedding of current layer.
+            msg: Message for propagating.
+            a: Coefficient.
+        """
         w = self.rel_weight.index_select(0, edges.data['type'])
         msg = torch.bmm(edges.src[self.input_].unsqueeze(1), w).squeeze(1)
-        curr_emb = torch.mm(edges.dst[self.input_], self.self_loop_weight)  # (B, F)
-        a = 1 / edges.dst['in_d'].to(torch.float32).type_as(w).reshape(-1, 1)
+        curr_emb = torch.mm(edges.dst[self.input_], self.loop_weight)  # (B, F)
+        a = 1 / edges.dst['in_d'].type_as(w).to(torch.float32).reshape(-1, 1)
 
         return {'curr_emb': curr_emb, 'msg': msg, 'alpha': a}
 
     def apply_node_func(self, nodes):
+        """Function used for nodes.
+
+        Args:
+            nodes: nodes in graph.
+
+        Returns:
+            node_repr: Representation of nodes.
+        """
         node_repr = nodes.data['h']
 
-        if self.has_bias:
-            node_repr = node_repr + self.bias
+        if self.bias:
+            node_repr = node_repr + self.h_bias
 
         if self.activation:
             node_repr = self.activation(node_repr)
@@ -145,6 +231,11 @@ class RelMorsGraphConv(RelGraphConv):
         return {'h': node_repr}
 
     def forward(self, g):
+        """Update node representation.
+
+        Args:
+            g: Subgraph of corresponding triple.
+        """
         # generate all relations' weight from bases
         weight = self.weight.view(self.num_bases, self.in_dim * self.out_dim)
         self.rel_weight = torch.matmul(self.w_comp, weight).view(
@@ -163,7 +254,15 @@ class RelMorsGraphConv(RelGraphConv):
             g.ndata['repr'] = torch.cat([g.ndata['repr'], g.ndata['h']], dim=1)
 
 class RGCN(Model):
+    """RGCN model
 
+    Attributes:
+        args: Model configuration parameters.
+        basiclayer: Layer of RGCN model.
+        inp_dim: Dimension of input.
+        emb_dim: Dimension of embedding.
+        aggregator: Type of aggregator.
+    """
     def __init__(self, args, basiclayer):
         super(RGCN, self).__init__(args)
 
@@ -183,11 +282,27 @@ class RGCN(Model):
         self.jk_linear = nn.Linear(self.emb_dim*(self.args.num_layers+1), self.emb_dim)
 
     def build_hidden_layer(self, idx): 
+        """build hidden layer of RGCN.
+
+        Args:
+            idx: The idx of layer.
+
+        Returns:
+            output: Build a basic layer according to whether it is the first layer.
+        """
         input_flag = True if idx == 0 else False
         return self.basiclayer(self.args, self.inp_dim, self.emb_dim, self.aggregator, self.num_rel, self.num_bases, bias=True,
                         activation=F.relu, is_input_layer=input_flag)
 
     def forward(self, g):
+        """Getting nodes embedding.
+
+        Args:
+            g: Subgraph of corresponding task.
+
+        Returns:
+            g.ndata['h']: Nodes embedding.
+        """
         for layer in self.layers:
             layer(g)
 
@@ -195,6 +310,18 @@ class RGCN(Model):
         return g.ndata['h']
 
 class KGEModel(nn.Module):
+    """KGE model
+
+    Attributes:
+        args: Model configuration parameters.
+        model_name: The name of model.
+        nrelation: The number of relation.
+        emb_dim: Dimension of embedding.
+        epsilon: Calculate embedding_range.
+        margin: Calculate embedding_range and loss.
+        embedding_range: Uniform distribution range.
+        relation_embedding: Embedding of relation.
+    """
     def __init__(self, args):
         super(KGEModel, self).__init__()
         self.args = args
@@ -217,14 +344,21 @@ class KGEModel(nn.Module):
             raise ValueError('model %s not supported' % self.model_name)
 
     def forward(self, sample, ent_emb, mode='single'):
-        '''
-        Forward function that calculate the score of a batch of triples.
-        In the 'single' mode, sample is a batch of triple.
-        In the 'head-batch' or 'tail-batch' mode, sample consists two part.
-        The first part is usually the positive sample.
-        And the second part is the entities in the negative samples.
-        Because negative samples and positive samples usually share two elements
-        in their triple ((head, relation) or (relation, tail)).
+        '''Forward function that calculate the score of a batch of triples.
+            In the 'single' mode, sample is a batch of triple.
+            In the 'head-batch' or 'tail-batch' mode, sample consists two part.
+            The first part is usually the positive sample.
+            And the second part is the entities in the negative samples.
+            Because negative samples and positive samples usually share two elements
+            in their triple ((head, relation) or (relation, tail)).
+        
+        Args:
+            sample: Positive and negative sample.
+            ent_emb: Embedding of entities.
+            mode: 'single', 'head-batch' or 'tail-batch'.
+
+        Returns:
+            score: The score of sample.
         '''
         self.entity_embedding = ent_emb
         if mode == 'single':
@@ -341,32 +475,4 @@ class KGEModel(nn.Module):
         else:
             raise ValueError('model %s not supported' % self.model_name)
 
-        return score
-        pi = 3.14159265358979323846
-
-        re_head, im_head = torch.chunk(head, 2, dim=2)
-        re_tail, im_tail = torch.chunk(tail, 2, dim=2)
-
-        # Make phases of relations uniformly distributed in [-pi, pi]
-
-        phase_relation = relation / (self.embedding_range.item() / pi)
-
-        re_relation = torch.cos(phase_relation)
-        im_relation = torch.sin(phase_relation)
-
-        if mode == 'head-batch':
-            re_score = re_relation * re_tail + im_relation * im_tail
-            im_score = re_relation * im_tail - im_relation * re_tail
-            re_score = re_score - re_head
-            im_score = im_score - im_head
-        else:
-            re_score = re_head * re_relation - im_head * im_relation
-            im_score = re_head * im_relation + im_head * re_relation
-            re_score = re_score - re_tail
-            im_score = im_score - im_tail
-
-        score = torch.stack([re_score, im_score], dim=0)
-        score = score.norm(dim=0)
-
-        score = self.margin.item() - score.sum(dim=2)
         return score
