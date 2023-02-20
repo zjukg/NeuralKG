@@ -138,7 +138,7 @@ def main():
             check_val_every_n_epoch=args.check_per_epoch, 
             reload_dataloaders_every_n_epochs=1 # IterE
         )
-    elif args.model_name == "MorsE" or args.model_name == 'RMPI':
+    elif args.check_per_step:
         trainer = pl.Trainer.from_argparse_args(
             args,
             callbacks=callbacks,
