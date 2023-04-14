@@ -1,0 +1,1868 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KGEModel &mdash; NeuralKG-ind v1.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="RuleModel" href="rulemodel.html" />
+    <link rel="prev" title="Model" href="neuralkg_ind.model.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> NeuralKG-ind
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Experiment Result</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="result.html">Results</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="neuralkg_ind.html">NeuralKG-ind</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="neuralkg_ind.data.html">Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="neuralkg_ind.eval_task.html">Eval_Task</a></li>
+<li class="toctree-l2"><a class="reference internal" href="neuralkg_ind.lit_model.html">Lit_Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="neuralkg_ind.loss.html">loss</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="neuralkg_ind.model.html">Model</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">KGEModel</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#module-neuralkg_ind.model.KGEModel.model">model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-neuralkg_ind.model.KGEModel.TransE">TransE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-neuralkg_ind.model.KGEModel.TransH">TransH</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-neuralkg_ind.model.KGEModel.TransR">TransR</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-neuralkg_ind.model.KGEModel.RotatE">RotatE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-neuralkg_ind.model.KGEModel.DistMult">DistMult</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-neuralkg_ind.model.KGEModel.ComplEx">ComplEx</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-neuralkg_ind.model.KGEModel.SimplE">SimplE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-neuralkg_ind.model.KGEModel.ConvE">ConvE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-neuralkg_ind.model.KGEModel.BoxE">BoxE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-neuralkg_ind.model.KGEModel.CrossE">CrossE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-neuralkg_ind.model.KGEModel.HAKE">HAKE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-neuralkg_ind.model.KGEModel.PairRE">PairRE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-neuralkg_ind.model.KGEModel.DualE">DualE</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="rulemodel.html">RuleModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gnnmodel.html">GNNModel</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="neuralkg_ind.utils.html">Utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">NeuralKG-ind</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="neuralkg_ind.html">NeuralKG-ind</a> &raquo;</li>
+          <li><a href="neuralkg_ind.model.html">Model</a> &raquo;</li>
+      <li>KGEModel</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/zjukg/NeuralKG_ind/blob/main/docs/source/kgemodel.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="kgemodel">
+<h1>KGEModel<a class="headerlink" href="#kgemodel" title="Permalink to this heading">¶</a></h1>
+<section id="module-neuralkg_ind.model.KGEModel.model">
+<span id="model"></span><h2>model<a class="headerlink" href="#module-neuralkg_ind.model.KGEModel.model" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.model.Model">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg_ind.model.KGEModel.model.</span></span><span class="sig-name descname"><span class="pre">Model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/model.html#Model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.model.Model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.model.Model.init_emb">
+<span class="sig-name descname"><span class="pre">init_emb</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/model.html#Model.init_emb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.model.Model.init_emb" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.model.Model.score_func">
+<span class="sig-name descname"><span class="pre">score_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">head_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relation_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tail_emb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/model.html#Model.score_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.model.Model.score_func" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.model.Model.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">triples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">negs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/model.html#Model.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.model.Model.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.model.Model.tri2emb">
+<span class="sig-name descname"><span class="pre">tri2emb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">triples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">negs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'single'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/model.html#Model.tri2emb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.model.Model.tri2emb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get embedding of triples.</p>
+<p>This function get the embeddings of head, relation, and tail
+respectively. each embedding has three dimensions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>triples</strong> (<em>tensor</em>) – This tensor save triples id, which dimension is
+[triples number, 3].</p></li>
+<li><p><strong>negs</strong> (<em>tensor</em><em>, </em><em>optional</em>) – This tenosr store the id of the entity to
+be replaced, which has one dimension. when negs is None, it is
+in the test/eval phase. Defaults to None.</p></li>
+<li><p><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><em>optional</em>) – This arg indicates that the negative entity
+will replace the head or tail entity. when it is ‘single’, it
+means that entity will not be replaced. Defaults to ‘single’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Head entity embedding.
+relation_emb: Relation embedding.
+tail_emb: Tail entity embedding.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>head_emb</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.model.Model.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><a class="headerlink" href="#neuralkg_ind.model.KGEModel.model.Model.training" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-neuralkg_ind.model.KGEModel.TransE">
+<span id="transe"></span><h2>TransE<a class="headerlink" href="#module-neuralkg_ind.model.KGEModel.TransE" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransE.TransE">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg_ind.model.KGEModel.TransE.</span></span><span class="sig-name descname"><span class="pre">TransE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/TransE.html#TransE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransE.TransE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#neuralkg_ind.model.KGEModel.model.Model" title="neuralkg_ind.model.KGEModel.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p>
+<p><a href="#id8"><span class="problematic" id="id9">`Translating Embeddings for Modeling Multi-relational Data`_</span></a> (TransE), which represents the relationships as translations in the embedding space.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransE.TransE.args">
+<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransE.TransE.args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Model configuration parameters.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransE.TransE.epsilon">
+<span class="sig-name descname"><span class="pre">epsilon</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransE.TransE.epsilon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate embedding_range.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransE.TransE.margin">
+<span class="sig-name descname"><span class="pre">margin</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransE.TransE.margin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate embedding_range and loss.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransE.TransE.embedding_range">
+<span class="sig-name descname"><span class="pre">embedding_range</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransE.TransE.embedding_range" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uniform distribution range.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransE.TransE.ent_emb">
+<span class="sig-name descname"><span class="pre">ent_emb</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransE.TransE.ent_emb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Entity embedding, shape:[num_ent, emb_dim].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransE.TransE.rel_emb">
+<span class="sig-name descname"><span class="pre">rel_emb</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransE.TransE.rel_emb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Relation embedding, shape:[num_rel, emb_dim].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransE.TransE.init_emb">
+<span class="sig-name descname"><span class="pre">init_emb</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/TransE.html#TransE.init_emb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransE.TransE.init_emb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the entity and relation embeddings in the form of a uniform distribution.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransE.TransE.score_func">
+<span class="sig-name descname"><span class="pre">score_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">head_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relation_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tail_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/TransE.html#TransE.score_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransE.TransE.score_func" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculating the score of triples.</p>
+<p>The formula for calculating the score is <span class="math notranslate nohighlight">\(\gamma - ||h + r - t||_F\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>head_emb</strong> – The head entity embedding.</p></li>
+<li><p><strong>relation_emb</strong> – The relation embedding.</p></li>
+<li><p><strong>tail_emb</strong> – The tail entity embedding.</p></li>
+<li><p><strong>mode</strong> – Choose head-predict or tail-predict.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The score of triples.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>score</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransE.TransE.score_embedding">
+<span class="sig-name descname"><span class="pre">score_embedding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">head_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relation_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tail_emb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/TransE.html#TransE.score_embedding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransE.TransE.score_embedding" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculating the triple embedding.</p>
+<p>The formula for calculating the triple embedding is <span class="math notranslate nohighlight">\(h + r - t\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>head_emb</strong> – The head entity embedding.</p></li>
+<li><p><strong>relation_emb</strong> – The relation embedding.</p></li>
+<li><p><strong>tail_emb</strong> – The tail entity embedding.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The embedding of triple.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>embedding</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransE.TransE.mapping_embedding">
+<span class="sig-name descname"><span class="pre">mapping_embedding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">head_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relation_emb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/TransE.html#TransE.mapping_embedding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransE.TransE.mapping_embedding" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculating the head and relation mapping embedding.</p>
+<p>The formula for calculating the mapping embedding is <span class="math notranslate nohighlight">\(h + r\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>head_emb</strong> – The head entity embedding.</p></li>
+<li><p><strong>relation_emb</strong> – The relation embedding.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The embedding of mapping.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>embedding</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransE.TransE.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">triples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">negs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'single'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/TransE.html#TransE.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransE.TransE.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>The functions used in the training phase</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>triples</strong> – The triples ids, as (h, r, t), shape:[batch_size, 3].</p></li>
+<li><p><strong>negs</strong> – Negative samples, defaults to None.</p></li>
+<li><p><strong>mode</strong> – Choose head-predict or tail-predict, Defaults to ‘single’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The score of triples.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>score</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransE.TransE.get_score">
+<span class="sig-name descname"><span class="pre">get_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/TransE.html#TransE.get_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransE.TransE.get_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>The functions used in the testing phase</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch</strong> – A batch of data.</p></li>
+<li><p><strong>mode</strong> – Choose head-predict or tail-predict.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The score of triples.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>score</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransE.TransE.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransE.TransE.training" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-neuralkg_ind.model.KGEModel.TransH">
+<span id="transh"></span><h2>TransH<a class="headerlink" href="#module-neuralkg_ind.model.KGEModel.TransH" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransH.TransH">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg_ind.model.KGEModel.TransH.</span></span><span class="sig-name descname"><span class="pre">TransH</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/TransH.html#TransH"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransH.TransH" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#neuralkg_ind.model.KGEModel.model.Model" title="neuralkg_ind.model.KGEModel.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p>
+<p><a class="reference external" href="https://ojs.aaai.org/index.php/AAAI/article/view/8870">Knowledge Graph Embedding by Translating on Hyperplanes</a> (TransH), which apply the translation from head to tail entity in a
+relational-specific hyperplane in order to address its inability to model one-to-many, many-to-one, and many-to-many relations.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransH.TransH.args">
+<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransH.TransH.args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Model configuration parameters.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransH.TransH.epsilon">
+<span class="sig-name descname"><span class="pre">epsilon</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransH.TransH.epsilon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate embedding_range.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransH.TransH.margin">
+<span class="sig-name descname"><span class="pre">margin</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransH.TransH.margin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate embedding_range and loss.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransH.TransH.embedding_range">
+<span class="sig-name descname"><span class="pre">embedding_range</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransH.TransH.embedding_range" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uniform distribution range.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransH.TransH.ent_emb">
+<span class="sig-name descname"><span class="pre">ent_emb</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransH.TransH.ent_emb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Entity embedding, shape:[num_ent, emb_dim].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransH.TransH.rel_emb">
+<span class="sig-name descname"><span class="pre">rel_emb</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransH.TransH.rel_emb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Relation embedding, shape:[num_rel, emb_dim].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransH.TransH.norm_vector">
+<span class="sig-name descname"><span class="pre">norm_vector</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransH.TransH.norm_vector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Relation-specific projection matrix, shape:[num_rel, emb_dim]</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransH.TransH.init_emb">
+<span class="sig-name descname"><span class="pre">init_emb</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/TransH.html#TransH.init_emb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransH.TransH.init_emb" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransH.TransH.score_func">
+<span class="sig-name descname"><span class="pre">score_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">head_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relation_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tail_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/TransH.html#TransH.score_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransH.TransH.score_func" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculating the score of triples.</p>
+<p>The formula for calculating the score is <span class="math notranslate nohighlight">\(\gamma - \|e'_{h,r} + d_r - e'_{t,r}\|_{p}^2\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>head_emb</strong> – The head entity embedding.</p></li>
+<li><p><strong>relation_emb</strong> – The relation embedding.</p></li>
+<li><p><strong>tail_emb</strong> – The tail entity embedding.</p></li>
+<li><p><strong>mode</strong> – Choose head-predict or tail-predict.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The score of triples.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>score</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransH.TransH.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">triples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">negs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'single'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/TransH.html#TransH.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransH.TransH.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>The functions used in the training phase, same as TransE</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransH.TransH.get_score">
+<span class="sig-name descname"><span class="pre">get_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/TransH.html#TransH.get_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransH.TransH.get_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>The functions used in the testing phase, same as TransE</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransH.TransH.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransH.TransH.training" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-neuralkg_ind.model.KGEModel.TransR">
+<span id="transr"></span><h2>TransR<a class="headerlink" href="#module-neuralkg_ind.model.KGEModel.TransR" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransR.TransR">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg_ind.model.KGEModel.TransR.</span></span><span class="sig-name descname"><span class="pre">TransR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/TransR.html#TransR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransR.TransR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#neuralkg_ind.model.KGEModel.model.Model" title="neuralkg_ind.model.KGEModel.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p>
+<p>Learning Entity and Relation Embeddings for Knowledge Graph Completion`_ (TransR), which building entity and relation embeddings in separate entity space and relation spaces</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransR.TransR.args">
+<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransR.TransR.args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Model configuration parameters.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransR.TransR.epsilon">
+<span class="sig-name descname"><span class="pre">epsilon</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransR.TransR.epsilon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate embedding_range.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransR.TransR.margin">
+<span class="sig-name descname"><span class="pre">margin</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransR.TransR.margin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate embedding_range and loss.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransR.TransR.embedding_range">
+<span class="sig-name descname"><span class="pre">embedding_range</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransR.TransR.embedding_range" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uniform distribution range.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransR.TransR.ent_emb">
+<span class="sig-name descname"><span class="pre">ent_emb</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransR.TransR.ent_emb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Entity embedding, shape:[num_ent, emb_dim].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransR.TransR.rel_emb">
+<span class="sig-name descname"><span class="pre">rel_emb</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransR.TransR.rel_emb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Relation embedding, shape:[num_rel, emb_dim].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransR.TransR.transfer_matrix">
+<span class="sig-name descname"><span class="pre">transfer_matrix</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransR.TransR.transfer_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transfer entity and relation embedding, shape:[num_rel, emb_dim*emb_dim]</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransR.TransR.init_emb">
+<span class="sig-name descname"><span class="pre">init_emb</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/TransR.html#TransR.init_emb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransR.TransR.init_emb" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransR.TransR.score_func">
+<span class="sig-name descname"><span class="pre">score_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">head_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relation_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tail_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/TransR.html#TransR.score_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransR.TransR.score_func" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculating the score of triples.</p>
+<p>The formula for calculating the score is <span class="math notranslate nohighlight">\(\gamma - \| M_{r} {e}_h + r_r - M_{r}e_t \|_{p}^2\)</span></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransR.TransR.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">triples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">negs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'single'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/TransR.html#TransR.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransR.TransR.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>The functions used in the training phase, calculate triple score.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransR.TransR.get_score">
+<span class="sig-name descname"><span class="pre">get_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/TransR.html#TransR.get_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransR.TransR.get_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>The functions used in the testing phase, predict triple score.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.TransR.TransR.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><a class="headerlink" href="#neuralkg_ind.model.KGEModel.TransR.TransR.training" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-neuralkg_ind.model.KGEModel.RotatE">
+<span id="rotate"></span><h2>RotatE<a class="headerlink" href="#module-neuralkg_ind.model.KGEModel.RotatE" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.RotatE.RotatE">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg_ind.model.KGEModel.RotatE.</span></span><span class="sig-name descname"><span class="pre">RotatE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/RotatE.html#RotatE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.RotatE.RotatE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#neuralkg_ind.model.KGEModel.model.Model" title="neuralkg_ind.model.KGEModel.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p>
+<p><a href="#id10"><span class="problematic" id="id11">`RotatE: Knowledge Graph Embedding by Relational Rotation in Complex Space`_</span></a> (RotatE), which defines each relation as a rotation from the source entity to the target entity in the complex vector space.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.RotatE.RotatE.args">
+<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.RotatE.RotatE.args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Model configuration parameters.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.RotatE.RotatE.epsilon">
+<span class="sig-name descname"><span class="pre">epsilon</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.RotatE.RotatE.epsilon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate embedding_range.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.RotatE.RotatE.margin">
+<span class="sig-name descname"><span class="pre">margin</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.RotatE.RotatE.margin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate embedding_range and loss.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.RotatE.RotatE.embedding_range">
+<span class="sig-name descname"><span class="pre">embedding_range</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.RotatE.RotatE.embedding_range" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uniform distribution range.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.RotatE.RotatE.ent_emb">
+<span class="sig-name descname"><span class="pre">ent_emb</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.RotatE.RotatE.ent_emb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Entity embedding, shape:[num_ent, emb_dim * 2].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.RotatE.RotatE.rel_emb">
+<span class="sig-name descname"><span class="pre">rel_emb</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.RotatE.RotatE.rel_emb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Relation_embedding, shape:[num_rel, emb_dim].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.RotatE.RotatE.init_emb">
+<span class="sig-name descname"><span class="pre">init_emb</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/RotatE.html#RotatE.init_emb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.RotatE.RotatE.init_emb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the entity and relation embeddings in the form of a uniform distribution.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.RotatE.RotatE.score_func">
+<span class="sig-name descname"><span class="pre">score_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">head_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relation_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tail_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/RotatE.html#RotatE.score_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.RotatE.RotatE.score_func" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculating the score of triples.</p>
+<p>The formula for calculating the score is <span class="math notranslate nohighlight">\(\gamma - \|h \circ r - t\|\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>head_emb</strong> – The head entity embedding.</p></li>
+<li><p><strong>relation_emb</strong> – The relation embedding.</p></li>
+<li><p><strong>tail_emb</strong> – The tail entity embedding.</p></li>
+<li><p><strong>mode</strong> – Choose head-predict or tail-predict.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The score of triples.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>score</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.RotatE.RotatE.score_embedding">
+<span class="sig-name descname"><span class="pre">score_embedding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">head_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relation_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tail_emb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/RotatE.html#RotatE.score_embedding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.RotatE.RotatE.score_embedding" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculating the triple embedding.</p>
+<p>The formula for calculating the triple embedding is <span class="math notranslate nohighlight">\(\|h \circ r - t\|\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>head_emb</strong> – The head entity embedding.</p></li>
+<li><p><strong>relation_emb</strong> – The relation embedding.</p></li>
+<li><p><strong>tail_emb</strong> – The tail entity embedding.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The embedding of triple.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>embedding</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.RotatE.RotatE.mapping_embedding">
+<span class="sig-name descname"><span class="pre">mapping_embedding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">head_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relation_emb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/RotatE.html#RotatE.mapping_embedding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.RotatE.RotatE.mapping_embedding" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculating the head and relation mapping embedding.</p>
+<p>The formula for calculating the mapping embedding is <span class="math notranslate nohighlight">\(h \circ r\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>head_emb</strong> – The head entity embedding.</p></li>
+<li><p><strong>relation_emb</strong> – The relation embedding.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The embedding of mapping.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>embedding</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.RotatE.RotatE.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">triples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">negs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'single'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/RotatE.html#RotatE.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.RotatE.RotatE.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>The functions used in the training phase</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>triples</strong> – The triples ids, as (h, r, t), shape:[batch_size, 3].</p></li>
+<li><p><strong>negs</strong> – Negative samples, defaults to None.</p></li>
+<li><p><strong>mode</strong> – Choose head-predict or tail-predict, Defaults to ‘single’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The score of triples.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>score</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.RotatE.RotatE.get_score">
+<span class="sig-name descname"><span class="pre">get_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/RotatE.html#RotatE.get_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.RotatE.RotatE.get_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>The functions used in the testing phase</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch</strong> – A batch of data.</p></li>
+<li><p><strong>mode</strong> – Choose head-predict or tail-predict.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The score of triples.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>score</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.RotatE.RotatE.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><a class="headerlink" href="#neuralkg_ind.model.KGEModel.RotatE.RotatE.training" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-neuralkg_ind.model.KGEModel.DistMult">
+<span id="distmult"></span><h2>DistMult<a class="headerlink" href="#module-neuralkg_ind.model.KGEModel.DistMult" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.DistMult.DistMult">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg_ind.model.KGEModel.DistMult.</span></span><span class="sig-name descname"><span class="pre">DistMult</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/DistMult.html#DistMult"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.DistMult.DistMult" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#neuralkg_ind.model.KGEModel.model.Model" title="neuralkg_ind.model.KGEModel.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p>
+<p><a class="reference external" href="https://arxiv.org/abs/1412.6575">Embedding Entities and Relations for Learning and Inference in Knowledge Bases</a> (DistMult)</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.DistMult.DistMult.args">
+<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.DistMult.DistMult.args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Model configuration parameters.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.DistMult.DistMult.epsilon">
+<span class="sig-name descname"><span class="pre">epsilon</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.DistMult.DistMult.epsilon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate embedding_range.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.DistMult.DistMult.margin">
+<span class="sig-name descname"><span class="pre">margin</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.DistMult.DistMult.margin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate embedding_range and loss.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.DistMult.DistMult.embedding_range">
+<span class="sig-name descname"><span class="pre">embedding_range</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.DistMult.DistMult.embedding_range" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uniform distribution range.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.DistMult.DistMult.ent_emb">
+<span class="sig-name descname"><span class="pre">ent_emb</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.DistMult.DistMult.ent_emb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Entity embedding, shape:[num_ent, emb_dim].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.DistMult.DistMult.rel_emb">
+<span class="sig-name descname"><span class="pre">rel_emb</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.DistMult.DistMult.rel_emb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Relation_embedding, shape:[num_rel, emb_dim].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.DistMult.DistMult.init_emb">
+<span class="sig-name descname"><span class="pre">init_emb</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/DistMult.html#DistMult.init_emb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.DistMult.DistMult.init_emb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the entity and relation embeddings in the form of a uniform distribution.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.DistMult.DistMult.score_func">
+<span class="sig-name descname"><span class="pre">score_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">head_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relation_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tail_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/DistMult.html#DistMult.score_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.DistMult.DistMult.score_func" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculating the score of triples.</p>
+<p>The formula for calculating the score is <span class="math notranslate nohighlight">\(h^{     op} \operatorname{diag}(r) t\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>head_emb</strong> – The head entity embedding.</p></li>
+<li><p><strong>relation_emb</strong> – The relation embedding.</p></li>
+<li><p><strong>tail_emb</strong> – The tail entity embedding.</p></li>
+<li><p><strong>mode</strong> – Choose head-predict or tail-predict.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The score of triples.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>score</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.DistMult.DistMult.score_embedding">
+<span class="sig-name descname"><span class="pre">score_embedding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">head_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relation_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tail_emb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/DistMult.html#DistMult.score_embedding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.DistMult.DistMult.score_embedding" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculating the triple embedding.</p>
+<p>The formula for calculating the triple embedding is <span class="math notranslate nohighlight">\(h^{  op} \operatorname{diag}(r) t\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>head_emb</strong> – The head entity embedding.</p></li>
+<li><p><strong>relation_emb</strong> – The relation embedding.</p></li>
+<li><p><strong>tail_emb</strong> – The tail entity embedding.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The embedding of triple.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>embedding</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.DistMult.DistMult.mapping_embedding">
+<span class="sig-name descname"><span class="pre">mapping_embedding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">head_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relation_emb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/DistMult.html#DistMult.mapping_embedding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.DistMult.DistMult.mapping_embedding" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculating the head and relation mapping embedding.</p>
+<p>The formula for calculating the mapping embedding is <span class="math notranslate nohighlight">\(h * r\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>head_emb</strong> – The head entity embedding.</p></li>
+<li><p><strong>relation_emb</strong> – The relation embedding.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The embedding of mapping.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>embedding</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.DistMult.DistMult.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">triples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">negs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'single'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/DistMult.html#DistMult.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.DistMult.DistMult.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>The functions used in the training phase</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>triples</strong> – The triples ids, as (h, r, t), shape:[batch_size, 3].</p></li>
+<li><p><strong>negs</strong> – Negative samples, defaults to None.</p></li>
+<li><p><strong>mode</strong> – Choose head-predict or tail-predict, Defaults to ‘single’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The score of triples.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>score</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.DistMult.DistMult.get_score">
+<span class="sig-name descname"><span class="pre">get_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/DistMult.html#DistMult.get_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.DistMult.DistMult.get_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>The functions used in the testing phase</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch</strong> – A batch of data.</p></li>
+<li><p><strong>mode</strong> – Choose head-predict or tail-predict.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The score of triples.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>score</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.DistMult.DistMult.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><a class="headerlink" href="#neuralkg_ind.model.KGEModel.DistMult.DistMult.training" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-neuralkg_ind.model.KGEModel.ComplEx">
+<span id="complex"></span><h2>ComplEx<a class="headerlink" href="#module-neuralkg_ind.model.KGEModel.ComplEx" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.ComplEx.ComplEx">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg_ind.model.KGEModel.ComplEx.</span></span><span class="sig-name descname"><span class="pre">ComplEx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/ComplEx.html#ComplEx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.ComplEx.ComplEx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#neuralkg_ind.model.KGEModel.model.Model" title="neuralkg_ind.model.KGEModel.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.ComplEx.ComplEx.init_emb">
+<span class="sig-name descname"><span class="pre">init_emb</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/ComplEx.html#ComplEx.init_emb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.ComplEx.ComplEx.init_emb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the entity and relation embeddings in the form of a uniform distribution.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.ComplEx.ComplEx.score_func">
+<span class="sig-name descname"><span class="pre">score_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">head_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relation_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tail_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/ComplEx.html#ComplEx.score_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.ComplEx.ComplEx.score_func" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculating the score of triples.</p>
+<blockquote>
+<div><p>The formula for calculating the score is :math:<a href="#id3"><span class="problematic" id="id4">`</span></a>operatorname{Re}left(h^{      op} operatorname{diag}(r) overline{t}</p>
+</div></blockquote>
+<p>ight)`</p>
+<blockquote>
+<div><dl class="simple">
+<dt>Args:</dt><dd><p>head_emb: The head entity embedding.
+relation_emb: The relation embedding.
+tail_emb: The tail entity embedding.
+mode: Choose head-predict or tail-predict.</p>
+</dd>
+<dt>Returns:</dt><dd><p>score: The score of triples.</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.ComplEx.ComplEx.score_embedding">
+<span class="sig-name descname"><span class="pre">score_embedding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">head_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relation_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tail_emb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/ComplEx.html#ComplEx.score_embedding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.ComplEx.ComplEx.score_embedding" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculating the triple embedding.</p>
+<blockquote>
+<div><p>The formula for calculating the score is :math:<a href="#id5"><span class="problematic" id="id6">`</span></a>operatorname{Re}left(h^{      op} operatorname{diag}(r) overline{t}</p>
+</div></blockquote>
+<p>ight)`</p>
+<blockquote>
+<div><dl class="simple">
+<dt>Args:</dt><dd><p>head_emb: The head entity embedding.
+relation_emb: The relation embedding.
+tail_emb: The tail entity embedding.</p>
+</dd>
+<dt>Returns:</dt><dd><p>embedding: The embedding of triple.</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.ComplEx.ComplEx.mapping_embedding">
+<span class="sig-name descname"><span class="pre">mapping_embedding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">head_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relation_emb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/ComplEx.html#ComplEx.mapping_embedding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.ComplEx.ComplEx.mapping_embedding" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculating the head and relation mapping embedding.</p>
+<p>The formula for calculating the score is <span class="math notranslate nohighlight">\(\operatorname{Re}\left(h^{      op} \operatorname{diag}(r))\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>head_emb</strong> – The head entity embedding.</p></li>
+<li><p><strong>relation_emb</strong> – The relation embedding.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The embedding of mapping.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>embedding</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.ComplEx.ComplEx.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">triples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">negs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'single'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/ComplEx.html#ComplEx.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.ComplEx.ComplEx.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>The functions used in the training phase</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>triples</strong> – The triples ids, as (h, r, t), shape:[batch_size, 3].</p></li>
+<li><p><strong>negs</strong> – Negative samples, defaults to None.</p></li>
+<li><p><strong>mode</strong> – Choose head-predict or tail-predict, Defaults to ‘single’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The score of triples.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>score</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.ComplEx.ComplEx.get_score">
+<span class="sig-name descname"><span class="pre">get_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/ComplEx.html#ComplEx.get_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.ComplEx.ComplEx.get_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>The functions used in the testing phase</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch</strong> – A batch of data.</p></li>
+<li><p><strong>mode</strong> – Choose head-predict or tail-predict.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The score of triples.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>score</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.ComplEx.ComplEx.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><a class="headerlink" href="#neuralkg_ind.model.KGEModel.ComplEx.ComplEx.training" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-neuralkg_ind.model.KGEModel.SimplE">
+<span id="simple"></span><h2>SimplE<a class="headerlink" href="#module-neuralkg_ind.model.KGEModel.SimplE" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.SimplE.SimplE">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg_ind.model.KGEModel.SimplE.</span></span><span class="sig-name descname"><span class="pre">SimplE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/SimplE.html#SimplE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.SimplE.SimplE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#neuralkg_ind.model.KGEModel.model.Model" title="neuralkg_ind.model.KGEModel.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p>
+<p><a class="reference external" href="http://papers.neurips.cc/paper/7682-simple-embedding-for-link-prediction-in-knowledge-graphs.pdf">SimplE Embedding for Link Prediction in Knowledge Graphs</a> (SimpleE), which presents a simple enhancement of CP (which we call SimplE) to allow the two embeddings of each entity to be learned dependently.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.SimplE.SimplE.args">
+<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.SimplE.SimplE.args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Model configuration parameters.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.SimplE.SimplE.epsilon">
+<span class="sig-name descname"><span class="pre">epsilon</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.SimplE.SimplE.epsilon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate embedding_range.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.SimplE.SimplE.margin">
+<span class="sig-name descname"><span class="pre">margin</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.SimplE.SimplE.margin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate embedding_range and loss.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.SimplE.SimplE.embedding_range">
+<span class="sig-name descname"><span class="pre">embedding_range</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.SimplE.SimplE.embedding_range" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uniform distribution range.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.SimplE.SimplE.ent_h_emb">
+<span class="sig-name descname"><span class="pre">ent_h_emb</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.SimplE.SimplE.ent_h_emb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Entity embedding, shape:[num_ent, emb_dim].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.SimplE.SimplE.ent_t_emb">
+<span class="sig-name descname"><span class="pre">ent_t_emb</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.SimplE.SimplE.ent_t_emb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Entity embedding, shape:[num_ent, emb_dim].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.SimplE.SimplE.rel_emb">
+<span class="sig-name descname"><span class="pre">rel_emb</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.SimplE.SimplE.rel_emb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Relation_embedding, shape:[num_rel, emb_dim].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.SimplE.SimplE.rel_inv_emb">
+<span class="sig-name descname"><span class="pre">rel_inv_emb</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.SimplE.SimplE.rel_inv_emb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inverse Relation_embedding, shape:[num_rel, emb_dim].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.SimplE.SimplE.init_emb">
+<span class="sig-name descname"><span class="pre">init_emb</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/SimplE.html#SimplE.init_emb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.SimplE.SimplE.init_emb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the entity and relation embeddings in the form of a uniform distribution.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.SimplE.SimplE.score_func">
+<span class="sig-name descname"><span class="pre">score_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hh_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rel_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tt_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ht_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rel_inv_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">th_emb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/SimplE.html#SimplE.score_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.SimplE.SimplE.score_func" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculating the score of triples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hh_emb</strong> – The head entity embedding on embedding h.</p></li>
+<li><p><strong>rel_emb</strong> – The relation embedding.</p></li>
+<li><p><strong>tt_emb</strong> – The tail entity embedding on embedding t.</p></li>
+<li><p><strong>ht_emb</strong> – The tail entity embedding on embedding h.</p></li>
+<li><p><strong>rel_inv_emb</strong> – The tail entity embedding.</p></li>
+<li><p><strong>th_emb</strong> – The head entity embedding on embedding t.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The score of triples.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>score</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.SimplE.SimplE.l2_loss">
+<span class="sig-name descname"><span class="pre">l2_loss</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/SimplE.html#SimplE.l2_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.SimplE.SimplE.l2_loss" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.SimplE.SimplE.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">triples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">negs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'single'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/SimplE.html#SimplE.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.SimplE.SimplE.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>The functions used in the training phase</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>triples</strong> – The triples ids, as (h, r, t), shape:[batch_size, 3].</p></li>
+<li><p><strong>negs</strong> – Negative samples, defaults to None.</p></li>
+<li><p><strong>mode</strong> – Choose head-predict or tail-predict, Defaults to ‘single’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The score of triples.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>score</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.SimplE.SimplE.get_score">
+<span class="sig-name descname"><span class="pre">get_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/SimplE.html#SimplE.get_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.SimplE.SimplE.get_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>The functions used in the testing phase</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch</strong> – A batch of data.</p></li>
+<li><p><strong>mode</strong> – Choose head-predict or tail-predict.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The score of triples.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>score</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.SimplE.SimplE.get_emb">
+<span class="sig-name descname"><span class="pre">get_emb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">triples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">negs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'single'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/SimplE.html#SimplE.get_emb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.SimplE.SimplE.get_emb" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.SimplE.SimplE.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><a class="headerlink" href="#neuralkg_ind.model.KGEModel.SimplE.SimplE.training" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-neuralkg_ind.model.KGEModel.ConvE">
+<span id="conve"></span><h2>ConvE<a class="headerlink" href="#module-neuralkg_ind.model.KGEModel.ConvE" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.ConvE.ConvE">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg_ind.model.KGEModel.ConvE.</span></span><span class="sig-name descname"><span class="pre">ConvE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/ConvE.html#ConvE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.ConvE.ConvE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#neuralkg_ind.model.KGEModel.model.Model" title="neuralkg_ind.model.KGEModel.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p>
+<p><a class="reference external" href="https://arxiv.org/pdf/1707.01476.pdf">Convolutional 2D Knowledge Graph Embeddings</a> (ConvE), which use a 2D convolution network for embedding representation.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.ConvE.ConvE.args">
+<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.ConvE.ConvE.args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Model configuration parameters.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.ConvE.ConvE.init_emb">
+<span class="sig-name descname"><span class="pre">init_emb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/ConvE.html#ConvE.init_emb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.ConvE.ConvE.init_emb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the convolution layer and embeddings .</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>conv1</strong> – The convolution layer.</p></li>
+<li><p><strong>fc</strong> – The full connection layer.</p></li>
+<li><p><strong>bn0</strong> – The batch Normalization layer.</p></li>
+<li><p><strong>bn1</strong> – The batch Normalization layer.</p></li>
+<li><p><strong>bn2</strong> – The batch Normalization layer.</p></li>
+<li><p><strong>inp_drop</strong> – The dropout layer.</p></li>
+<li><p><strong>hid_drop</strong> – The dropout layer.</p></li>
+<li><p><strong>feg_drop</strong> – The dropout layer.</p></li>
+<li><p><strong>emb_ent</strong> – Entity embedding, shape:[num_ent, emb_dim].</p></li>
+<li><p><strong>emb_rel</strong> – Relation_embedding, shape:[num_rel, emb_dim].</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.ConvE.ConvE.concat">
+<span class="sig-name descname"><span class="pre">concat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">head_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rela_emb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/ConvE.html#ConvE.concat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.ConvE.ConvE.concat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.ConvE.ConvE.score_func">
+<span class="sig-name descname"><span class="pre">score_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">head_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relation_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">concat=&lt;function</span> <span class="pre">ConvE.concat&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">choose_emb=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/ConvE.html#ConvE.score_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.ConvE.ConvE.score_func" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the score of the triple embedding.</p>
+<p>This function calculate the score of the embedding.
+First, the entity and relation embeddings are reshaped
+and concatenated; the resulting matrix is then used as
+input to a convolutional layer; the resulting feature
+map tensor is vectorised and projected into a k-dimensional
+space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>head_emb</strong> – The embedding of head entity.</p></li>
+<li><p><strong>relation_emb</strong> – The embedding of relation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Final score of the embedding.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>score</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.ConvE.ConvE.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">triples</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/ConvE.html#ConvE.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.ConvE.ConvE.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>The functions used in the training phase</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>triples</strong> – The triples ids, as (h, r, t), shape:[batch_size, 3].</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The score of triples.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>score</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.ConvE.ConvE.get_score">
+<span class="sig-name descname"><span class="pre">get_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tail_predict'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/ConvE.html#ConvE.get_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.ConvE.ConvE.get_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>The functions used in the testing phase</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>batch</strong> – A batch of data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The score of triples.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>score</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.ConvE.ConvE.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><a class="headerlink" href="#neuralkg_ind.model.KGEModel.ConvE.ConvE.training" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-neuralkg_ind.model.KGEModel.BoxE">
+<span id="boxe"></span><h2>BoxE<a class="headerlink" href="#module-neuralkg_ind.model.KGEModel.BoxE" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.BoxE.BoxE">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg_ind.model.KGEModel.BoxE.</span></span><span class="sig-name descname"><span class="pre">BoxE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/BoxE.html#BoxE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.BoxE.BoxE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#neuralkg_ind.model.KGEModel.model.Model" title="neuralkg_ind.model.KGEModel.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p>
+<p><a class="reference external" href="https://arxiv.org/pdf/2007.06267.pdf">A Box Embedding Model for Knowledge Base Completion</a> (BoxE), which represents the bump embedding as translations in the super rectangle space.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.BoxE.BoxE.args">
+<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.BoxE.BoxE.args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Model configuration parameters.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.BoxE.BoxE.init_emb">
+<span class="sig-name descname"><span class="pre">init_emb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/BoxE.html#BoxE.init_emb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.BoxE.BoxE.init_emb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the entity and relation embeddings in the form of a uniform distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arity</strong> – The maximum ary of the knowledge graph.</p></li>
+<li><p><strong>epsilon</strong> – Caculate embedding_range.</p></li>
+<li><p><strong>order</strong> – The distance order of score.</p></li>
+<li><p><strong>margin</strong> – Caculate embedding_range and loss.</p></li>
+<li><p><strong>embedding_range</strong> – Uniform distribution range.</p></li>
+<li><p><strong>ent_emb</strong> – Entity embedding, shape:[num_ent, emb_dim * 2].</p></li>
+<li><p><strong>rel_emb</strong> – Relation_embedding, shape:[num_rel, emb_dim * arity * 2].</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.BoxE.BoxE.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">triples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">negs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'single'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/BoxE.html#BoxE.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.BoxE.BoxE.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>The functions used in the training phase</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>triples</strong> – The triples ids, as (h, r, t), shape:[batch_size, 3].</p></li>
+<li><p><strong>negs</strong> – Negative samples, defaults to None.</p></li>
+<li><p><strong>mode</strong> – Choose head-predict or tail-predict, Defaults to ‘single’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The score of triples.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>score</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.BoxE.BoxE.get_score">
+<span class="sig-name descname"><span class="pre">get_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/BoxE.html#BoxE.get_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.BoxE.BoxE.get_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>The functions used in the testing phase</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch</strong> – A batch of data.</p></li>
+<li><p><strong>mode</strong> – Choose head-predict or tail-predict.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The score of triples.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>score</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.BoxE.BoxE.score_func">
+<span class="sig-name descname"><span class="pre">score_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">head_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relation_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tail_emb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/BoxE.html#BoxE.score_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.BoxE.BoxE.score_func" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the score of the triple embedding.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>head_emb</strong> – The embedding of head entity.</p></li>
+<li><p><strong>relation_emb</strong> – The embedding of relation.</p></li>
+<li><p><strong>tail_emb</strong> – The embedding of tail entity.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The score of triples.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>score</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.BoxE.BoxE.calc_score">
+<span class="sig-name descname"><span class="pre">calc_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ent_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">box_low</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">box_hig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/BoxE.html#BoxE.calc_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.BoxE.BoxE.calc_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the norm of distance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ent_emb</strong> – The embedding of entity.</p></li>
+<li><p><strong>box_low</strong> – The lower boundaries of the super rectangle.</p></li>
+<li><p><strong>box_hig</strong> – The upper boundaries of the super rectangle.</p></li>
+<li><p><strong>order</strong> – The order of this distance.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The norm of distance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.BoxE.BoxE.dist">
+<span class="sig-name descname"><span class="pre">dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ent_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ub</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/BoxE.html#BoxE.dist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.BoxE.BoxE.dist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the distance.</p>
+<p>This function calculate the distance between the entity
+and the super rectangle. If the entity is in its target
+box, distance inversely correlates with box size, to
+maintain low distance inside large boxes and provide a
+gradient to keep points inside; if the entity is not in
+its target box, box size linearly correlates with distance,
+to penalize points outside larger boxes more severely.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ent_emb</strong> – The embedding of entity.</p></li>
+<li><p><strong>lb</strong> – The lower boundaries of the super rectangle.</p></li>
+<li><p><strong>ub</strong> – The upper boundaries of the super rectangle.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The distance between entity and super rectangle.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.BoxE.BoxE.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><a class="headerlink" href="#neuralkg_ind.model.KGEModel.BoxE.BoxE.training" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-neuralkg_ind.model.KGEModel.CrossE">
+<span id="crosse"></span><h2>CrossE<a class="headerlink" href="#module-neuralkg_ind.model.KGEModel.CrossE" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.CrossE.CrossE">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg_ind.model.KGEModel.CrossE.</span></span><span class="sig-name descname"><span class="pre">CrossE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/CrossE.html#CrossE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.CrossE.CrossE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#neuralkg_ind.model.KGEModel.model.Model" title="neuralkg_ind.model.KGEModel.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p>
+<p><a class="reference external" href="https://arxiv.org/abs/1903.04750">Interaction Embeddings for Prediction and Explanation in Knowledge Graphs</a> (CrossE), which simulates crossover interactions(bi-directional effects between entities and relations)
+to select related information when predicting a new triple</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.CrossE.CrossE.args">
+<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.CrossE.CrossE.args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Model configuration parameters.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.CrossE.CrossE.ent_emb">
+<span class="sig-name descname"><span class="pre">ent_emb</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.CrossE.CrossE.ent_emb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Entity embedding, shape:[num_ent, emb_dim].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.CrossE.CrossE.rel_emb">
+<span class="sig-name descname"><span class="pre">rel_emb</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.CrossE.CrossE.rel_emb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Relation embedding, shape:[num_rel, emb_dim].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.CrossE.CrossE.rel_reverse_emb">
+<span class="sig-name descname"><span class="pre">rel_reverse_emb</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.CrossE.CrossE.rel_reverse_emb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reverse Relation embedding, shape:[num_rel, emb_dim].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.CrossE.CrossE.h_weighted_vector">
+<span class="sig-name descname"><span class="pre">h_weighted_vector</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.CrossE.CrossE.h_weighted_vector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interaction matrix for head entities and relations, shape:[num_rel, emb_dim]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.CrossE.CrossE.t_weighted_vector">
+<span class="sig-name descname"><span class="pre">t_weighted_vector</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.CrossE.CrossE.t_weighted_vector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interaction matrix for tail entities and relations, shape:[num_rel, emb_dim]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.CrossE.CrossE.hr_bias">
+<span class="sig-name descname"><span class="pre">hr_bias</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.CrossE.CrossE.hr_bias" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bias for head entity and relation</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.CrossE.CrossE.tr_bias">
+<span class="sig-name descname"><span class="pre">tr_bias</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.CrossE.CrossE.tr_bias" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bias for tail entity and relation</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.CrossE.CrossE.init_emb">
+<span class="sig-name descname"><span class="pre">init_emb</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/CrossE.html#CrossE.init_emb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.CrossE.CrossE.init_emb" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.CrossE.CrossE.score_func">
+<span class="sig-name descname"><span class="pre">score_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ent_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rel_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weighted_vector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/CrossE.html#CrossE.score_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.CrossE.CrossE.score_func" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculating the score of triples.</p>
+<p>The formula for calculating the score is <span class="math notranslate nohighlight">\(\sigma(tanh(c_r \circ h + c_r \circ h \circ r + b)t ^ T)\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ent_emb</strong> – entity embedding</p></li>
+<li><p><strong>rel_emb</strong> – relation embedding</p></li>
+<li><p><strong>weighted_vector</strong> – Interaction matrix for entities and relations</p></li>
+<li><p><strong>mode</strong> – Choose head-predict or tail-predict.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The score of triples.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>score</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.CrossE.CrossE.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">triples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'single'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/CrossE.html#CrossE.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.CrossE.CrossE.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>The functions used in the training phase, calculate hr_score and tr_score simultaneously</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.CrossE.CrossE.get_score">
+<span class="sig-name descname"><span class="pre">get_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/CrossE.html#CrossE.get_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.CrossE.CrossE.get_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>The functions used in the testing phase, predict triple score</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.CrossE.CrossE.regularize_loss">
+<span class="sig-name descname"><span class="pre">regularize_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/CrossE.html#CrossE.regularize_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.CrossE.CrossE.regularize_loss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add regularization to loss</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.CrossE.CrossE.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><a class="headerlink" href="#neuralkg_ind.model.KGEModel.CrossE.CrossE.training" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-neuralkg_ind.model.KGEModel.HAKE">
+<span id="hake"></span><h2>HAKE<a class="headerlink" href="#module-neuralkg_ind.model.KGEModel.HAKE" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.HAKE.HAKE">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg_ind.model.KGEModel.HAKE.</span></span><span class="sig-name descname"><span class="pre">HAKE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/HAKE.html#HAKE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.HAKE.HAKE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#neuralkg_ind.model.KGEModel.model.Model" title="neuralkg_ind.model.KGEModel.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p>
+<p><a class="reference external" href="https://arxiv.org/pdf/1911.09419.pdf">Learning Hierarchy-Aware Knowledge Graph Embeddings for Link Prediction</a> (HAKE), which maps entities into the polar coordinate system.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.HAKE.HAKE.args">
+<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.HAKE.HAKE.args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Model configuration parameters.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.HAKE.HAKE.epsilon">
+<span class="sig-name descname"><span class="pre">epsilon</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.HAKE.HAKE.epsilon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate embedding_range.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.HAKE.HAKE.margin">
+<span class="sig-name descname"><span class="pre">margin</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.HAKE.HAKE.margin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate embedding_range and loss.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.HAKE.HAKE.embedding_range">
+<span class="sig-name descname"><span class="pre">embedding_range</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.HAKE.HAKE.embedding_range" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uniform distribution range.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.HAKE.HAKE.ent_emb">
+<span class="sig-name descname"><span class="pre">ent_emb</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.HAKE.HAKE.ent_emb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Entity embedding, shape:[num_ent, emb_dim * 2].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.HAKE.HAKE.rel_emb">
+<span class="sig-name descname"><span class="pre">rel_emb</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.HAKE.HAKE.rel_emb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Relation embedding, shape:[num_rel, emb_dim * 3].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.HAKE.HAKE.phase_weight">
+<span class="sig-name descname"><span class="pre">phase_weight</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.HAKE.HAKE.phase_weight" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate phase score.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.HAKE.HAKE.modules_weight">
+<span class="sig-name descname"><span class="pre">modules_weight</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.HAKE.HAKE.modules_weight" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate modulus score.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.HAKE.HAKE.init_emb">
+<span class="sig-name descname"><span class="pre">init_emb</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/HAKE.html#HAKE.init_emb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.HAKE.HAKE.init_emb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the entity and relation embeddings in the form of a uniform distribution.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.HAKE.HAKE.score_func">
+<span class="sig-name descname"><span class="pre">score_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">head_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relation_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tail_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/HAKE.html#HAKE.score_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.HAKE.HAKE.score_func" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculating the score of triples.</p>
+<p>The formula for calculating the score is <span class="math notranslate nohighlight">\(\gamma - ||h_m \circ r_m- t_m||_2 - \lambda ||\sin((h_p + r_p - t_p)/2)||_1\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>head_emb</strong> – The head entity embedding.</p></li>
+<li><p><strong>relation_emb</strong> – The relation embedding.</p></li>
+<li><p><strong>tail_emb</strong> – The tail entity embedding.</p></li>
+<li><p><strong>mode</strong> – Choose head-predict or tail-predict.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The score of triples.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>score</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.HAKE.HAKE.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">triples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">negs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'single'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/HAKE.html#HAKE.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.HAKE.HAKE.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>The functions used in the training phase</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>triples</strong> – The triples ids, as (h, r, t), shape:[batch_size, 3].</p></li>
+<li><p><strong>negs</strong> – Negative samples, defaults to None.</p></li>
+<li><p><strong>mode</strong> – Choose head-predict or tail-predict, Defaults to ‘single’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The score of triples.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>score</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.HAKE.HAKE.get_score">
+<span class="sig-name descname"><span class="pre">get_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/HAKE.html#HAKE.get_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.HAKE.HAKE.get_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>The functions used in the testing phase</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch</strong> – A batch of data.</p></li>
+<li><p><strong>mode</strong> – Choose head-predict or tail-predict.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The score of triples.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>score</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.HAKE.HAKE.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><a class="headerlink" href="#neuralkg_ind.model.KGEModel.HAKE.HAKE.training" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-neuralkg_ind.model.KGEModel.PairRE">
+<span id="pairre"></span><h2>PairRE<a class="headerlink" href="#module-neuralkg_ind.model.KGEModel.PairRE" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.PairRE.PairRE">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg_ind.model.KGEModel.PairRE.</span></span><span class="sig-name descname"><span class="pre">PairRE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/PairRE.html#PairRE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.PairRE.PairRE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#neuralkg_ind.model.KGEModel.model.Model" title="neuralkg_ind.model.KGEModel.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p>
+<p><a href="#id12"><span class="problematic" id="id13">`PairRE: Knowledge Graph Embeddings via Paired Relation Vectors`_</span></a> (PairRE), which paired vectors for each relation representation to model complex patterns.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.PairRE.PairRE.args">
+<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.PairRE.PairRE.args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Model configuration parameters.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.PairRE.PairRE.epsilon">
+<span class="sig-name descname"><span class="pre">epsilon</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.PairRE.PairRE.epsilon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate embedding_range.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.PairRE.PairRE.margin">
+<span class="sig-name descname"><span class="pre">margin</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.PairRE.PairRE.margin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate embedding_range and loss.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.PairRE.PairRE.embedding_range">
+<span class="sig-name descname"><span class="pre">embedding_range</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.PairRE.PairRE.embedding_range" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uniform distribution range.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.PairRE.PairRE.ent_emb">
+<span class="sig-name descname"><span class="pre">ent_emb</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.PairRE.PairRE.ent_emb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Entity embedding, shape:[num_ent, emb_dim].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.PairRE.PairRE.rel_emb">
+<span class="sig-name descname"><span class="pre">rel_emb</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.PairRE.PairRE.rel_emb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Relation embedding, shape:[num_rel, emb_dim * 2].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.PairRE.PairRE.init_emb">
+<span class="sig-name descname"><span class="pre">init_emb</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/PairRE.html#PairRE.init_emb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.PairRE.PairRE.init_emb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the entity and relation embeddings in the form of a uniform distribution.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.PairRE.PairRE.score_func">
+<span class="sig-name descname"><span class="pre">score_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">head_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relation_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tail_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/PairRE.html#PairRE.score_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.PairRE.PairRE.score_func" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculating the score of triples.</p>
+<p>The formula for calculating the score is <span class="math notranslate nohighlight">\(\gamma - || h \circ r^H - t  \circ r^T ||\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>head_emb</strong> – The head entity embedding.</p></li>
+<li><p><strong>relation_emb</strong> – The relation embedding.</p></li>
+<li><p><strong>tail_emb</strong> – The tail entity embedding.</p></li>
+<li><p><strong>mode</strong> – Choose head-predict or tail-predict.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The score of triples.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>score</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.PairRE.PairRE.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">triples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">negs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'single'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/PairRE.html#PairRE.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.PairRE.PairRE.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>The functions used in the training phase</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>triples</strong> – The triples ids, as (h, r, t), shape:[batch_size, 3].</p></li>
+<li><p><strong>negs</strong> – Negative samples, defaults to None.</p></li>
+<li><p><strong>mode</strong> – Choose head-predict or tail-predict, Defaults to ‘single’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The score of triples.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>score</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.PairRE.PairRE.get_score">
+<span class="sig-name descname"><span class="pre">get_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/PairRE.html#PairRE.get_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.PairRE.PairRE.get_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>The functions used in the testing phase</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch</strong> – A batch of data.</p></li>
+<li><p><strong>mode</strong> – Choose head-predict or tail-predict.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The score of triples.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>score</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.PairRE.PairRE.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><a class="headerlink" href="#neuralkg_ind.model.KGEModel.PairRE.PairRE.training" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-neuralkg_ind.model.KGEModel.DualE">
+<span id="duale"></span><h2>DualE<a class="headerlink" href="#module-neuralkg_ind.model.KGEModel.DualE" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.DualE.DualE">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg_ind.model.KGEModel.DualE.</span></span><span class="sig-name descname"><span class="pre">DualE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/DualE.html#DualE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.DualE.DualE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#neuralkg_ind.model.KGEModel.model.Model" title="neuralkg_ind.model.KGEModel.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p>
+<p><a href="#id14"><span class="problematic" id="id15">`Dual Quaternion Knowledge Graph Embeddings`_</span></a> (DualE), which introduces dual quaternions into knowledge graph embeddings.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.DualE.DualE.args">
+<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.DualE.DualE.args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Model configuration parameters.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.DualE.DualE.ent_emb">
+<span class="sig-name descname"><span class="pre">ent_emb</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.DualE.DualE.ent_emb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Entity embedding, shape:[num_ent, emb_dim * 8].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.DualE.DualE.rel_emb">
+<span class="sig-name descname"><span class="pre">rel_emb</span></span><a class="headerlink" href="#neuralkg_ind.model.KGEModel.DualE.DualE.rel_emb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Relation embedding, shape:[num_rel, emb_dim * 8].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.DualE.DualE.init_weights">
+<span class="sig-name descname"><span class="pre">init_weights</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/DualE.html#DualE.init_weights"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.DualE.DualE.init_weights" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.DualE.DualE.score_func">
+<span class="sig-name descname"><span class="pre">score_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">head_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relation_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tail_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/DualE.html#DualE.score_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.DualE.DualE.score_func" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculating the score of triples.</p>
+<p>The formula for calculating the score is :math:` &lt;oldsymbol{Q}_h otimes oldsymbol{W}_r^{diamond}, oldsymbol{Q}_t&gt; `</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>head_emb</strong> – The head entity embedding with 8 dimensionalities.</p></li>
+<li><p><strong>relation_emb</strong> – The relation embedding with 8 dimensionalities.</p></li>
+<li><p><strong>tail_emb</strong> – The tail entity embedding with 8 dimensionalities.</p></li>
+<li><p><strong>mode</strong> – Choose head-predict or tail-predict.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The score of triples with regul_1 and regul_2</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>score</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.DualE.DualE.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">triples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">negs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'single'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/DualE.html#DualE.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.DualE.DualE.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.DualE.DualE.get_score">
+<span class="sig-name descname"><span class="pre">get_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/DualE.html#DualE.get_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.DualE.DualE.get_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>The functions used in the testing phase
+:param batch: A batch of data.
+:param mode: Choose head-predict or tail-predict.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The score of triples.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>score</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.DualE.DualE.quaternion_init">
+<span class="sig-name descname"><span class="pre">quaternion_init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">criterion</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'he'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/model/KGEModel/DualE.html#DualE.quaternion_init"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.model.KGEModel.DualE.DualE.quaternion_init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Quaternion-valued weight initialization
+the initialization scheme is optional on these four datasets,
+random initialization can get the same performance. This initialization
+scheme might be useful for the case which needs fewer epochs.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.model.KGEModel.DualE.DualE.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><a class="headerlink" href="#neuralkg_ind.model.KGEModel.DualE.DualE.training" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="neuralkg_ind.model.html" class="btn btn-neutral float-left" title="Model" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="rulemodel.html" class="btn btn-neutral float-right" title="RuleModel" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, zjukg.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

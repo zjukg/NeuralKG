@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>neuralkg_ind.model.GNNModel.MorsE &mdash; NeuralKG-ind v1.0 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> NeuralKG-ind
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../install.html">Install</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Experiment Result</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../result.html">Results</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../neuralkg_ind.html">NeuralKG-ind</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">NeuralKG-ind</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      <li>neuralkg_ind.model.GNNModel.MorsE</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for neuralkg_ind.model.GNNModel.MorsE</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">dgl</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
+<span class="kn">from</span> <span class="nn">.RGCN</span> <span class="kn">import</span> <span class="n">RelGraphConv</span>
+<span class="kn">from</span> <span class="nn">.model</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">neuralkg_ind.utils.tools</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">neuralkg_ind.model</span> <span class="kn">import</span> <span class="n">TransE</span><span class="p">,</span> <span class="n">DistMult</span><span class="p">,</span> <span class="n">ComplEx</span><span class="p">,</span> <span class="n">RotatE</span>
+<span class="kn">from</span> <span class="nn">neuralkg_ind.utils</span> <span class="kn">import</span> <span class="n">get_indtest_test_dataset_and_train_g</span><span class="p">,</span> <span class="n">get_g_bidir</span>
+
+<div class="viewcode-block" id="MorsE"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.MorsE.MorsE">[docs]</a><span class="k">class</span> <span class="nc">MorsE</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;`Meta-Knowledge Transfer for Inductive Knowledge Graph Embedding`_ (MorsE), which learns transferable meta-knowledge that</span>
+<span class="sd">        can be used to produce entity embeddings.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        args: Model configuration parameters.</span>
+<span class="sd">        ent_init: Relation embedding init class.</span>
+<span class="sd">        rgcn: RGCN model.</span>
+<span class="sd">        KGEModel: KGE model.</span>
+
+<span class="sd">    .. _Meta-Knowledge Transfer for Inductive Knowledge Graph Embedding: https://arxiv.org/abs/2110.14170</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">ent_dim</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">emb_dim</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">rel_dim</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">emb_dim</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">kge_model</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;ComplEx&#39;</span><span class="p">,</span> <span class="s1">&#39;RotatE&#39;</span><span class="p">]:</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">ent_dim</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">emb_dim</span> <span class="o">*</span> <span class="mi">2</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">kge_model</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;ComplEx&#39;</span><span class="p">]:</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">rel_dim</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">emb_dim</span> <span class="o">*</span> <span class="mi">2</span>
+
+        <span class="n">args</span><span class="o">.</span><span class="n">num_rel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_num_rel</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ent_init</span> <span class="o">=</span> <span class="n">EntInit</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rgcn</span> <span class="o">=</span> <span class="n">RGCN</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">basiclayer</span> <span class="o">=</span> <span class="n">RelMorsGraphConv</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kge_model</span> <span class="o">=</span> <span class="n">KGEModel</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MorsE.forward"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.MorsE.MorsE.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample</span><span class="p">,</span> <span class="n">ent_emb</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;single&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculating triple score.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            sample: Sampled triplets.</span>
+<span class="sd">            ent_emb: Embedding of entities.</span>
+<span class="sd">            mode: This arg indicates that negative entity will replace the head or tail entity.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            score: Score of triple.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kge_model</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">ent_emb</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MorsE.get_intest_train_g"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.MorsE.MorsE.get_intest_train_g">[docs]</a>    <span class="k">def</span> <span class="nf">get_intest_train_g</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Getting inductive test-train graph.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            indtest_train_g: test-train graph.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_indtest_test_dataset_and_train_g</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">indtest_train_g</span> <span class="o">=</span> <span class="n">get_g_bidir</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;train&#39;</span><span class="p">]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">indtest_train_g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indtest_train_g</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">gpu</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">indtest_train_g</span></div>
+
+<div class="viewcode-block" id="MorsE.get_ent_emb"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.MorsE.MorsE.get_ent_emb">[docs]</a>    <span class="k">def</span> <span class="nf">get_ent_emb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sup_g_bidir</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Getting entities embedding.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            sup_g_bidir: Undirected supporting graph.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ent_emb: Embedding of entities.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ent_init</span><span class="p">(</span><span class="n">sup_g_bidir</span><span class="p">)</span>
+        <span class="n">ent_emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rgcn</span><span class="p">(</span><span class="n">sup_g_bidir</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ent_emb</span></div>
+    
+<div class="viewcode-block" id="MorsE.get_score"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.MorsE.MorsE.get_score">[docs]</a>    <span class="k">def</span> <span class="nf">get_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Getting score of triplets.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            batch: Including positive sample, entities embedding, etc.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            score: Score of positive or negative sample.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pos_triple</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;positive_sample&quot;</span><span class="p">]</span>
+        <span class="n">ent_emb</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;ent_emb&quot;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">batch</span><span class="p">[</span><span class="s1">&#39;cand&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kge_model</span><span class="p">((</span><span class="n">pos_triple</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">ent_emb</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;tail_predict&#39;</span><span class="p">:</span>
+                <span class="n">tail_cand</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s1">&#39;tail_cand&#39;</span><span class="p">]</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kge_model</span><span class="p">((</span><span class="n">pos_triple</span><span class="p">,</span> <span class="n">tail_cand</span><span class="p">),</span> <span class="n">ent_emb</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">head_cand</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s1">&#39;head_cand&#39;</span><span class="p">]</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kge_model</span><span class="p">((</span><span class="n">pos_triple</span><span class="p">,</span> <span class="n">head_cand</span><span class="p">),</span> <span class="n">ent_emb</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="MorsE.get_num_rel"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.MorsE.MorsE.get_num_rel">[docs]</a>    <span class="k">def</span> <span class="nf">get_num_rel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Getting number of relation.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            args: Model configuration parameters.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            num_rel: The number of relation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">pk_path</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">))</span>
+        <span class="n">num_rel</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;train_graph&#39;</span><span class="p">][</span><span class="s1">&#39;train&#39;</span><span class="p">])[:,</span> <span class="mi">1</span><span class="p">]))</span>
+
+        <span class="k">return</span> <span class="n">num_rel</span>   </div></div>
+
+<div class="viewcode-block" id="EntInit"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.MorsE.EntInit">[docs]</a><span class="k">class</span> <span class="nc">EntInit</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class of initializing entities.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        args: Model configuration parameters.</span>
+<span class="sd">        rel_head_emb: Embedding of relation to head.</span>
+<span class="sd">        rel_tail_emb: Embedding of relation to tail.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">EntInit</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rel_head_emb</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">num_rel</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">ent_dim</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rel_tail_emb</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">num_rel</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">ent_dim</span><span class="p">))</span>
+
+        <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">xavier_normal_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rel_head_emb</span><span class="p">,</span> <span class="n">gain</span><span class="o">=</span><span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">calculate_gain</span><span class="p">(</span><span class="s1">&#39;relu&#39;</span><span class="p">))</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">xavier_normal_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rel_tail_emb</span><span class="p">,</span> <span class="n">gain</span><span class="o">=</span><span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">calculate_gain</span><span class="p">(</span><span class="s1">&#39;relu&#39;</span><span class="p">))</span>
+
+<div class="viewcode-block" id="EntInit.forward"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.MorsE.EntInit.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">g_bidir</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize entities in graph.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            g_bidir: Undirected graph.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">num_edge</span> <span class="o">=</span> <span class="n">g_bidir</span><span class="o">.</span><span class="n">num_edges</span><span class="p">()</span>
+        <span class="n">etypes</span> <span class="o">=</span> <span class="n">g_bidir</span><span class="o">.</span><span class="n">edata</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span>
+        <span class="n">g_bidir</span><span class="o">.</span><span class="n">edata</span><span class="p">[</span><span class="s1">&#39;ent_e&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_edge</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">ent_dim</span><span class="p">)</span><span class="o">.</span><span class="n">type_as</span><span class="p">(</span><span class="n">etypes</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+        <span class="n">rh_idx</span> <span class="o">=</span> <span class="n">etypes</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_rel</span>
+        <span class="n">rt_idx</span> <span class="o">=</span> <span class="n">etypes</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_rel</span>
+        <span class="n">g_bidir</span><span class="o">.</span><span class="n">edata</span><span class="p">[</span><span class="s1">&#39;ent_e&#39;</span><span class="p">][</span><span class="n">rh_idx</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rel_head_emb</span><span class="p">[</span><span class="n">etypes</span><span class="p">[</span><span class="n">rh_idx</span><span class="p">]]</span>
+        <span class="n">g_bidir</span><span class="o">.</span><span class="n">edata</span><span class="p">[</span><span class="s1">&#39;ent_e&#39;</span><span class="p">][</span><span class="n">rt_idx</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rel_tail_emb</span><span class="p">[</span><span class="n">etypes</span><span class="p">[</span><span class="n">rt_idx</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_rel</span><span class="p">]</span>
+
+        <span class="n">message_func</span> <span class="o">=</span> <span class="n">dgl</span><span class="o">.</span><span class="n">function</span><span class="o">.</span><span class="n">copy_e</span><span class="p">(</span><span class="s1">&#39;ent_e&#39;</span><span class="p">,</span> <span class="s1">&#39;msg&#39;</span><span class="p">)</span>
+        <span class="n">reduce_func</span> <span class="o">=</span> <span class="n">dgl</span><span class="o">.</span><span class="n">function</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;msg&#39;</span><span class="p">,</span> <span class="s1">&#39;feat&#39;</span><span class="p">)</span>
+        <span class="n">g_bidir</span><span class="o">.</span><span class="n">update_all</span><span class="p">(</span><span class="n">message_func</span><span class="p">,</span> <span class="n">reduce_func</span><span class="p">)</span>
+        <span class="n">g_bidir</span><span class="o">.</span><span class="n">edata</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;ent_e&#39;</span><span class="p">)</span></div></div>
+
+<div class="viewcode-block" id="RelMorsGraphConv"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.MorsE.RelMorsGraphConv">[docs]</a><span class="k">class</span> <span class="nc">RelMorsGraphConv</span><span class="p">(</span><span class="n">RelGraphConv</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Basic layer of RGCN.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        args: Model configuration parameters.</span>
+<span class="sd">        bias: Weight bias.</span>
+<span class="sd">        inp_dim: Dimension of input.</span>
+<span class="sd">        out_dim: Dimension of output.</span>
+<span class="sd">        num_rels: The number of relations.</span>
+<span class="sd">        num_bases: The number of bases.</span>
+<span class="sd">        has_attn: Whether there is attention mechanism.</span>
+<span class="sd">        is_input_layer: Whether it is input layer.</span>
+<span class="sd">        aggregator: Type of aggregator.</span>
+<span class="sd">        weight: Weight matrix.</span>
+<span class="sd">        w_comp: Bases matrix.</span>
+<span class="sd">        self_loop_weight: Self-loop weight.</span>
+<span class="sd">        edge_dropout: Dropout of edge.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">inp_dim</span><span class="p">,</span> <span class="n">out_dim</span><span class="p">,</span> <span class="n">aggregator</span><span class="p">,</span> <span class="n">num_rels</span><span class="p">,</span> <span class="n">num_bases</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">activation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">edge_dropout</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">is_input_layer</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">has_attn</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">inp_dim</span><span class="p">,</span> <span class="n">out_dim</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="n">bias</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">,</span> 
+                        <span class="n">self_loop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">layer_norm</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_dim</span> <span class="o">=</span> <span class="n">inp_dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out_dim</span> <span class="o">=</span> <span class="n">out_dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_rels</span> <span class="o">=</span> <span class="n">num_rels</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aggregator</span> <span class="o">=</span> <span class="n">aggregator</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_bases</span> <span class="o">=</span> <span class="n">num_bases</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_bases</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_bases</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_rels</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_bases</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_bases</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_rels</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rel_weight</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">activation</span> <span class="o">=</span> <span class="n">activation</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_input_layer</span> <span class="o">=</span> <span class="n">is_input_layer</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_bases</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_dim</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w_comp</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_rels</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_bases</span><span class="p">))</span>
+
+        <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">xavier_uniform_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">,</span> <span class="n">gain</span><span class="o">=</span><span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">calculate_gain</span><span class="p">(</span><span class="s1">&#39;relu&#39;</span><span class="p">))</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">xavier_uniform_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">w_comp</span><span class="p">,</span> <span class="n">gain</span><span class="o">=</span><span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">calculate_gain</span><span class="p">(</span><span class="s1">&#39;relu&#39;</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">aggregator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregator</span>
+
+<div class="viewcode-block" id="RelMorsGraphConv.message"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.MorsE.RelMorsGraphConv.message">[docs]</a>    <span class="k">def</span> <span class="nf">message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edges</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Message function for propagating.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            edges: Edges in graph.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            curr_emb: Embedding of current layer.</span>
+<span class="sd">            msg: Message for propagating.</span>
+<span class="sd">            a: Coefficient.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rel_weight</span><span class="o">.</span><span class="n">index_select</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">edges</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">])</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">bmm</span><span class="p">(</span><span class="n">edges</span><span class="o">.</span><span class="n">src</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">input_</span><span class="p">]</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">w</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">curr_emb</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">edges</span><span class="o">.</span><span class="n">dst</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">input_</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">loop_weight</span><span class="p">)</span>  <span class="c1"># (B, F)</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">edges</span><span class="o">.</span><span class="n">dst</span><span class="p">[</span><span class="s1">&#39;in_d&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">type_as</span><span class="p">(</span><span class="n">w</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;curr_emb&#39;</span><span class="p">:</span> <span class="n">curr_emb</span><span class="p">,</span> <span class="s1">&#39;msg&#39;</span><span class="p">:</span> <span class="n">msg</span><span class="p">,</span> <span class="s1">&#39;alpha&#39;</span><span class="p">:</span> <span class="n">a</span><span class="p">}</span></div>
+
+<div class="viewcode-block" id="RelMorsGraphConv.apply_node_func"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.MorsE.RelMorsGraphConv.apply_node_func">[docs]</a>    <span class="k">def</span> <span class="nf">apply_node_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Function used for nodes.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            nodes: nodes in graph.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            node_repr: Representation of nodes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">node_repr</span> <span class="o">=</span> <span class="n">nodes</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;h&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="p">:</span>
+            <span class="n">node_repr</span> <span class="o">=</span> <span class="n">node_repr</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">h_bias</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">activation</span><span class="p">:</span>
+            <span class="n">node_repr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">activation</span><span class="p">(</span><span class="n">node_repr</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;h&#39;</span><span class="p">:</span> <span class="n">node_repr</span><span class="p">}</span></div>
+
+<div class="viewcode-block" id="RelMorsGraphConv.forward"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.MorsE.RelMorsGraphConv.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">g</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update node representation.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            g: Subgraph of corresponding triple.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># generate all relations&#39; weight from bases</span>
+        <span class="n">weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_bases</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_dim</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_dim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rel_weight</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">w_comp</span><span class="p">,</span> <span class="n">weight</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_rels</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_dim</span><span class="p">)</span>
+
+        <span class="c1"># normalization constant</span>
+        <span class="n">g</span><span class="o">.</span><span class="n">dstdata</span><span class="p">[</span><span class="s1">&#39;in_d&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">in_degrees</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_</span> <span class="o">=</span> <span class="s1">&#39;feat&#39;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_input_layer</span> <span class="k">else</span> <span class="s1">&#39;h&#39;</span>
+
+        <span class="n">g</span><span class="o">.</span><span class="n">update_all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregator</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_node_func</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_input_layer</span><span class="p">:</span>
+            <span class="n">g</span><span class="o">.</span><span class="n">ndata</span><span class="p">[</span><span class="s1">&#39;repr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">g</span><span class="o">.</span><span class="n">ndata</span><span class="p">[</span><span class="s1">&#39;feat&#39;</span><span class="p">],</span> <span class="n">g</span><span class="o">.</span><span class="n">ndata</span><span class="p">[</span><span class="s1">&#39;h&#39;</span><span class="p">]],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">g</span><span class="o">.</span><span class="n">ndata</span><span class="p">[</span><span class="s1">&#39;repr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">g</span><span class="o">.</span><span class="n">ndata</span><span class="p">[</span><span class="s1">&#39;repr&#39;</span><span class="p">],</span> <span class="n">g</span><span class="o">.</span><span class="n">ndata</span><span class="p">[</span><span class="s1">&#39;h&#39;</span><span class="p">]],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div></div>
+
+<div class="viewcode-block" id="RGCN"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.MorsE.RGCN">[docs]</a><span class="k">class</span> <span class="nc">RGCN</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;RGCN model</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        args: Model configuration parameters.</span>
+<span class="sd">        basiclayer: Layer of RGCN model.</span>
+<span class="sd">        inp_dim: Dimension of input.</span>
+<span class="sd">        emb_dim: Dimension of embedding.</span>
+<span class="sd">        aggregator: Type of aggregator.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">basiclayer</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">RGCN</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">basiclayer</span> <span class="o">=</span> <span class="n">basiclayer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inp_dim</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">ent_dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">emb_dim</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">ent_dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_rel</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">num_rel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_bases</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">num_bases</span>
+
+        <span class="n">aggregator_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">gnn_agg_type</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">+</span><span class="s2">&quot;Aggregator&quot;</span>
+        <span class="n">aggregator_class</span> <span class="o">=</span> <span class="n">import_class</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;neuralkg_ind.model.</span><span class="si">{</span><span class="n">aggregator_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aggregator</span> <span class="o">=</span> <span class="n">aggregator_class</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">emb_dim</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">build_model</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">jk_linear</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">emb_dim</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_layers</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">emb_dim</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RGCN.build_hidden_layer"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.MorsE.RGCN.build_hidden_layer">[docs]</a>    <span class="k">def</span> <span class="nf">build_hidden_layer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;build hidden layer of RGCN.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            idx: The idx of layer.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            output: Build a basic layer according to whether it is the first layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">input_flag</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">basiclayer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">inp_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">emb_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregator</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_rel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_bases</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                        <span class="n">activation</span><span class="o">=</span><span class="n">F</span><span class="o">.</span><span class="n">relu</span><span class="p">,</span> <span class="n">is_input_layer</span><span class="o">=</span><span class="n">input_flag</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RGCN.forward"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.MorsE.RGCN.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">g</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Getting nodes embedding.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            g: Subgraph of corresponding task.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            g.ndata[&#39;h&#39;]: Nodes embedding.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">:</span>
+            <span class="n">layer</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+
+        <span class="n">g</span><span class="o">.</span><span class="n">ndata</span><span class="p">[</span><span class="s1">&#39;h&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">jk_linear</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">ndata</span><span class="p">[</span><span class="s1">&#39;repr&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">g</span><span class="o">.</span><span class="n">ndata</span><span class="p">[</span><span class="s1">&#39;h&#39;</span><span class="p">]</span></div></div>
+
+<div class="viewcode-block" id="KGEModel"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.MorsE.KGEModel">[docs]</a><span class="k">class</span> <span class="nc">KGEModel</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;KGE model</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        args: Model configuration parameters.</span>
+<span class="sd">        model_name: The name of model.</span>
+<span class="sd">        nrelation: The number of relation.</span>
+<span class="sd">        emb_dim: Dimension of embedding.</span>
+<span class="sd">        epsilon: Calculate embedding_range.</span>
+<span class="sd">        margin: Calculate embedding_range and loss.</span>
+<span class="sd">        embedding_range: Uniform distribution range.</span>
+<span class="sd">        relation_embedding: Embedding of relation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">KGEModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">kge_model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nrelation</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">num_rel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">emb_dim</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">emb_dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="mf">2.0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">margin</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span><span class="n">args</span><span class="o">.</span><span class="n">margin</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">embedding_range</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([(</span><span class="bp">self</span><span class="o">.</span><span class="n">margin</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">)</span> <span class="o">/</span> <span class="n">args</span><span class="o">.</span><span class="n">emb_dim</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">relation_embedding</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nrelation</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">rel_dim</span><span class="p">))</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">uniform_</span><span class="p">(</span>
+            <span class="n">tensor</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">relation_embedding</span><span class="p">,</span>
+            <span class="n">a</span><span class="o">=-</span><span class="bp">self</span><span class="o">.</span><span class="n">embedding_range</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span>
+            <span class="n">b</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">embedding_range</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;TransE&#39;</span><span class="p">,</span> <span class="s1">&#39;DistMult&#39;</span><span class="p">,</span> <span class="s1">&#39;ComplEx&#39;</span><span class="p">,</span> <span class="s1">&#39;RotatE&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;model </span><span class="si">%s</span><span class="s1"> not supported&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">)</span>
+
+<div class="viewcode-block" id="KGEModel.forward"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.MorsE.KGEModel.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample</span><span class="p">,</span> <span class="n">ent_emb</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;single&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Forward function that calculate the score of a batch of triples.</span>
+<span class="sd">            In the &#39;single&#39; mode, sample is a batch of triple.</span>
+<span class="sd">            In the &#39;head-batch&#39; or &#39;tail-batch&#39; mode, sample consists two part.</span>
+<span class="sd">            The first part is usually the positive sample.</span>
+<span class="sd">            And the second part is the entities in the negative samples.</span>
+<span class="sd">            Because negative samples and positive samples usually share two elements</span>
+<span class="sd">            in their triple ((head, relation) or (relation, tail)).</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            sample: Positive and negative sample.</span>
+<span class="sd">            ent_emb: Embedding of entities.</span>
+<span class="sd">            mode: &#39;single&#39;, &#39;head-batch&#39; or &#39;tail-batch&#39;.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            score: The score of sample.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entity_embedding</span> <span class="o">=</span> <span class="n">ent_emb</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;single&#39;</span><span class="p">:</span>
+            <span class="n">batch_size</span><span class="p">,</span> <span class="n">negative_sample_size</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="mi">1</span>
+
+            <span class="n">head</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">index_select</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">entity_embedding</span><span class="p">,</span>
+                <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">sample</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="n">relation</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">index_select</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">relation_embedding</span><span class="p">,</span>
+                <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">sample</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="n">tail</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">index_select</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">entity_embedding</span><span class="p">,</span>
+                <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">sample</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;head_predict&#39;</span><span class="p">:</span>
+            <span class="n">tail_part</span><span class="p">,</span> <span class="n">head_part</span> <span class="o">=</span> <span class="n">sample</span>
+            <span class="k">if</span> <span class="n">head_part</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">batch_size</span><span class="p">,</span> <span class="n">negative_sample_size</span> <span class="o">=</span> <span class="n">head_part</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">head_part</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">head_part</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">head</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">entity_embedding</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">head</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">index_select</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">entity_embedding</span><span class="p">,</span>
+                    <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                    <span class="n">index</span><span class="o">=</span><span class="n">head_part</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">negative_sample_size</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="n">relation</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">index_select</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">relation_embedding</span><span class="p">,</span>
+                <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">tail_part</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="n">tail</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">index_select</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">entity_embedding</span><span class="p">,</span>
+                <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">tail_part</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;tail_predict&#39;</span><span class="p">:</span>
+            <span class="n">head_part</span><span class="p">,</span> <span class="n">tail_part</span> <span class="o">=</span> <span class="n">sample</span>
+            <span class="k">if</span> <span class="n">tail_part</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">batch_size</span><span class="p">,</span> <span class="n">negative_sample_size</span> <span class="o">=</span> <span class="n">tail_part</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">tail_part</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="n">head</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">index_select</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">entity_embedding</span><span class="p">,</span>
+                <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">head_part</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="n">relation</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">index_select</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">relation_embedding</span><span class="p">,</span>
+                <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">head_part</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">tail_part</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">tail</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">entity_embedding</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">tail</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">index_select</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">entity_embedding</span><span class="p">,</span>
+                    <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                    <span class="n">index</span><span class="o">=</span><span class="n">tail_part</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">negative_sample_size</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;rel-batch&#39;</span><span class="p">:</span>
+            <span class="n">head_part</span><span class="p">,</span> <span class="n">tail_part</span> <span class="o">=</span> <span class="n">sample</span>
+            <span class="k">if</span> <span class="n">tail_part</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">batch_size</span><span class="p">,</span> <span class="n">negative_sample_size</span> <span class="o">=</span> <span class="n">tail_part</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">tail_part</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="n">head</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">index_select</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">entity_embedding</span><span class="p">,</span>
+                <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">head_part</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="n">tail</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">index_select</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">entity_embedding</span><span class="p">,</span>
+                <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">head_part</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">tail_part</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">relation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">relation_embedding</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">relation</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">index_select</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">relation_embedding</span><span class="p">,</span>
+                    <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                    <span class="n">index</span><span class="o">=</span><span class="n">tail_part</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">negative_sample_size</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;mode </span><span class="si">%s</span><span class="s1"> not supported&#39;</span> <span class="o">%</span> <span class="n">mode</span><span class="p">)</span>
+
+        <span class="n">model_func</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;TransE&#39;</span><span class="p">:</span> <span class="n">TransE</span><span class="o">.</span><span class="n">score_func</span><span class="p">,</span>
+            <span class="s1">&#39;DistMult&#39;</span><span class="p">:</span> <span class="n">DistMult</span><span class="o">.</span><span class="n">score_func</span><span class="p">,</span>
+            <span class="s1">&#39;ComplEx&#39;</span><span class="p">:</span> <span class="n">ComplEx</span><span class="o">.</span><span class="n">score_func</span><span class="p">,</span>
+            <span class="s1">&#39;RotatE&#39;</span><span class="p">:</span> <span class="n">RotatE</span><span class="o">.</span><span class="n">score_func</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="ow">in</span> <span class="n">model_func</span><span class="p">:</span>
+            <span class="n">score</span> <span class="o">=</span> <span class="n">model_func</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">](</span><span class="bp">self</span><span class="p">,</span> <span class="n">head</span><span class="p">,</span> <span class="n">relation</span><span class="p">,</span> <span class="n">tail</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;model </span><span class="si">%s</span><span class="s1"> not supported&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">score</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, zjukg.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

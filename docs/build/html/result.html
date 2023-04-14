@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Results &mdash; NeuralKG-ind v1.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="NeuralKG-ind" href="neuralkg_ind.html" />
+    <link rel="prev" title="Install" href="install.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> NeuralKG-ind
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Experiment Result</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Results</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#fb15k237-v1">FB15K237-v1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fb15k237-v2">FB15K237-v2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fb15k237-v3">FB15K237-v3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fb15k237-v4">FB15K237-v4</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#wn18rr-v1">WN18RR-v1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#wn18rr-v2">WN18RR-v2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#wn18rr-v3">WN18RR-v3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#wn18rr-v4">WN18RR-v4</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#nell-v1">NELL-v1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#nell-v2">NELL-v2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#nell-v3">NELL-v3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#nell-v4">NELL-v4</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="neuralkg_ind.html">NeuralKG-ind</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">NeuralKG-ind</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Results</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/zjukg/NeuralKG_ind/blob/main/docs/source/result.md" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="results">
+<h1>Results<a class="headerlink" href="#results" title="Permalink to this heading">¶</a></h1>
+<p>There are some reproduced inductive model results using NeuralKG-ind</p>
+<section id="fb15k237-v1">
+<h2>FB15K237-v1<a class="headerlink" href="#fb15k237-v1" title="Permalink to this heading">¶</a></h2>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Method</th>
+<th style="text-align: center;">AUC</th>
+<th style="text-align: center;">AUC-PR</th>
+<th style="text-align: center;">MRR</th>
+<th style="text-align: center;">Hit@1</th>
+<th style="text-align: center;">Hit@5</th>
+<th style="text-align: center;">Hit@10</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">GraIL</td>
+<td style="text-align: center;">0.752</td>
+<td style="text-align: center;">0.821</td>
+<td style="text-align: center;">0.452</td>
+<td style="text-align: center;">0.359</td>
+<td style="text-align: center;">0.561</td>
+<td style="text-align: center;">0.624</td>
+</tr>
+<tr>
+<td style="text-align: center;">CoMPILE</td>
+<td style="text-align: center;">0.800</td>
+<td style="text-align: center;">0.835</td>
+<td style="text-align: center;">0.516</td>
+<td style="text-align: center;">0.437</td>
+<td style="text-align: center;">0.600</td>
+<td style="text-align: center;">0.668</td>
+</tr>
+<tr>
+<td style="text-align: center;">SNRI</td>
+<td style="text-align: center;">0.815</td>
+<td style="text-align: center;">0.833</td>
+<td style="text-align: center;">0.495</td>
+<td style="text-align: center;">0.390</td>
+<td style="text-align: center;">0.600</td>
+<td style="text-align: center;">0.720</td>
+</tr>
+<tr>
+<td style="text-align: center;">RMPI</td>
+<td style="text-align: center;">0.803</td>
+<td style="text-align: center;">0.823</td>
+<td style="text-align: center;">0.532</td>
+<td style="text-align: center;">0.451</td>
+<td style="text-align: center;">0.620</td>
+<td style="text-align: center;">0.689</td>
+</tr>
+<tr>
+<td style="text-align: center;">MorsE-TransE</td>
+<td style="text-align: center;">0.844</td>
+<td style="text-align: center;">0.847</td>
+<td style="text-align: center;">0.591</td>
+<td style="text-align: center;">0.470</td>
+<td style="text-align: center;">0.723</td>
+<td style="text-align: center;">0.833</td>
+</tr>
+</tbody>
+</table></section>
+<section id="fb15k237-v2">
+<h2>FB15K237-v2<a class="headerlink" href="#fb15k237-v2" title="Permalink to this heading">¶</a></h2>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Method</th>
+<th style="text-align: center;">AUC</th>
+<th style="text-align: center;">AUC-PR</th>
+<th style="text-align: center;">MRR</th>
+<th style="text-align: center;">Hit@1</th>
+<th style="text-align: center;">Hit@5</th>
+<th style="text-align: center;">Hit@10</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">GraIL</td>
+<td style="text-align: center;">0.873</td>
+<td style="text-align: center;">0.900</td>
+<td style="text-align: center;">0.642</td>
+<td style="text-align: center;">0.539</td>
+<td style="text-align: center;">0.767</td>
+<td style="text-align: center;">0.831</td>
+</tr>
+<tr>
+<td style="text-align: center;">CoMPILE</td>
+<td style="text-align: center;">0.876</td>
+<td style="text-align: center;">0.905</td>
+<td style="text-align: center;">0.617</td>
+<td style="text-align: center;">0.509</td>
+<td style="text-align: center;">0.741</td>
+<td style="text-align: center;">0.813</td>
+</tr>
+<tr>
+<td style="text-align: center;">SNRI</td>
+<td style="text-align: center;">0.884</td>
+<td style="text-align: center;">0.906</td>
+<td style="text-align: center;">0.646</td>
+<td style="text-align: center;">0.536</td>
+<td style="text-align: center;">0.781</td>
+<td style="text-align: center;">0.857</td>
+</tr>
+<tr>
+<td style="text-align: center;">RMPI</td>
+<td style="text-align: center;">0.851</td>
+<td style="text-align: center;">0.882</td>
+<td style="text-align: center;">0.632</td>
+<td style="text-align: center;">0.523</td>
+<td style="text-align: center;">0.763</td>
+<td style="text-align: center;">0.830</td>
+</tr>
+<tr>
+<td style="text-align: center;">MorsE-TransE</td>
+<td style="text-align: center;">0.964</td>
+<td style="text-align: center;">0.960</td>
+<td style="text-align: center;">0.754</td>
+<td style="text-align: center;">0.643</td>
+<td style="text-align: center;">0.897</td>
+<td style="text-align: center;">0.950</td>
+</tr>
+</tbody>
+</table></section>
+<section id="fb15k237-v3">
+<h2>FB15K237-v3<a class="headerlink" href="#fb15k237-v3" title="Permalink to this heading">¶</a></h2>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Method</th>
+<th style="text-align: center;">AUC</th>
+<th style="text-align: center;">AUC-PR</th>
+<th style="text-align: center;">MRR</th>
+<th style="text-align: center;">Hit@1</th>
+<th style="text-align: center;">Hit@5</th>
+<th style="text-align: center;">Hit@10</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">GraIL</td>
+<td style="text-align: center;">0.871</td>
+<td style="text-align: center;">0.899</td>
+<td style="text-align: center;">0.637</td>
+<td style="text-align: center;">0.530</td>
+<td style="text-align: center;">0.765</td>
+<td style="text-align: center;">0.828</td>
+</tr>
+<tr>
+<td style="text-align: center;">CoMPILE</td>
+<td style="text-align: center;">0.906</td>
+<td style="text-align: center;">0.925</td>
+<td style="text-align: center;">0.670</td>
+<td style="text-align: center;">0.568</td>
+<td style="text-align: center;">0.796</td>
+<td style="text-align: center;">0.859</td>
+</tr>
+<tr>
+<td style="text-align: center;">SNRI</td>
+<td style="text-align: center;">0.870</td>
+<td style="text-align: center;">0.884</td>
+<td style="text-align: center;">0.642</td>
+<td style="text-align: center;">0.525</td>
+<td style="text-align: center;">0.775</td>
+<td style="text-align: center;">0.871</td>
+</tr>
+<tr>
+<td style="text-align: center;">RMPI</td>
+<td style="text-align: center;">0.876</td>
+<td style="text-align: center;">0.866</td>
+<td style="text-align: center;">0.662</td>
+<td style="text-align: center;">0.569</td>
+<td style="text-align: center;">0.767</td>
+<td style="text-align: center;">0.827</td>
+</tr>
+<tr>
+<td style="text-align: center;">MorsE-TransE</td>
+<td style="text-align: center;">0.959</td>
+<td style="text-align: center;">0.952</td>
+<td style="text-align: center;">0.745</td>
+<td style="text-align: center;">0.637</td>
+<td style="text-align: center;">0.878</td>
+<td style="text-align: center;">0.954</td>
+</tr>
+</tbody>
+</table></section>
+<section id="fb15k237-v4">
+<h2>FB15K237-v4<a class="headerlink" href="#fb15k237-v4" title="Permalink to this heading">¶</a></h2>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Method</th>
+<th style="text-align: center;">AUC</th>
+<th style="text-align: center;">AUC-PR</th>
+<th style="text-align: center;">MRR</th>
+<th style="text-align: center;">Hit@1</th>
+<th style="text-align: center;">Hit@5</th>
+<th style="text-align: center;">Hit@10</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">GraIL</td>
+<td style="text-align: center;">0.911</td>
+<td style="text-align: center;">0.921</td>
+<td style="text-align: center;">0.639</td>
+<td style="text-align: center;">0.521</td>
+<td style="text-align: center;">0.797</td>
+<td style="text-align: center;">0.880</td>
+</tr>
+<tr>
+<td style="text-align: center;">CoMPILE</td>
+<td style="text-align: center;">0.927</td>
+<td style="text-align: center;">0.932</td>
+<td style="text-align: center;">0.704</td>
+<td style="text-align: center;">0.604</td>
+<td style="text-align: center;">0.831</td>
+<td style="text-align: center;">0.894</td>
+</tr>
+<tr>
+<td style="text-align: center;">SNRI</td>
+<td style="text-align: center;">0.899</td>
+<td style="text-align: center;">0.908</td>
+<td style="text-align: center;">0.681</td>
+<td style="text-align: center;">0.573</td>
+<td style="text-align: center;">0.821</td>
+<td style="text-align: center;">0.894</td>
+</tr>
+<tr>
+<td style="text-align: center;">RMPI</td>
+<td style="text-align: center;">0.905</td>
+<td style="text-align: center;">0.916</td>
+<td style="text-align: center;">0.647</td>
+<td style="text-align: center;">0.535</td>
+<td style="text-align: center;">0.787</td>
+<td style="text-align: center;">0.866</td>
+</tr>
+<tr>
+<td style="text-align: center;">MorsE-TransE</td>
+<td style="text-align: center;">0.963</td>
+<td style="text-align: center;">0.952</td>
+<td style="text-align: center;">0.742</td>
+<td style="text-align: center;">0.632</td>
+<td style="text-align: center;">0.888</td>
+<td style="text-align: center;">0.958</td>
+</tr>
+</tbody>
+</table></section>
+<section id="wn18rr-v1">
+<h2>WN18RR-v1<a class="headerlink" href="#wn18rr-v1" title="Permalink to this heading">¶</a></h2>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Method</th>
+<th style="text-align: center;">AUC</th>
+<th style="text-align: center;">AUC-PR</th>
+<th style="text-align: center;">MRR</th>
+<th style="text-align: center;">Hit@1</th>
+<th style="text-align: center;">Hit@5</th>
+<th style="text-align: center;">Hit@10</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">GraIL</td>
+<td style="text-align: center;">0.934</td>
+<td style="text-align: center;">0.935</td>
+<td style="text-align: center;">0.777</td>
+<td style="text-align: center;">0.726</td>
+<td style="text-align: center;">0.830</td>
+<td style="text-align: center;">0.840</td>
+</tr>
+<tr>
+<td style="text-align: center;">CoMPILE</td>
+<td style="text-align: center;">0.939</td>
+<td style="text-align: center;">0.944</td>
+<td style="text-align: center;">0.782</td>
+<td style="text-align: center;">0.736</td>
+<td style="text-align: center;">0.834</td>
+<td style="text-align: center;">0.839</td>
+</tr>
+<tr>
+<td style="text-align: center;">SNRI</td>
+<td style="text-align: center;">0.885</td>
+<td style="text-align: center;">0.914</td>
+<td style="text-align: center;">0.806</td>
+<td style="text-align: center;">0.766</td>
+<td style="text-align: center;">0.843</td>
+<td style="text-align: center;">0.859</td>
+</tr>
+<tr>
+<td style="text-align: center;">RMPI</td>
+<td style="text-align: center;">0.935</td>
+<td style="text-align: center;">0.941</td>
+<td style="text-align: center;">0.703</td>
+<td style="text-align: center;">0.569</td>
+<td style="text-align: center;">0.866</td>
+<td style="text-align: center;">0.890</td>
+</tr>
+<tr>
+<td style="text-align: center;">MorsE-RotatE</td>
+<td style="text-align: center;">0.895</td>
+<td style="text-align: center;">0.922</td>
+<td style="text-align: center;">0.689</td>
+<td style="text-align: center;">0.628</td>
+<td style="text-align: center;">0.736</td>
+<td style="text-align: center;">0.819</td>
+</tr>
+</tbody>
+</table></section>
+<section id="wn18rr-v2">
+<h2>WN18RR-v2<a class="headerlink" href="#wn18rr-v2" title="Permalink to this heading">¶</a></h2>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Method</th>
+<th style="text-align: center;">AUC</th>
+<th style="text-align: center;">AUC-PR</th>
+<th style="text-align: center;">MRR</th>
+<th style="text-align: center;">Hit@1</th>
+<th style="text-align: center;">Hit@5</th>
+<th style="text-align: center;">Hit@10</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">GraIL</td>
+<td style="text-align: center;">0.929</td>
+<td style="text-align: center;">0.940</td>
+<td style="text-align: center;">0.797</td>
+<td style="text-align: center;">0.776</td>
+<td style="text-align: center;">0.814</td>
+<td style="text-align: center;">0.814</td>
+</tr>
+<tr>
+<td style="text-align: center;">CoMPILE</td>
+<td style="text-align: center;">0.934</td>
+<td style="text-align: center;">0.942</td>
+<td style="text-align: center;">0.781</td>
+<td style="text-align: center;">0.759</td>
+<td style="text-align: center;">0.797</td>
+<td style="text-align: center;">0.797</td>
+</tr>
+<tr>
+<td style="text-align: center;">SNRI</td>
+<td style="text-align: center;">0.919</td>
+<td style="text-align: center;">0.944</td>
+<td style="text-align: center;">0.788</td>
+<td style="text-align: center;">0.736</td>
+<td style="text-align: center;">0.842</td>
+<td style="text-align: center;">0.855</td>
+</tr>
+<tr>
+<td style="text-align: center;">RMPI</td>
+<td style="text-align: center;">0.930</td>
+<td style="text-align: center;">0.932</td>
+<td style="text-align: center;">0.757</td>
+<td style="text-align: center;">0.699</td>
+<td style="text-align: center;">0.811</td>
+<td style="text-align: center;">0.824</td>
+</tr>
+<tr>
+<td style="text-align: center;">MorsE-RotatE</td>
+<td style="text-align: center;">0.909</td>
+<td style="text-align: center;">0.929</td>
+<td style="text-align: center;">0.694</td>
+<td style="text-align: center;">0.632</td>
+<td style="text-align: center;">0.746</td>
+<td style="text-align: center;">0.804</td>
+</tr>
+</tbody>
+</table></section>
+<section id="wn18rr-v3">
+<h2>WN18RR-v3<a class="headerlink" href="#wn18rr-v3" title="Permalink to this heading">¶</a></h2>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Method</th>
+<th style="text-align: center;">AUC</th>
+<th style="text-align: center;">AUC-PR</th>
+<th style="text-align: center;">MRR</th>
+<th style="text-align: center;">Hit@1</th>
+<th style="text-align: center;">Hit@5</th>
+<th style="text-align: center;">Hit@10</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">GraIL</td>
+<td style="text-align: center;">0.858</td>
+<td style="text-align: center;">0.869</td>
+<td style="text-align: center;">0.549</td>
+<td style="text-align: center;">0.497</td>
+<td style="text-align: center;">0.605</td>
+<td style="text-align: center;">0.631</td>
+</tr>
+<tr>
+<td style="text-align: center;">CoMPILE</td>
+<td style="text-align: center;">0.845</td>
+<td style="text-align: center;">0.862</td>
+<td style="text-align: center;">0.542</td>
+<td style="text-align: center;">0.490</td>
+<td style="text-align: center;">0.595</td>
+<td style="text-align: center;">0.619</td>
+</tr>
+<tr>
+<td style="text-align: center;">SNRI</td>
+<td style="text-align: center;">0.822</td>
+<td style="text-align: center;">0.833</td>
+<td style="text-align: center;">0.567</td>
+<td style="text-align: center;">0.501</td>
+<td style="text-align: center;">0.617</td>
+<td style="text-align: center;">0.685</td>
+</tr>
+<tr>
+<td style="text-align: center;">RMPI</td>
+<td style="text-align: center;">0.859</td>
+<td style="text-align: center;">0.872</td>
+<td style="text-align: center;">0.606</td>
+<td style="text-align: center;">0.537</td>
+<td style="text-align: center;">0.663</td>
+<td style="text-align: center;">0.713</td>
+</tr>
+<tr>
+<td style="text-align: center;">MorsE-RotatE</td>
+<td style="text-align: center;">0.770</td>
+<td style="text-align: center;">0.830</td>
+<td style="text-align: center;">0.519</td>
+<td style="text-align: center;">0.428</td>
+<td style="text-align: center;">0.605</td>
+<td style="text-align: center;">0.689</td>
+</tr>
+</tbody>
+</table></section>
+<section id="wn18rr-v4">
+<h2>WN18RR-v4<a class="headerlink" href="#wn18rr-v4" title="Permalink to this heading">¶</a></h2>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Method</th>
+<th style="text-align: center;">AUC</th>
+<th style="text-align: center;">AUC-PR</th>
+<th style="text-align: center;">MRR</th>
+<th style="text-align: center;">Hit@1</th>
+<th style="text-align: center;">Hit@5</th>
+<th style="text-align: center;">Hit@10</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">GraIL</td>
+<td style="text-align: center;">0.936</td>
+<td style="text-align: center;">0.934</td>
+<td style="text-align: center;">0.760</td>
+<td style="text-align: center;">0.747</td>
+<td style="text-align: center;">0.763</td>
+<td style="text-align: center;">0.763</td>
+</tr>
+<tr>
+<td style="text-align: center;">CoMPILE</td>
+<td style="text-align: center;">0.935</td>
+<td style="text-align: center;">0.931</td>
+<td style="text-align: center;">0.751</td>
+<td style="text-align: center;">0.732</td>
+<td style="text-align: center;">0.762</td>
+<td style="text-align: center;">0.762</td>
+</tr>
+<tr>
+<td style="text-align: center;">SNRI</td>
+<td style="text-align: center;">0.906</td>
+<td style="text-align: center;">0.931</td>
+<td style="text-align: center;">0.772</td>
+<td style="text-align: center;">0.735</td>
+<td style="text-align: center;">0.797</td>
+<td style="text-align: center;">0.816</td>
+</tr>
+<tr>
+<td style="text-align: center;">RMPI</td>
+<td style="text-align: center;">0.933</td>
+<td style="text-align: center;">0.940</td>
+<td style="text-align: center;">0.751</td>
+<td style="text-align: center;">0.707</td>
+<td style="text-align: center;">0.783</td>
+<td style="text-align: center;">0.810</td>
+</tr>
+<tr>
+<td style="text-align: center;">MorsE-RotatE</td>
+<td style="text-align: center;">0.903</td>
+<td style="text-align: center;">0.923</td>
+<td style="text-align: center;">0.660</td>
+<td style="text-align: center;">0.597</td>
+<td style="text-align: center;">0.721</td>
+<td style="text-align: center;">0.787</td>
+</tr>
+</tbody>
+</table></section>
+<section id="nell-v1">
+<h2>NELL-v1<a class="headerlink" href="#nell-v1" title="Permalink to this heading">¶</a></h2>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Method</th>
+<th style="text-align: center;">AUC</th>
+<th style="text-align: center;">AUC-PR</th>
+<th style="text-align: center;">MRR</th>
+<th style="text-align: center;">Hit@1</th>
+<th style="text-align: center;">Hit@5</th>
+<th style="text-align: center;">Hit@10</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">GraIL</td>
+<td style="text-align: center;">0.814</td>
+<td style="text-align: center;">0.750</td>
+<td style="text-align: center;">0.467</td>
+<td style="text-align: center;">0.395</td>
+<td style="text-align: center;">0.515</td>
+<td style="text-align: center;">0.575</td>
+</tr>
+<tr>
+<td style="text-align: center;">CoMPILE</td>
+<td style="text-align: center;">0.780</td>
+<td style="text-align: center;">0.703</td>
+<td style="text-align: center;">0.506</td>
+<td style="text-align: center;">0.455</td>
+<td style="text-align: center;">0.510</td>
+<td style="text-align: center;">0.585</td>
+</tr>
+<tr>
+<td style="text-align: center;">SNRI</td>
+<td style="text-align: center;">0.739</td>
+<td style="text-align: center;">0.720</td>
+<td style="text-align: center;">0.523</td>
+<td style="text-align: center;">0.475</td>
+<td style="text-align: center;">0.545</td>
+<td style="text-align: center;">0.595</td>
+</tr>
+<tr>
+<td style="text-align: center;">RMPI</td>
+<td style="text-align: center;">0.806</td>
+<td style="text-align: center;">0.722</td>
+<td style="text-align: center;">0.465</td>
+<td style="text-align: center;">0.409</td>
+<td style="text-align: center;">0.495</td>
+<td style="text-align: center;">0.514</td>
+</tr>
+<tr>
+<td style="text-align: center;">MorsE-TransE</td>
+<td style="text-align: center;">0.689</td>
+<td style="text-align: center;">0.683</td>
+<td style="text-align: center;">0.291</td>
+<td style="text-align: center;">0.189</td>
+<td style="text-align: center;">0.354</td>
+<td style="text-align: center;">0.550</td>
+</tr>
+</tbody>
+</table></section>
+<section id="nell-v2">
+<h2>NELL-v2<a class="headerlink" href="#nell-v2" title="Permalink to this heading">¶</a></h2>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Method</th>
+<th style="text-align: center;">AUC</th>
+<th style="text-align: center;">AUC-PR</th>
+<th style="text-align: center;">MRR</th>
+<th style="text-align: center;">Hit@1</th>
+<th style="text-align: center;">Hit@5</th>
+<th style="text-align: center;">Hit@10</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">GraIL</td>
+<td style="text-align: center;">0.929</td>
+<td style="text-align: center;">0.947</td>
+<td style="text-align: center;">0.735</td>
+<td style="text-align: center;">0.624</td>
+<td style="text-align: center;">0.884</td>
+<td style="text-align: center;">0.933</td>
+</tr>
+<tr>
+<td style="text-align: center;">CoMPILE</td>
+<td style="text-align: center;">0.928</td>
+<td style="text-align: center;">0.942</td>
+<td style="text-align: center;">0.778</td>
+<td style="text-align: center;">0.676</td>
+<td style="text-align: center;">0.905</td>
+<td style="text-align: center;">0.936</td>
+</tr>
+<tr>
+<td style="text-align: center;">SNRI</td>
+<td style="text-align: center;">0.864</td>
+<td style="text-align: center;">0.884</td>
+<td style="text-align: center;">0.630</td>
+<td style="text-align: center;">0.507</td>
+<td style="text-align: center;">0.774</td>
+<td style="text-align: center;">0.863</td>
+</tr>
+<tr>
+<td style="text-align: center;">RMPI</td>
+<td style="text-align: center;">0.926</td>
+<td style="text-align: center;">0.939</td>
+<td style="text-align: center;">0.750</td>
+<td style="text-align: center;">0.657</td>
+<td style="text-align: center;">0.861</td>
+<td style="text-align: center;">0.911</td>
+</tr>
+<tr>
+<td style="text-align: center;">MorsE-TransE</td>
+<td style="text-align: center;">0.835</td>
+<td style="text-align: center;">0.874</td>
+<td style="text-align: center;">0.554</td>
+<td style="text-align: center;">0.402</td>
+<td style="text-align: center;">0.740</td>
+<td style="text-align: center;">0.813</td>
+</tr>
+</tbody>
+</table></section>
+<section id="nell-v3">
+<h2>NELL-v3<a class="headerlink" href="#nell-v3" title="Permalink to this heading">¶</a></h2>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Method</th>
+<th style="text-align: center;">AUC</th>
+<th style="text-align: center;">AUC-PR</th>
+<th style="text-align: center;">MRR</th>
+<th style="text-align: center;">Hit@1</th>
+<th style="text-align: center;">Hit@5</th>
+<th style="text-align: center;">Hit@10</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">GraIL</td>
+<td style="text-align: center;">0.935</td>
+<td style="text-align: center;">0.943</td>
+<td style="text-align: center;">0.735</td>
+<td style="text-align: center;">0.624</td>
+<td style="text-align: center;">0.884</td>
+<td style="text-align: center;">0.933</td>
+</tr>
+<tr>
+<td style="text-align: center;">CoMPILE</td>
+<td style="text-align: center;">0.938</td>
+<td style="text-align: center;">0.952</td>
+<td style="text-align: center;">0.816</td>
+<td style="text-align: center;">0.744</td>
+<td style="text-align: center;">0.907</td>
+<td style="text-align: center;">0.920</td>
+</tr>
+<tr>
+<td style="text-align: center;">SNRI</td>
+<td style="text-align: center;">0.878</td>
+<td style="text-align: center;">0.887</td>
+<td style="text-align: center;">0.623</td>
+<td style="text-align: center;">0.486</td>
+<td style="text-align: center;">0.787</td>
+<td style="text-align: center;">0.894</td>
+</tr>
+<tr>
+<td style="text-align: center;">RMPI</td>
+<td style="text-align: center;">0.918</td>
+<td style="text-align: center;">0.924</td>
+<td style="text-align: center;">0.785</td>
+<td style="text-align: center;">0.694</td>
+<td style="text-align: center;">0.904</td>
+<td style="text-align: center;">0.930</td>
+</tr>
+<tr>
+<td style="text-align: center;">MorsE-TransE</td>
+<td style="text-align: center;">0.908</td>
+<td style="text-align: center;">0.920</td>
+<td style="text-align: center;">0.626</td>
+<td style="text-align: center;">0.465</td>
+<td style="text-align: center;">0.841</td>
+<td style="text-align: center;">0.912</td>
+</tr>
+</tbody>
+</table></section>
+<section id="nell-v4">
+<h2>NELL-v4<a class="headerlink" href="#nell-v4" title="Permalink to this heading">¶</a></h2>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Method</th>
+<th style="text-align: center;">AUC</th>
+<th style="text-align: center;">AUC-PR</th>
+<th style="text-align: center;">MRR</th>
+<th style="text-align: center;">Hit@1</th>
+<th style="text-align: center;">Hit@5</th>
+<th style="text-align: center;">Hit@10</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">GraIL</td>
+<td style="text-align: center;">0.797</td>
+<td style="text-align: center;">0.851</td>
+<td style="text-align: center;">0.632</td>
+<td style="text-align: center;">0.574</td>
+<td style="text-align: center;">0.674</td>
+<td style="text-align: center;">0.689</td>
+</tr>
+<tr>
+<td style="text-align: center;">CoMPILE</td>
+<td style="text-align: center;">0.862</td>
+<td style="text-align: center;">0.885</td>
+<td style="text-align: center;">0.629</td>
+<td style="text-align: center;">0.527</td>
+<td style="text-align: center;">0.754</td>
+<td style="text-align: center;">0.791</td>
+</tr>
+<tr>
+<td style="text-align: center;">SNRI</td>
+<td style="text-align: center;">0.498</td>
+<td style="text-align: center;">0.477</td>
+<td style="text-align: center;">0.367</td>
+<td style="text-align: center;">0.251</td>
+<td style="text-align: center;">0.477</td>
+<td style="text-align: center;">0.566</td>
+</tr>
+<tr>
+<td style="text-align: center;">RMPI</td>
+<td style="text-align: center;">0.918</td>
+<td style="text-align: center;">0.924</td>
+<td style="text-align: center;">0.785</td>
+<td style="text-align: center;">0.694</td>
+<td style="text-align: center;">0.904</td>
+<td style="text-align: center;">0.930</td>
+</tr>
+<tr>
+<td style="text-align: center;">MorsE-TransE</td>
+<td style="text-align: center;">0.824</td>
+<td style="text-align: center;">0.841</td>
+<td style="text-align: center;">0.435</td>
+<td style="text-align: center;">0.261</td>
+<td style="text-align: center;">0.675</td>
+<td style="text-align: center;">0.801</td>
+</tr>
+</tbody>
+</table></section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="install.html" class="btn btn-neutral float-left" title="Install" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="neuralkg_ind.html" class="btn btn-neutral float-right" title="NeuralKG-ind" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, zjukg.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

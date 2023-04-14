@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>neuralkg_ind.model.GNNModel.RGCN &mdash; NeuralKG-ind v1.0 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> NeuralKG-ind
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../install.html">Install</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Experiment Result</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../result.html">Results</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../neuralkg_ind.html">NeuralKG-ind</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">NeuralKG-ind</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      <li>neuralkg_ind.model.GNNModel.RGCN</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for neuralkg_ind.model.GNNModel.RGCN</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
+<span class="kn">from</span> <span class="nn">.layer</span> <span class="kn">import</span> <span class="n">GNNLayer</span>
+<span class="kn">from</span> <span class="nn">.model</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">dgl</span> <span class="kn">import</span> <span class="n">function</span> <span class="k">as</span> <span class="n">fn</span>
+<span class="kn">from</span> <span class="nn">dgl.nn.pytorch.linear</span> <span class="kn">import</span> <span class="n">TypedLinear</span>
+<span class="kn">from</span> <span class="nn">neuralkg_ind.model</span> <span class="kn">import</span> <span class="n">DistMult</span>
+
+
+<div class="viewcode-block" id="RGCN"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.RGCN.RGCN">[docs]</a><span class="k">class</span> <span class="nc">RGCN</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;`Modeling Relational Data with Graph Convolutional Networks`_ (RGCN), which use GCN framework to model relation data.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        args: Model configuration parameters.</span>
+<span class="sd">    </span>
+<span class="sd">    .. _Modeling Relational Data with Graph Convolutional Networks: https://arxiv.org/pdf/1703.06103.pdf</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">RGCN</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ent_emb</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rel_emb</span> <span class="o">=</span> <span class="kc">None</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="kc">None</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">Loss_emb</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_emb</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">build_model</span><span class="p">()</span>
+
+<div class="viewcode-block" id="RGCN.init_emb"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.RGCN.RGCN.init_emb">[docs]</a>    <span class="k">def</span> <span class="nf">init_emb</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the RGCN model and embeddings </span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ent_emb: Entity embedding, shape:[num_ent, emb_dim].</span>
+<span class="sd">            rel_emb: Relation_embedding, shape:[num_rel, emb_dim].</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">ent_emb</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_ent</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">emb_dim</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rel_emb</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_rel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">emb_dim</span><span class="p">))</span>
+
+        <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">xavier_uniform_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rel_emb</span><span class="p">,</span> <span class="n">gain</span><span class="o">=</span><span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">calculate_gain</span><span class="p">(</span><span class="s1">&#39;relu&#39;</span><span class="p">))</span></div>
+        
+<div class="viewcode-block" id="RGCN.forward"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.RGCN.RGCN.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">ent</span><span class="p">,</span> <span class="n">rel</span><span class="p">,</span> <span class="n">norm</span><span class="p">,</span> <span class="n">triples</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;single&#39;</span><span class="p">):</span>
+<span class="w">        </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The functions used in the training and testing phase</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            graph: The knowledge graph recorded in dgl.graph()</span>
+<span class="sd">            ent: The entitiy ids sampled in triples</span>
+<span class="sd">            rel: The relation ids sampled in triples</span>
+<span class="sd">            norm: The edge norm in graph </span>
+<span class="sd">            triples: The triples ids, as (h, r, t), shape:[batch_size, 3].</span>
+<span class="sd">            mode: Choose head-predict or tail-predict, Defaults to &#39;single&#39;.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            score: The score of triples.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">embedding</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ent_emb</span><span class="p">(</span><span class="n">ent</span><span class="o">.</span><span class="n">squeeze</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">:</span>
+            <span class="n">embedding</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">embedding</span><span class="p">,</span> <span class="n">rel</span><span class="p">,</span> <span class="n">norm</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Loss_emb</span> <span class="o">=</span> <span class="n">embedding</span>
+        <span class="n">head_emb</span><span class="p">,</span> <span class="n">rela_emb</span><span class="p">,</span> <span class="n">tail_emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tri2emb</span><span class="p">(</span><span class="n">embedding</span><span class="p">,</span> <span class="n">triples</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+        <span class="n">score</span> <span class="o">=</span> <span class="n">DistMult</span><span class="o">.</span><span class="n">score_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">head_emb</span><span class="p">,</span> <span class="n">rela_emb</span><span class="p">,</span> <span class="n">tail_emb</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">score</span></div>
+
+<div class="viewcode-block" id="RGCN.get_score"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.RGCN.RGCN.get_score">[docs]</a>    <span class="k">def</span> <span class="nf">get_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The functions used in the testing phase</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            batch: A batch of data.</span>
+<span class="sd">            mode: Choose head-predict or tail-predict.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            score: The score of triples.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">triples</span>    <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s1">&#39;positive_sample&#39;</span><span class="p">]</span>
+        <span class="n">graph</span>      <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s1">&#39;graph&#39;</span><span class="p">]</span>
+        <span class="n">ent</span>        <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s1">&#39;entity&#39;</span><span class="p">]</span>
+        <span class="n">rel</span>        <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s1">&#39;rela&#39;</span><span class="p">]</span>
+        <span class="n">norm</span>       <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s1">&#39;norm&#39;</span><span class="p">]</span>
+
+        <span class="n">embedding</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ent_emb</span><span class="p">(</span><span class="n">ent</span><span class="o">.</span><span class="n">squeeze</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">:</span>
+            <span class="n">embedding</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">embedding</span><span class="p">,</span> <span class="n">rel</span><span class="p">,</span> <span class="n">norm</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Loss_emb</span> <span class="o">=</span> <span class="n">embedding</span>
+        <span class="n">head_emb</span><span class="p">,</span> <span class="n">rela_emb</span><span class="p">,</span> <span class="n">tail_emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tri2emb</span><span class="p">(</span><span class="n">embedding</span><span class="p">,</span> <span class="n">triples</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+        <span class="n">score</span> <span class="o">=</span> <span class="n">DistMult</span><span class="o">.</span><span class="n">score_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">head_emb</span><span class="p">,</span> <span class="n">rela_emb</span><span class="p">,</span> <span class="n">tail_emb</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">score</span></div>
+
+<div class="viewcode-block" id="RGCN.tri2emb"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.RGCN.RGCN.tri2emb">[docs]</a>    <span class="k">def</span> <span class="nf">tri2emb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embedding</span><span class="p">,</span> <span class="n">triples</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;single&quot;</span><span class="p">):</span>
+<span class="w">        </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get embedding of triples.</span>
+<span class="sd">        </span>
+<span class="sd">        This function get the embeddings of head, relation, and tail</span>
+<span class="sd">        respectively. each embedding has three dimensions.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            embedding(tensor): This embedding save the entity embeddings.            </span>
+<span class="sd">            triples (tensor): This tensor save triples id, which dimension is </span>
+<span class="sd">                [triples number, 3].</span>
+<span class="sd">            mode (str, optional): This arg indicates that the negative entity </span>
+<span class="sd">                will replace the head or tail entity. when it is &#39;single&#39;, it </span>
+<span class="sd">                means that entity will not be replaced. Defaults to &#39;single&#39;.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            head_emb: Head entity embedding.</span>
+<span class="sd">            rela_emb: Relation embedding.</span>
+<span class="sd">            tail_emb: Tail entity embedding.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">rela_emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rel_emb</span><span class="p">[</span><span class="n">triples</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># [bs, 1, dim]</span>
+        <span class="n">head_emb</span> <span class="o">=</span> <span class="n">embedding</span><span class="p">[</span><span class="n">triples</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># [bs, 1, dim] </span>
+        <span class="n">tail_emb</span> <span class="o">=</span> <span class="n">embedding</span><span class="p">[</span><span class="n">triples</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]]</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># [bs, 1, dim]</span>
+
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;head-batch&quot;</span> <span class="ow">or</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;head_predict&quot;</span><span class="p">:</span>
+            <span class="n">head_emb</span> <span class="o">=</span> <span class="n">embedding</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># [1, num_ent, dim]</span>
+
+        <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;tail-batch&quot;</span> <span class="ow">or</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;tail_predict&quot;</span><span class="p">:</span>
+            <span class="n">tail_emb</span> <span class="o">=</span> <span class="n">embedding</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># [1, num_ent, dim]</span>
+
+        <span class="k">return</span> <span class="n">head_emb</span><span class="p">,</span> <span class="n">rela_emb</span><span class="p">,</span> <span class="n">tail_emb</span></div>
+
+<div class="viewcode-block" id="RGCN.build_hidden_layer"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.RGCN.RGCN.build_hidden_layer">[docs]</a>    <span class="k">def</span> <span class="nf">build_hidden_layer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The functions used to initialize the RGCN model</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            idx: it`s used to identify rgcn layers. The last rgcn layer should use </span>
+<span class="sd">            relu as activation function.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            the relation graph convolution layer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">act</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">relu</span> <span class="k">if</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_layers</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_bases</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_rel</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_bases</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_rel</span>
+        <span class="k">return</span> <span class="n">RelGraphConv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">emb_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">emb_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_rel</span><span class="p">,</span> <span class="s2">&quot;bdd&quot;</span><span class="p">,</span>
+                    <span class="n">num_bases</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_bases</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="n">act</span><span class="p">,</span> <span class="n">self_loop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="mf">0.2</span> <span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="RelGraphConv"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.RGCN.RelGraphConv">[docs]</a><span class="k">class</span> <span class="nc">RelGraphConv</span><span class="p">(</span><span class="n">GNNLayer</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">in_feat</span><span class="p">,</span> <span class="n">out_feat</span><span class="p">,</span> <span class="n">num_rels</span><span class="p">,</span> <span class="n">regularizer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">num_bases</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">activation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">self_loop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">layer_norm</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linear_r</span> <span class="o">=</span> <span class="n">TypedLinear</span><span class="p">(</span><span class="n">in_feat</span><span class="p">,</span> <span class="n">out_feat</span><span class="p">,</span> <span class="n">num_rels</span><span class="p">,</span> <span class="n">regularizer</span><span class="p">,</span> <span class="n">num_bases</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bias</span> <span class="o">=</span> <span class="n">bias</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">activation</span> <span class="o">=</span> <span class="n">activation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">self_loop</span> <span class="o">=</span> <span class="n">self_loop</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layer_norm</span> <span class="o">=</span> <span class="n">layer_norm</span>
+
+        <span class="c1"># bias</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">h_bias</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">out_feat</span><span class="p">))</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">zeros_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">h_bias</span><span class="p">)</span>
+
+        <span class="c1"># layer norm</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer_norm</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">layer_norm_weight</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">LayerNorm</span><span class="p">(</span><span class="n">out_feat</span><span class="p">,</span> <span class="n">elementwise_affine</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># weight for self loop</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">self_loop</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">loop_weight</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">in_feat</span><span class="p">,</span> <span class="n">out_feat</span><span class="p">))</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">xavier_uniform_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loop_weight</span><span class="p">,</span> <span class="n">gain</span><span class="o">=</span><span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">calculate_gain</span><span class="p">(</span><span class="s1">&#39;relu&#39;</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">dropout</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RelGraphConv.message"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.RGCN.RelGraphConv.message">[docs]</a>    <span class="k">def</span> <span class="nf">message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edges</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Message function.&quot;&quot;&quot;</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">linear_r</span><span class="p">(</span><span class="n">edges</span><span class="o">.</span><span class="n">src</span><span class="p">[</span><span class="s1">&#39;h&#39;</span><span class="p">],</span> <span class="n">edges</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;etype&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">presorted</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;norm&#39;</span> <span class="ow">in</span> <span class="n">edges</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">m</span> <span class="o">*</span> <span class="n">edges</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;norm&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;m&#39;</span> <span class="p">:</span> <span class="n">m</span><span class="p">}</span></div>
+
+<div class="viewcode-block" id="RelGraphConv.forward"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.RGCN.RelGraphConv.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">feat</span><span class="p">,</span> <span class="n">etypes</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">presorted</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">presorted</span> <span class="o">=</span> <span class="n">presorted</span>
+        <span class="k">with</span> <span class="n">g</span><span class="o">.</span><span class="n">local_scope</span><span class="p">():</span>
+            <span class="n">g</span><span class="o">.</span><span class="n">srcdata</span><span class="p">[</span><span class="s1">&#39;h&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">feat</span>
+            <span class="k">if</span> <span class="n">norm</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">g</span><span class="o">.</span><span class="n">edata</span><span class="p">[</span><span class="s1">&#39;norm&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">norm</span>
+            <span class="n">g</span><span class="o">.</span><span class="n">edata</span><span class="p">[</span><span class="s1">&#39;etype&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">etypes</span>
+            <span class="c1"># message passing</span>
+            <span class="n">g</span><span class="o">.</span><span class="n">update_all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="n">fn</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="s1">&#39;h&#39;</span><span class="p">))</span>
+            <span class="c1"># apply bias and activation</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">dstdata</span><span class="p">[</span><span class="s1">&#39;h&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer_norm</span><span class="p">:</span>
+                <span class="n">h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer_norm_weight</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="p">:</span>
+                <span class="n">h</span> <span class="o">=</span> <span class="n">h</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">h_bias</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">self_loop</span><span class="p">:</span>
+                <span class="n">h</span> <span class="o">=</span> <span class="n">h</span> <span class="o">+</span> <span class="n">feat</span><span class="p">[:</span><span class="n">g</span><span class="o">.</span><span class="n">num_dst_nodes</span><span class="p">()]</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">loop_weight</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">activation</span><span class="p">:</span>
+                <span class="n">h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">activation</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">h</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, zjukg.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

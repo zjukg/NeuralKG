@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eval_Task &mdash; NeuralKG-ind v1.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Lit_Model" href="neuralkg_ind.lit_model.html" />
+    <link rel="prev" title="Data" href="neuralkg_ind.data.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> NeuralKG-ind
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Experiment Result</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="result.html">Results</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="neuralkg_ind.html">NeuralKG-ind</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="neuralkg_ind.data.html">Data</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Eval_Task</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-neuralkg_ind.eval_task.link_prediction">link_prediction</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#neuralkg_ind.eval_task.link_prediction.link_predict"><code class="docutils literal notranslate"><span class="pre">link_predict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#neuralkg_ind.eval_task.link_prediction.ind_predict"><code class="docutils literal notranslate"><span class="pre">ind_predict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#neuralkg_ind.eval_task.link_prediction.head_predict"><code class="docutils literal notranslate"><span class="pre">head_predict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#neuralkg_ind.eval_task.link_prediction.tail_predict"><code class="docutils literal notranslate"><span class="pre">tail_predict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#neuralkg_ind.eval_task.link_prediction.calc_ranks"><code class="docutils literal notranslate"><span class="pre">calc_ranks()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#neuralkg_ind.eval_task.link_prediction.link_predict_SEGNN"><code class="docutils literal notranslate"><span class="pre">link_predict_SEGNN()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#neuralkg_ind.eval_task.link_prediction.head_predict_SEGNN"><code class="docutils literal notranslate"><span class="pre">head_predict_SEGNN()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#neuralkg_ind.eval_task.link_prediction.tail_predict_SEGNN"><code class="docutils literal notranslate"><span class="pre">tail_predict_SEGNN()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#neuralkg_ind.eval_task.link_prediction.calc_ranks_SEGNN"><code class="docutils literal notranslate"><span class="pre">calc_ranks_SEGNN()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-neuralkg_ind.eval_task.triple_classification">triple_classification</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#neuralkg_ind.eval_task.triple_classification.classification"><code class="docutils literal notranslate"><span class="pre">classification()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="neuralkg_ind.lit_model.html">Lit_Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="neuralkg_ind.loss.html">loss</a></li>
+<li class="toctree-l2"><a class="reference internal" href="neuralkg_ind.model.html">Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="neuralkg_ind.utils.html">Utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">NeuralKG-ind</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="neuralkg_ind.html">NeuralKG-ind</a> &raquo;</li>
+      <li>Eval_Task</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/zjukg/NeuralKG_ind/blob/main/docs/source/neuralkg_ind.eval_task.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="eval-task">
+<h1>Eval_Task<a class="headerlink" href="#eval-task" title="Permalink to this heading">¶</a></h1>
+<section id="module-neuralkg_ind.eval_task.link_prediction">
+<span id="link-prediction"></span><h2>link_prediction<a class="headerlink" href="#module-neuralkg_ind.eval_task.link_prediction" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="neuralkg_ind.eval_task.link_prediction.link_predict">
+<span class="sig-prename descclassname"><span class="pre">neuralkg_ind.eval_task.link_prediction.</span></span><span class="sig-name descname"><span class="pre">link_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prediction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/eval_task/link_prediction.html#link_predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.eval_task.link_prediction.link_predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>The evaluate task is predicting the head entity or tail entity in incomplete triples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch</strong> – The batch of the triples for validation or test.</p></li>
+<li><p><strong>model</strong> – The KG model for training.</p></li>
+<li><p><strong>predicion</strong> – mode of link prediction.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The rank of the triple to be predicted.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ranks</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="neuralkg_ind.eval_task.link_prediction.ind_predict">
+<span class="sig-prename descclassname"><span class="pre">neuralkg_ind.eval_task.link_prediction.</span></span><span class="sig-name descname"><span class="pre">ind_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/eval_task/link_prediction.html#ind_predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.eval_task.link_prediction.ind_predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getting the ranking of positive samples in the other 50 negative samples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch</strong> – The batch of sample for test.</p></li>
+<li><p><strong>model</strong> – The inductive model for training.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The rank of the triple to be predicted.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ranks</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="neuralkg_ind.eval_task.link_prediction.head_predict">
+<span class="sig-prename descclassname"><span class="pre">neuralkg_ind.eval_task.link_prediction.</span></span><span class="sig-name descname"><span class="pre">head_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/eval_task/link_prediction.html#head_predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.eval_task.link_prediction.head_predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getting head entity ranks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch</strong> – The batch of the triples for validation or test</p></li>
+<li><p><strong>model</strong> – The KG model for training.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The rank of the head entity to be predicted, dim [batch_size]</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="neuralkg_ind.eval_task.link_prediction.tail_predict">
+<span class="sig-prename descclassname"><span class="pre">neuralkg_ind.eval_task.link_prediction.</span></span><span class="sig-name descname"><span class="pre">tail_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/eval_task/link_prediction.html#tail_predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.eval_task.link_prediction.tail_predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getting tail entity ranks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch</strong> – The batch of the triples for validation or test</p></li>
+<li><p><strong>model</strong> – The KG model for training.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The rank of the tail entity to be predicted, dim [batch_size]</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="neuralkg_ind.eval_task.link_prediction.calc_ranks">
+<span class="sig-prename descclassname"><span class="pre">neuralkg_ind.eval_task.link_prediction.</span></span><span class="sig-name descname"><span class="pre">calc_ranks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pred_score</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/eval_task/link_prediction.html#calc_ranks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.eval_task.link_prediction.calc_ranks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculating triples score ranks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>idx</strong> (<em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.11)"><em>type</em></a><em>]</em>) – The id of the entity to be predicted.</p></li>
+<li><p><strong>label</strong> (<em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.11)"><em>type</em></a><em>]</em>) – The id of existing triples, to calc filtered results.</p></li>
+<li><p><strong>pred_score</strong> (<em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.11)"><em>type</em></a><em>]</em>) – The score of the triple predicted by the model.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The rank of the triple to be predicted, dim [batch_size].</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ranks</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="neuralkg_ind.eval_task.link_prediction.link_predict_SEGNN">
+<span class="sig-prename descclassname"><span class="pre">neuralkg_ind.eval_task.link_prediction.</span></span><span class="sig-name descname"><span class="pre">link_predict_SEGNN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prediction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/eval_task/link_prediction.html#link_predict_SEGNN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.eval_task.link_prediction.link_predict_SEGNN" title="Permalink to this definition">¶</a></dt>
+<dd><p>The evaluate task is predicting the head entity or tail entity in incomplete triples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch</strong> – The batch of the triples for validation or test.</p></li>
+<li><p><strong>model</strong> – The KG model for training.</p></li>
+<li><p><strong>predicion</strong> – mode of link prediction.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The rank of the triple to be predicted.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ranks</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="neuralkg_ind.eval_task.link_prediction.head_predict_SEGNN">
+<span class="sig-prename descclassname"><span class="pre">neuralkg_ind.eval_task.link_prediction.</span></span><span class="sig-name descname"><span class="pre">head_predict_SEGNN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ent_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rel_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/eval_task/link_prediction.html#head_predict_SEGNN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.eval_task.link_prediction.head_predict_SEGNN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getting head entity ranks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch</strong> – The batch of the triples for validation or test</p></li>
+<li><p><strong>model</strong> – The KG model for training.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The rank of the head entity to be predicted, dim [batch_size]</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="neuralkg_ind.eval_task.link_prediction.tail_predict_SEGNN">
+<span class="sig-prename descclassname"><span class="pre">neuralkg_ind.eval_task.link_prediction.</span></span><span class="sig-name descname"><span class="pre">tail_predict_SEGNN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ent_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rel_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/eval_task/link_prediction.html#tail_predict_SEGNN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.eval_task.link_prediction.tail_predict_SEGNN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getting tail entity ranks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch</strong> – The batch of the triples for validation or test</p></li>
+<li><p><strong>model</strong> – The KG model for training.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The rank of the tail entity to be predicted, dim [batch_size]</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="neuralkg_ind.eval_task.link_prediction.calc_ranks_SEGNN">
+<span class="sig-prename descclassname"><span class="pre">neuralkg_ind.eval_task.link_prediction.</span></span><span class="sig-name descname"><span class="pre">calc_ranks_SEGNN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pred_score</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/eval_task/link_prediction.html#calc_ranks_SEGNN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.eval_task.link_prediction.calc_ranks_SEGNN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculating triples score ranks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>idx</strong> (<em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.11)"><em>type</em></a><em>]</em>) – The id of the entity to be predicted.</p></li>
+<li><p><strong>label</strong> (<em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.11)"><em>type</em></a><em>]</em>) – The id of existing triples, to calc filtered results.</p></li>
+<li><p><strong>pred_score</strong> (<em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.11)"><em>type</em></a><em>]</em>) – The score of the triple predicted by the model.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The rank of the triple to be predicted, dim [batch_size].</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ranks</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-neuralkg_ind.eval_task.triple_classification">
+<span id="triple-classification"></span><h2>triple_classification<a class="headerlink" href="#module-neuralkg_ind.eval_task.triple_classification" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="neuralkg_ind.eval_task.triple_classification.classification">
+<span class="sig-prename descclassname"><span class="pre">neuralkg_ind.eval_task.triple_classification.</span></span><span class="sig-name descname"><span class="pre">classification</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/eval_task/triple_classification.html#classification"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.eval_task.triple_classification.classification" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculating triple classification score.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch</strong> – Positive sample and negative sample.</p></li>
+<li><p><strong>model</strong> – The model for testing.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The positive sample score and the negative sample score.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>score</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="neuralkg_ind.data.html" class="btn btn-neutral float-left" title="Data" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="neuralkg_ind.lit_model.html" class="btn btn-neutral float-right" title="Lit_Model" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, zjukg.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

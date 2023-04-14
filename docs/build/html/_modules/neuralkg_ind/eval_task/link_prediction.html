@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>neuralkg_ind.eval_task.link_prediction &mdash; NeuralKG-ind v1.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> NeuralKG-ind
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Install</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Experiment Result</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../result.html">Results</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../neuralkg_ind.html">NeuralKG-ind</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">NeuralKG-ind</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>neuralkg_ind.eval_task.link_prediction</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for neuralkg_ind.eval_task.link_prediction</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">IPython</span> <span class="kn">import</span> <span class="n">embed</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<div class="viewcode-block" id="link_predict"><a class="viewcode-back" href="../../../neuralkg_ind.eval_task.html#neuralkg_ind.eval_task.link_prediction.link_predict">[docs]</a><span class="k">def</span> <span class="nf">link_predict</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">prediction</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The evaluate task is predicting the head entity or tail entity in incomplete triples.</span>
+<span class="sd">        </span>
+<span class="sd">    Args:</span>
+<span class="sd">        batch: The batch of the triples for validation or test.</span>
+<span class="sd">        model: The KG model for training.</span>
+<span class="sd">        predicion: mode of link prediction.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ranks: The rank of the triple to be predicted.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">prediction</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+        <span class="n">tail_ranks</span> <span class="o">=</span> <span class="n">tail_predict</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+        <span class="n">head_ranks</span> <span class="o">=</span> <span class="n">head_predict</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+        <span class="n">ranks</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">tail_ranks</span><span class="p">,</span> <span class="n">head_ranks</span><span class="p">])</span>
+    <span class="k">elif</span> <span class="n">prediction</span> <span class="o">==</span> <span class="s2">&quot;head&quot;</span><span class="p">:</span>
+        <span class="n">ranks</span> <span class="o">=</span> <span class="n">head_predict</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">prediction</span> <span class="o">==</span> <span class="s2">&quot;tail&quot;</span><span class="p">:</span>
+        <span class="n">ranks</span> <span class="o">=</span> <span class="n">tail_predict</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">prediction</span> <span class="o">==</span> <span class="s2">&quot;ind&quot;</span><span class="p">:</span>
+        <span class="n">ranks</span> <span class="o">=</span> <span class="n">ind_predict</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">ranks</span><span class="o">.</span><span class="n">float</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ind_predict"><a class="viewcode-back" href="../../../neuralkg_ind.eval_task.html#neuralkg_ind.eval_task.link_prediction.ind_predict">[docs]</a><span class="k">def</span> <span class="nf">ind_predict</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Getting the ranking of positive samples in the other 50 negative samples.</span>
+<span class="sd">        </span>
+<span class="sd">    Args:</span>
+<span class="sd">        batch: The batch of sample for test.</span>
+<span class="sd">        model: The inductive model for training.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ranks: The rank of the triple to be predicted.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">head_triple</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;head_sample&quot;</span><span class="p">]</span>
+    <span class="n">head_scores</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">head_triple</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+    <span class="n">head_target</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;head_target&quot;</span><span class="p">]</span>
+    <span class="n">head_rank</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">head_scores</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">head_target</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">head_rank</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">head_rank</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+
+    <span class="n">tail_triple</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;tail_sample&quot;</span><span class="p">]</span>
+    <span class="n">tail_scores</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">tail_triple</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+    <span class="n">tail_target</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;tail_target&quot;</span><span class="p">]</span>
+    <span class="n">tail_rank</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">tail_scores</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">tail_target</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">tail_rank</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">tail_rank</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">head_rank</span><span class="p">,</span> <span class="n">tail_rank</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="head_predict"><a class="viewcode-back" href="../../../neuralkg_ind.eval_task.html#neuralkg_ind.eval_task.link_prediction.head_predict">[docs]</a><span class="k">def</span> <span class="nf">head_predict</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Getting head entity ranks.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        batch: The batch of the triples for validation or test</span>
+<span class="sd">        model: The KG model for training.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tensor: The rank of the head entity to be predicted, dim [batch_size]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pos_triple</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;positive_sample&quot;</span><span class="p">]</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">pos_triple</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">label</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;head_label&quot;</span><span class="p">]</span>
+    <span class="n">pred_score</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_score</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="s2">&quot;head_predict&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">calc_ranks</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">pred_score</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="tail_predict"><a class="viewcode-back" href="../../../neuralkg_ind.eval_task.html#neuralkg_ind.eval_task.link_prediction.tail_predict">[docs]</a><span class="k">def</span> <span class="nf">tail_predict</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Getting tail entity ranks.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        batch: The batch of the triples for validation or test</span>
+<span class="sd">        model: The KG model for training.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tensor: The rank of the tail entity to be predicted, dim [batch_size]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pos_triple</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;positive_sample&quot;</span><span class="p">]</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">pos_triple</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span>
+    <span class="n">label</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;tail_label&quot;</span><span class="p">]</span>
+    <span class="n">pred_score</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_score</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="s2">&quot;tail_predict&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">calc_ranks</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">pred_score</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="calc_ranks"><a class="viewcode-back" href="../../../neuralkg_ind.eval_task.html#neuralkg_ind.eval_task.link_prediction.calc_ranks">[docs]</a><span class="k">def</span> <span class="nf">calc_ranks</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">pred_score</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculating triples score ranks.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        idx ([type]): The id of the entity to be predicted.</span>
+<span class="sd">        label ([type]): The id of existing triples, to calc filtered results.</span>
+<span class="sd">        pred_score ([type]): The score of the triple predicted by the model.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ranks: The rank of the triple to be predicted, dim [batch_size].</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">b_range</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">pred_score</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">target_pred</span> <span class="o">=</span> <span class="n">pred_score</span><span class="p">[</span><span class="n">b_range</span><span class="p">,</span> <span class="n">idx</span><span class="p">]</span>
+    <span class="n">pred_score</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">label</span><span class="o">.</span><span class="n">bool</span><span class="p">(),</span> <span class="o">-</span><span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">pred_score</span><span class="p">)</span> <span class="o">*</span> <span class="mi">10000000</span><span class="p">,</span> <span class="n">pred_score</span><span class="p">)</span>
+    <span class="n">pred_score</span><span class="p">[</span><span class="n">b_range</span><span class="p">,</span> <span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">target_pred</span>
+
+    <span class="n">ranks</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="mi">1</span>
+        <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">pred_score</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">descending</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">descending</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)[</span><span class="n">b_range</span><span class="p">,</span> <span class="n">idx</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">ranks</span></div>
+
+<div class="viewcode-block" id="link_predict_SEGNN"><a class="viewcode-back" href="../../../neuralkg_ind.eval_task.html#neuralkg_ind.eval_task.link_prediction.link_predict_SEGNN">[docs]</a><span class="k">def</span> <span class="nf">link_predict_SEGNN</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">kg</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">prediction</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The evaluate task is predicting the head entity or tail entity in incomplete triples.</span>
+<span class="sd">        </span>
+<span class="sd">    Args:</span>
+<span class="sd">        batch: The batch of the triples for validation or test.</span>
+<span class="sd">        model: The KG model for training.</span>
+<span class="sd">        predicion: mode of link prediction.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ranks: The rank of the triple to be predicted.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ent_emb</span><span class="p">,</span> <span class="n">rel_emb</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">aggragate_emb</span><span class="p">(</span><span class="n">kg</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">prediction</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+        <span class="n">tail_ranks</span> <span class="o">=</span> <span class="n">tail_predict_SEGNN</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">ent_emb</span><span class="p">,</span> <span class="n">rel_emb</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+        <span class="n">head_ranks</span> <span class="o">=</span> <span class="n">head_predict_SEGNN</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">ent_emb</span><span class="p">,</span> <span class="n">rel_emb</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+        <span class="n">ranks</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">tail_ranks</span><span class="p">,</span> <span class="n">head_ranks</span><span class="p">])</span>
+    <span class="k">elif</span> <span class="n">prediction</span> <span class="o">==</span> <span class="s2">&quot;head&quot;</span><span class="p">:</span>
+        <span class="n">ranks</span> <span class="o">=</span> <span class="n">head_predict_SEGNN</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">ent_emb</span><span class="p">,</span> <span class="n">rel_emb</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">prediction</span> <span class="o">==</span> <span class="s2">&quot;tail&quot;</span><span class="p">:</span>
+        <span class="n">ranks</span> <span class="o">=</span> <span class="n">tail_predict_SEGNN</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">ent_emb</span><span class="p">,</span> <span class="n">rel_emb</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">ranks</span><span class="o">.</span><span class="n">float</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="head_predict_SEGNN"><a class="viewcode-back" href="../../../neuralkg_ind.eval_task.html#neuralkg_ind.eval_task.link_prediction.head_predict_SEGNN">[docs]</a><span class="k">def</span> <span class="nf">head_predict_SEGNN</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">ent_emb</span><span class="p">,</span> <span class="n">rel_emb</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Getting head entity ranks.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        batch: The batch of the triples for validation or test</span>
+<span class="sd">        model: The KG model for training.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tensor: The rank of the head entity to be predicted, dim [batch_size]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pos_triple</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;positive_sample&quot;</span><span class="p">]</span>
+    <span class="n">head_idx</span> <span class="o">=</span> <span class="n">pos_triple</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">tail_idx</span> <span class="o">=</span> <span class="n">pos_triple</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span>
+    <span class="n">rel_idx</span> <span class="o">=</span> <span class="p">[</span><span class="n">pos_triple</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="mi">11</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pos_triple</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]))]</span>
+    <span class="n">rel_idx</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">rel_idx</span><span class="p">)</span>
+    <span class="n">filter_head</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;filter_head&quot;</span><span class="p">]</span>
+    <span class="n">pred_score</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predictor</span><span class="o">.</span><span class="n">score_func</span><span class="p">(</span><span class="n">ent_emb</span><span class="p">[</span><span class="n">tail_idx</span><span class="p">],</span> <span class="n">rel_emb</span><span class="p">[</span><span class="n">rel_idx</span><span class="p">],</span> <span class="n">model</span><span class="o">.</span><span class="n">concat</span><span class="p">,</span> <span class="n">ent_emb</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">calc_ranks_SEGNN</span><span class="p">(</span><span class="n">head_idx</span><span class="p">,</span> <span class="n">filter_head</span><span class="p">,</span> <span class="n">pred_score</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="tail_predict_SEGNN"><a class="viewcode-back" href="../../../neuralkg_ind.eval_task.html#neuralkg_ind.eval_task.link_prediction.tail_predict_SEGNN">[docs]</a><span class="k">def</span> <span class="nf">tail_predict_SEGNN</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">ent_emb</span><span class="p">,</span> <span class="n">rel_emb</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Getting tail entity ranks.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        batch: The batch of the triples for validation or test</span>
+<span class="sd">        model: The KG model for training.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tensor: The rank of the tail entity to be predicted, dim [batch_size]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pos_triple</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;positive_sample&quot;</span><span class="p">]</span>
+    <span class="n">head_idx</span> <span class="o">=</span> <span class="n">pos_triple</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">rel_idx</span> <span class="o">=</span> <span class="n">pos_triple</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">tail_idx</span> <span class="o">=</span> <span class="n">pos_triple</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span>
+    <span class="n">filter_tail</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;filter_tail&quot;</span><span class="p">]</span>
+    <span class="n">pred_score</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predictor</span><span class="o">.</span><span class="n">score_func</span><span class="p">(</span><span class="n">ent_emb</span><span class="p">[</span><span class="n">head_idx</span><span class="p">],</span> <span class="n">rel_emb</span><span class="p">[</span><span class="n">rel_idx</span><span class="p">],</span> <span class="n">model</span><span class="o">.</span><span class="n">concat</span><span class="p">,</span> <span class="n">ent_emb</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">calc_ranks_SEGNN</span><span class="p">(</span><span class="n">tail_idx</span><span class="p">,</span> <span class="n">filter_tail</span><span class="p">,</span> <span class="n">pred_score</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="calc_ranks_SEGNN"><a class="viewcode-back" href="../../../neuralkg_ind.eval_task.html#neuralkg_ind.eval_task.link_prediction.calc_ranks_SEGNN">[docs]</a><span class="k">def</span> <span class="nf">calc_ranks_SEGNN</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">filter_label</span><span class="p">,</span> <span class="n">pred_score</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculating triples score ranks.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        idx ([type]): The id of the entity to be predicted.</span>
+<span class="sd">        label ([type]): The id of existing triples, to calc filtered results.</span>
+<span class="sd">        pred_score ([type]): The score of the triple predicted by the model.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ranks: The rank of the triple to be predicted, dim [batch_size].</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">score</span> <span class="o">=</span> <span class="n">pred_score</span> <span class="o">+</span> <span class="n">filter_label</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="n">filter_label</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">pred_score1</span> <span class="o">=</span> <span class="n">score</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">size</span><span class="p">),</span> <span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">compare_up</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">gt</span><span class="p">(</span><span class="n">score</span><span class="p">,</span> <span class="n">pred_score1</span><span class="p">)</span>
+    <span class="n">compare_low</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ge</span><span class="p">(</span><span class="n">score</span><span class="p">,</span> <span class="n">pred_score1</span><span class="p">)</span>
+
+    <span class="n">ranking_up</span> <span class="o">=</span> <span class="n">compare_up</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># (bs, )</span>
+    <span class="n">ranking_low</span> <span class="o">=</span> <span class="n">compare_low</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># include the pos one itself, no need to +1</span>
+    <span class="n">ranking</span> <span class="o">=</span> <span class="p">(</span><span class="n">ranking_up</span> <span class="o">+</span> <span class="n">ranking_low</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="k">return</span> <span class="n">ranking</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, zjukg.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

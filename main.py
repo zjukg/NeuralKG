@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 # from torch._C import T
 # from train import Trainer
-
 import pytorch_lightning as pl
 from pytorch_lightning import seed_everything
-from neuralkg.utils import setup_parser
-from neuralkg.utils.tools import *
-from neuralkg.data.Sampler import *
-from neuralkg.data.Grounding import GroundAllRules
+from neuralkg_ind.utils import setup_parser
+from neuralkg_ind.utils.tools import *
+from neuralkg_ind.data.Sampler import *
+from neuralkg_ind.data.Grounding import GroundAllRules
 
 
 def main():
@@ -47,23 +46,23 @@ def main():
     logging.info("++++++++++++++++++++++++++++++++over loading+++++++++++++++++++++++++++++++")
     
     """set up sampler to datapreprocess""" #设置数据处理的采样过程
-    train_sampler_class = import_class(f"neuralkg.data.{args.train_sampler_class}")
+    train_sampler_class = import_class(f"neuralkg_ind.data.{args.train_sampler_class}")
     train_sampler = train_sampler_class(args)  # 这个sampler是可选择的
     
-    test_sampler_class = import_class(f"neuralkg.data.{args.test_sampler_class}")
+    test_sampler_class = import_class(f"neuralkg_ind.data.{args.test_sampler_class}")
     test_sampler = test_sampler_class(train_sampler)  # test_sampler是一定要的
 
     if args.valid_sampler_class != None:
-        valid_sampler_class = import_class(f"neuralkg.data.{args.valid_sampler_class}")
+        valid_sampler_class = import_class(f"neuralkg_ind.data.{args.valid_sampler_class}")
         valid_sampler = valid_sampler_class(train_sampler)
     else:
         valid_sampler = test_sampler
 
     """set up datamodule""" #设置数据模块
-    data_class = import_class(f"neuralkg.data.{args.data_class}") #定义数据类 DataClass
+    data_class = import_class(f"neuralkg_ind.data.{args.data_class}") #定义数据类 DataClass
     kgdata = data_class(args, train_sampler, valid_sampler, test_sampler)
     """set up model"""
-    model_class = import_class(f"neuralkg.model.{args.model_name}")
+    model_class = import_class(f"neuralkg_ind.model.{args.model_name}")
     
     if args.model_name == "RugE":
         ground = GroundAllRules(args)
@@ -77,14 +76,25 @@ def main():
         model = model_class(args, train_sampler, test_sampler)
     else:
         model = model_class(args)
+
+    if args.model_name == 'SEGNN':
+        src_list = train_sampler.get_train_1.src_list
+        dst_list = train_sampler.get_train_1.dst_list
+        rel_list = train_sampler.get_train_1.rel_list
+
     """set up lit_model"""
-    litmodel_class = import_class(f"neuralkg.lit_model.{args.litmodel_name}")
-    lit_model = litmodel_class(model, args)
+    litmodel_class = import_class(f"neuralkg_ind.lit_model.{args.litmodel_name}")
+
+    if args.model_name =='SEGNN':
+        lit_model = litmodel_class(model, args, src_list, dst_list, rel_list)
+    else:
+        lit_model = litmodel_class(model, args)
+    
     """set up logger"""
     logger = pl.loggers.TensorBoardLogger("training/logs")
     if args.use_wandb:
         log_name = "_".join([args.model_name, args.dataset_name, str(args.lr)])
-        logger = pl.loggers.WandbLogger(name=log_name, project="NeuralKG")
+        logger = pl.loggers.WandbLogger(name=log_name, project="NeuralKG_ind")
         logger.log_hyperparams(vars(args))
     if args.inductive and args.model_name != 'MorsE':
         """early stopping"""

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>neuralkg_ind.data.Grounding &mdash; NeuralKG-ind v1.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> NeuralKG-ind
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Install</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Experiment Result</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../result.html">Results</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../neuralkg_ind.html">NeuralKG-ind</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">NeuralKG-ind</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>neuralkg_ind.data.Grounding</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for neuralkg_ind.data.Grounding</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">.DataPreprocess</span> <span class="kn">import</span> <span class="n">KGData</span>
+<span class="kn">import</span> <span class="nn">pdb</span>
+<div class="viewcode-block" id="GroundAllRules"><a class="viewcode-back" href="../../../neuralkg_ind.data.html#neuralkg_ind.data.Grounding.GroundAllRules">[docs]</a><span class="k">class</span> <span class="nc">GroundAllRules</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">MapRelation2ID</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">MapEntity2ID</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Relation2Tuple</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">MapID2Entity</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">MapID2Relation</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TrainTriples</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">RelSub2Obj</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">MapVariable</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fnEntityIDMap</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">data_path</span> <span class="o">+</span> <span class="s2">&quot;/entities.dict&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fnRelationIDMap</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">data_path</span> <span class="o">+</span> <span class="s2">&quot;/relations.dict&quot;</span>
+        <span class="n">path_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">data_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fnRuleType</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">data_path</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">args</span><span class="o">.</span><span class="n">data_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="n">path_len</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;_rule&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fnTrainingTriples</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">data_path</span> <span class="o">+</span> <span class="s2">&quot;/train.txt&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fnOutout</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">data_path</span> <span class="o">+</span> <span class="s2">&quot;/groudings.txt&quot;</span>
+
+<div class="viewcode-block" id="GroundAllRules.PropositionalizeRule"><a class="viewcode-back" href="../../../neuralkg_ind.data.html#neuralkg_ind.data.Grounding.GroundAllRules.PropositionalizeRule">[docs]</a>    <span class="k">def</span> <span class="nf">PropositionalizeRule</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kgData</span> <span class="o">=</span> <span class="n">KGData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">readData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fnEntityIDMap</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fnRelationIDMap</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fnTrainingTriples</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">groundRule</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fnRuleType</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fnOutout</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GroundAllRules.readData"><a class="viewcode-back" href="../../../neuralkg_ind.data.html#neuralkg_ind.data.Grounding.GroundAllRules.readData">[docs]</a>    <span class="k">def</span> <span class="nf">readData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fnEntityIDMap</span><span class="p">,</span> <span class="n">fnRelationIDMap</span><span class="p">,</span> <span class="n">fnTrainingTriples</span><span class="p">):</span>
+        <span class="n">tokens</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">MapEntity2ID</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kgData</span><span class="o">.</span><span class="n">ent2id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">MapRelation2ID</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kgData</span><span class="o">.</span><span class="n">rel2id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TrainTriples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kgData</span><span class="o">.</span><span class="n">TrainTriples</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Relation2Tuple</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kgData</span><span class="o">.</span><span class="n">Relation2Tuple</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">RelSub2Obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kgData</span><span class="o">.</span><span class="n">RelSub2Obj</span>
+        <span class="c1"># with open(fnEntityIDMap, &#39;r&#39;, encoding=&#39;utf-8&#39;) as f:</span>
+        <span class="c1">#     for line in f.readlines():</span>
+        <span class="c1">#         line = line.strip(&#39;\n&#39;)</span>
+        <span class="c1">#         tokens = line.split(&quot;\t&quot;)</span>
+        <span class="c1">#         iEntityID = int(tokens[0])</span>
+        <span class="c1">#         strValue = tokens[1]</span>
+        <span class="c1">#         self.MapEntity2ID[strValue] = iEntityID</span>
+        <span class="c1">#         self.MapID2Entity[iEntityID] = strValue</span>
+        <span class="c1">#</span>
+        <span class="c1"># with open(fnRelationIDMap, &quot;r&quot;, encoding=&#39;utf-8&#39;) as f:</span>
+        <span class="c1">#     for line in f.readlines():</span>
+        <span class="c1">#         line = line.strip(&#39;\n&#39;)</span>
+        <span class="c1">#         tokens = line.split(&quot;\t&quot;)</span>
+        <span class="c1">#         iRelationID = int(tokens[0])</span>
+        <span class="c1">#         strValue = tokens[1]</span>
+        <span class="c1">#         self.MapRelation2ID[strValue] = iRelationID</span>
+        <span class="c1">#         self.MapID2Relation[iRelationID] = strValue</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Start to load soft rules......&quot;</span><span class="p">)</span>
+
+        <span class="c1"># with open(fnTrainingTriples, &quot;r&quot;, encoding=&#39;utf-8&#39;) as f:</span>
+        <span class="c1">#     for line in f.readlines():</span>
+        <span class="c1">#         line = line.strip(&#39;\n&#39;)</span>
+        <span class="c1">#         tokens = line.split(&quot;\t&quot;)</span>
+        <span class="c1">#         iRelationID = self.MapRelation2ID[tokens[1]]</span>
+        <span class="c1">#         strValue = tokens[0] + &quot;#&quot; + tokens[2]</span>
+        <span class="c1">#         line = line.replace(tokens[0], str(self.MapEntity2ID[tokens[0]]))</span>
+        <span class="c1">#         line = line.replace(tokens[1], str(self.MapRelation2ID[tokens[1]]))</span>
+        <span class="c1">#         line = line.replace(tokens[2], str(self.MapEntity2ID[tokens[2]]))</span>
+        <span class="c1">#         self.TrainTriples[line] = True</span>
+        <span class="c1">#         if not iRelationID in self.Relation2Tuple:</span>
+        <span class="c1">#             tmpLst = []</span>
+        <span class="c1">#             tmpLst.append(strValue)</span>
+        <span class="c1">#             self.Relation2Tuple[iRelationID] = tmpLst</span>
+        <span class="c1">#         else:</span>
+        <span class="c1">#             self.Relation2Tuple[iRelationID].append(strValue)</span>
+
+        <span class="c1"># with open(fnTrainingTriples, &quot;r&quot;, encoding=&#39;utf-8&#39;) as f:</span>
+        <span class="c1">#     for line in f.readlines():</span>
+        <span class="c1">#         line = line.strip(&#39;\n&#39;)</span>
+        <span class="c1">#         tokens = line.split(&quot;\t&quot;)</span>
+        <span class="c1">#         iRelationID = self.MapRelation2ID[tokens[1]]</span>
+        <span class="c1">#         iSubjectID = self.MapEntity2ID[tokens[0]]</span>
+        <span class="c1">#         iObjectID = self.MapEntity2ID[tokens[2]]</span>
+        <span class="c1">#         tmpMap = {}</span>
+        <span class="c1">#         tmpMap_in = {}</span>
+        <span class="c1">#         if not iRelationID in self.RelSub2Obj:</span>
+        <span class="c1">#             if not iSubjectID in tmpMap:</span>
+        <span class="c1">#                 tmpMap_in.clear()</span>
+        <span class="c1">#                 tmpMap_in[iObjectID] = True</span>
+        <span class="c1">#                 tmpMap[iSubjectID] = tmpMap_in</span>
+        <span class="c1">#             else:</span>
+        <span class="c1">#                 tmpMap[iSubjectID][iObjectID] = True</span>
+        <span class="c1">#             self.RelSub2Obj[iRelationID] = tmpMap</span>
+        <span class="c1">#         else:</span>
+        <span class="c1">#             tmpMap = self.RelSub2Obj[iRelationID]</span>
+        <span class="c1">#             if not iSubjectID in tmpMap:</span>
+        <span class="c1">#                 tmpMap_in.clear()</span>
+        <span class="c1">#                 tmpMap_in[iObjectID] = True</span>
+        <span class="c1">#                 tmpMap[iSubjectID] = tmpMap_in</span>
+        <span class="c1">#             else:</span>
+        <span class="c1">#                 tmpMap[iSubjectID][iObjectID] = True</span>
+        <span class="c1">#             self.RelSub2Obj[iRelationID] = tmpMap  # 是不是应该要加？</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;success&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GroundAllRules.groundRule"><a class="viewcode-back" href="../../../neuralkg_ind.data.html#neuralkg_ind.data.Grounding.GroundAllRules.groundRule">[docs]</a>    <span class="k">def</span> <span class="nf">groundRule</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fnRuleType</span><span class="p">,</span> <span class="n">fnOutput</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Start to propositionalize soft rules......&quot;</span><span class="p">)</span>
+        <span class="n">writer</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fnOutput</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+        <span class="n">tmpLst</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fnRuleType</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;?&quot;</span><span class="p">):</span>
+                    <span class="n">bodys</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&gt;&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;  &quot;</span><span class="p">)</span>
+                    <span class="n">heads</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&gt;&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;  &quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bodys</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                    <span class="n">bEntity1</span> <span class="o">=</span> <span class="n">bodys</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">iFstRelation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">MapRelation2ID</span><span class="p">[</span><span class="n">bodys</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+                    <span class="n">bEntity2</span> <span class="o">=</span> <span class="n">bodys</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                    <span class="n">bEntity3</span> <span class="o">=</span> <span class="n">heads</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">iSndRelation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">MapRelation2ID</span><span class="p">[</span><span class="n">heads</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+                    <span class="n">bEntity4</span> <span class="o">=</span> <span class="n">heads</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">hEntity1</span> <span class="o">=</span> <span class="n">heads</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">confi</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">hEntity1</span><span class="p">)</span>
+                    <span class="n">iSize</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Relation2Tuple</span><span class="p">[</span><span class="n">iFstRelation</span><span class="p">])</span>
+
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">iSize</span><span class="p">):</span>
+                        <span class="n">strValue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Relation2Tuple</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">iFstRelation</span><span class="p">)[</span><span class="n">i</span><span class="p">]</span>
+                        <span class="n">iSubjectID</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">MapEntity2ID</span><span class="p">[</span><span class="n">strValue</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]]</span>
+                        <span class="n">iObjectID</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">MapEntity2ID</span><span class="p">[</span><span class="n">strValue</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]]</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">MapVariable</span><span class="p">[</span><span class="n">bEntity1</span><span class="p">]</span> <span class="o">=</span> <span class="n">iSubjectID</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">MapVariable</span><span class="p">[</span><span class="n">bEntity2</span><span class="p">]</span> <span class="o">=</span> <span class="n">iObjectID</span>
+                        <span class="n">strKey</span> <span class="o">=</span> <span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">iSubjectID</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">iFstRelation</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span>
+                            <span class="n">iObjectID</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;)</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MapVariable</span><span class="p">[</span><span class="n">bEntity3</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span>
+                            <span class="n">iSndRelation</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MapVariable</span><span class="p">[</span><span class="n">bEntity4</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
+                        <span class="n">strCons</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MapVariable</span><span class="p">[</span><span class="n">bEntity3</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">iSndRelation</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">MapVariable</span><span class="p">[</span><span class="n">bEntity4</span><span class="p">])</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">strKey</span> <span class="ow">in</span> <span class="n">tmpLst</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">strCons</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">TrainTriples</span><span class="p">):</span>
+                            <span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;2</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">strKey</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">confi</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                            <span class="n">tmpLst</span><span class="p">[</span><span class="n">strKey</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="n">writer</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">MapVariable</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bodys</span><span class="p">)</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span>
+                    <span class="n">bEntity1</span> <span class="o">=</span> <span class="n">bodys</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="n">iFstRelation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">MapRelation2ID</span><span class="p">[</span><span class="n">bodys</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
+                    <span class="n">bEntity2</span> <span class="o">=</span> <span class="n">bodys</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="n">bEntity3</span> <span class="o">=</span> <span class="n">bodys</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="n">iSndRelation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">MapRelation2ID</span><span class="p">[</span><span class="n">bodys</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
+                    <span class="n">bEntity4</span> <span class="o">=</span> <span class="n">bodys</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="n">hEntity1</span> <span class="o">=</span> <span class="n">heads</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="n">iTrdRelation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">MapRelation2ID</span><span class="p">[</span><span class="n">heads</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
+                    <span class="n">hEntity2</span> <span class="o">=</span> <span class="n">heads</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="n">confidence</span> <span class="o">=</span> <span class="n">heads</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="n">confi</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">confidence</span><span class="p">)</span>
+                    <span class="n">mapFstRel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">RelSub2Obj</span><span class="p">[</span><span class="n">iFstRelation</span><span class="p">]</span>
+                    <span class="n">mapSndRel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">RelSub2Obj</span><span class="p">[</span><span class="n">iSndRelation</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">lstEntity1</span> <span class="ow">in</span> <span class="n">mapFstRel</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">MapVariable</span><span class="p">[</span><span class="n">bEntity1</span><span class="p">]</span> <span class="o">=</span> <span class="n">lstEntity1</span>
+                        <span class="n">lstEntity2</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">mapFstRel</span><span class="p">[</span><span class="n">lstEntity1</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+                        <span class="n">iFstSize</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lstEntity2</span><span class="p">)</span>
+
+                        <span class="k">for</span> <span class="n">iFstIndex</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">iFstSize</span><span class="p">):</span>
+                            <span class="n">iEntity2ID</span> <span class="o">=</span> <span class="n">lstEntity2</span><span class="p">[</span><span class="n">iFstIndex</span><span class="p">]</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">MapVariable</span><span class="p">[</span><span class="n">bEntity1</span><span class="p">]</span> <span class="o">=</span> <span class="n">lstEntity1</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">MapVariable</span><span class="p">[</span><span class="n">bEntity2</span><span class="p">]</span> <span class="o">=</span> <span class="n">iEntity2ID</span>
+                            <span class="n">lstEntity3</span> <span class="o">=</span> <span class="p">[]</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="n">bEntity3</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">MapVariable</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MapVariable</span><span class="p">[</span><span class="n">bEntity3</span><span class="p">]</span> <span class="ow">in</span> <span class="n">mapSndRel</span><span class="p">):</span>
+                                <span class="n">lstEntity3</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MapVariable</span><span class="p">[</span><span class="n">bEntity3</span><span class="p">])</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="k">if</span> <span class="ow">not</span> <span class="n">bEntity3</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">MapVariable</span><span class="p">:</span>
+                                    <span class="n">lstEntity3</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">mapSndRel</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+                            <span class="n">iSndSize</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lstEntity3</span><span class="p">)</span>
+
+                            <span class="k">for</span> <span class="n">iSndIndex</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">iSndSize</span><span class="p">):</span>
+                                <span class="n">iEntity3ID</span> <span class="o">=</span> <span class="n">lstEntity3</span><span class="p">[</span><span class="n">iSndIndex</span><span class="p">]</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">MapVariable</span><span class="p">[</span><span class="n">bEntity1</span><span class="p">]</span> <span class="o">=</span> <span class="n">lstEntity1</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">MapVariable</span><span class="p">[</span><span class="n">bEntity2</span><span class="p">]</span> <span class="o">=</span> <span class="n">iEntity2ID</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">MapVariable</span><span class="p">[</span><span class="n">bEntity3</span><span class="p">]</span> <span class="o">=</span> <span class="n">iEntity3ID</span>
+                                <span class="n">lstEntity4</span> <span class="o">=</span> <span class="p">[]</span>
+                                <span class="k">if</span> <span class="p">(</span><span class="n">bEntity4</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">MapVariable</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">MapVariable</span><span class="p">[</span><span class="n">bEntity4</span><span class="p">]</span> <span class="ow">in</span> <span class="n">mapSndRel</span><span class="p">[</span><span class="n">iEntity3ID</span><span class="p">]):</span>
+                                    <span class="n">lstEntity4</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MapVariable</span><span class="p">[</span><span class="n">bEntity4</span><span class="p">])</span>
+                                <span class="k">else</span><span class="p">:</span>
+                                    <span class="k">if</span> <span class="ow">not</span> <span class="n">bEntity4</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">MapVariable</span><span class="p">:</span>
+                                        <span class="n">lstEntity4</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">mapSndRel</span><span class="p">[</span><span class="n">iEntity3ID</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+                                <span class="n">iTrdSize</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lstEntity4</span><span class="p">)</span>
+
+                                <span class="k">for</span> <span class="n">iTrdIndex</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">iTrdSize</span><span class="p">):</span>
+                                    <span class="n">iEntity4ID</span> <span class="o">=</span> <span class="n">lstEntity4</span><span class="p">[</span><span class="n">iTrdIndex</span><span class="p">]</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">MapVariable</span><span class="p">[</span><span class="n">bEntity4</span><span class="p">]</span> <span class="o">=</span> <span class="n">iEntity4ID</span>
+                                    <span class="n">infer</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MapVariable</span><span class="p">[</span><span class="n">hEntity1</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">iTrdRelation</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">MapVariable</span><span class="p">[</span><span class="n">hEntity2</span><span class="p">])</span>
+                                    <span class="n">strKey</span> <span class="o">=</span> <span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">lstEntity1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">iFstRelation</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span>
+                                        <span class="n">iEntity2ID</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;)</span><span class="se">\t</span><span class="s2">(&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">iEntity3ID</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">iSndRelation</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span>
+                                        <span class="n">iEntity4ID</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;)</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MapVariable</span><span class="p">[</span><span class="n">hEntity1</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span>
+                                        <span class="n">iTrdRelation</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MapVariable</span><span class="p">[</span><span class="n">hEntity2</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
+                                    <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">strKey</span> <span class="ow">in</span> <span class="n">tmpLst</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">infer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">TrainTriples</span><span class="p">):</span>
+                                        <span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;3</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">strKey</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">confi</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                                        <span class="n">tmpLst</span><span class="p">[</span><span class="n">strKey</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">MapVariable</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">MapVariable</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+                        <span class="n">writer</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">MapVariable</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, zjukg.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

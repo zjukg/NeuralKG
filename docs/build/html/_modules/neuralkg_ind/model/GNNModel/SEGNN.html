@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>neuralkg_ind.model.GNNModel.SEGNN &mdash; NeuralKG-ind v1.0 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> NeuralKG-ind
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../install.html">Install</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Experiment Result</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../result.html">Results</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../neuralkg_ind.html">NeuralKG-ind</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">NeuralKG-ind</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      <li>neuralkg_ind.model.GNNModel.SEGNN</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for neuralkg_ind.model.GNNModel.SEGNN</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">import</span> <span class="nn">dgl</span>
+<span class="kn">import</span> <span class="nn">dgl.function</span> <span class="k">as</span> <span class="nn">fn</span>
+<span class="kn">from</span> <span class="nn">neuralkg_ind</span> <span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">neuralkg_ind.utils.tools</span> <span class="kn">import</span> <span class="n">get_param</span>
+<span class="kn">from</span> <span class="nn">neuralkg_ind.model</span> <span class="kn">import</span> <span class="n">ConvE</span>
+
+<div class="viewcode-block" id="SEGNN"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.SEGNN.SEGNN">[docs]</a><span class="k">class</span> <span class="nc">SEGNN</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SEGNN</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda:0&quot;</span><span class="p">)</span> <span class="c1">#TODO: remove cuda</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">dataset_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_ent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_ent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_rel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_rel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">emb_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">emb_dim</span>
+
+        <span class="c1"># entity embedding</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ent_emb</span> <span class="o">=</span> <span class="n">get_param</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_ent</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">emb_dim</span><span class="p">)</span>
+
+        <span class="c1"># gnn layer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kg_n_layer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">kg_layer</span>  <span class="c1">#1</span>
+        <span class="c1"># relation SE layer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">edge_layers</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">([</span><span class="n">EdgeLayer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kg_n_layer</span><span class="p">)])</span>
+        <span class="c1"># entity SE layer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">node_layers</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">([</span><span class="n">NodeLayer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kg_n_layer</span><span class="p">)])</span>
+        <span class="c1"># triple SE layer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comp_layers</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">([</span><span class="n">CompLayer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kg_n_layer</span><span class="p">)])</span>
+
+        <span class="c1"># relation embedding for aggregation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rel_embs</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ParameterList</span><span class="p">([</span><span class="n">get_param</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_rel</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">emb_dim</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kg_n_layer</span><span class="p">)])</span>
+
+        <span class="c1"># relation embedding for prediction</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">pred_rel_w</span><span class="p">:</span> <span class="c1">#true</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rel_w</span> <span class="o">=</span> <span class="n">get_param</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">emb_dim</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">kg_n_layer</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">emb_dim</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pred_rel_emb</span> <span class="o">=</span> <span class="n">get_param</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_rel</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">emb_dim</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">predictor</span> <span class="o">=</span> <span class="n">ConvE</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">)</span> <span class="c1">#(200, 250, 7)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ent_drop</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">ent_drop</span><span class="p">)</span>  <span class="c1">#0.2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rel_drop</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">rel_drop</span><span class="p">)</span>  <span class="c1">#0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ent_pred_drop</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">ent_drop_pred</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">act</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">()</span>
+
+<div class="viewcode-block" id="SEGNN.concat"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.SEGNN.SEGNN.concat">[docs]</a>    <span class="k">def</span> <span class="nf">concat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">head_emb</span><span class="p">,</span> <span class="n">rela_emb</span><span class="p">):</span>
+        <span class="n">head_emb</span> <span class="o">=</span> <span class="n">head_emb</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">head_emb</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">rela_emb</span> <span class="o">=</span> <span class="n">rela_emb</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">rela_emb</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">stacked_input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">head_emb</span><span class="p">,</span> <span class="n">rela_emb</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">stacked_input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">stacked_input</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">k_h</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">k_w</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">stacked_input</span></div>
+
+<div class="viewcode-block" id="SEGNN.forward"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.SEGNN.SEGNN.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h_id</span><span class="p">,</span> <span class="n">r_id</span><span class="p">,</span> <span class="n">kg</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        matching computation between query (h, r) and answer t.</span>
+<span class="sd">        :param h_id: head entity id, (bs, )</span>
+<span class="sd">        :param r_id: relation id, (bs, )</span>
+<span class="sd">        :param kg: aggregation graph</span>
+<span class="sd">        :return: matching score, (bs, n_ent)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># aggregate embedding</span>
+        <span class="n">kg</span> <span class="o">=</span> <span class="n">kg</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">ent_emb</span><span class="p">,</span> <span class="n">rel_emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggragate_emb</span><span class="p">(</span><span class="n">kg</span><span class="p">)</span>
+        <span class="n">head</span> <span class="o">=</span> <span class="n">ent_emb</span><span class="p">[</span><span class="n">h_id</span><span class="p">]</span>
+        <span class="n">rel</span> <span class="o">=</span> <span class="n">rel_emb</span><span class="p">[</span><span class="n">r_id</span><span class="p">]</span>
+        <span class="c1"># (bs, n_ent)</span>
+        <span class="n">ent_emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ent_pred_drop</span><span class="p">(</span><span class="n">ent_emb</span><span class="p">)</span>
+        <span class="n">score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predictor</span><span class="o">.</span><span class="n">score_func</span><span class="p">(</span><span class="n">head</span><span class="p">,</span> <span class="n">rel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">concat</span><span class="p">,</span> <span class="n">ent_emb</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">score</span>   </div>
+
+<div class="viewcode-block" id="SEGNN.aggragate_emb"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.SEGNN.SEGNN.aggragate_emb">[docs]</a>    <span class="k">def</span> <span class="nf">aggragate_emb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kg</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        aggregate embedding.</span>
+<span class="sd">        :param kg:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ent_emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ent_emb</span>
+        <span class="n">rel_emb_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">edge_layer</span><span class="p">,</span> <span class="n">node_layer</span><span class="p">,</span> <span class="n">comp_layer</span><span class="p">,</span> <span class="n">rel_emb</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edge_layers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_layers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">comp_layers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rel_embs</span><span class="p">):</span>
+            <span class="n">ent_emb</span><span class="p">,</span> <span class="n">rel_emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ent_drop</span><span class="p">(</span><span class="n">ent_emb</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">rel_drop</span><span class="p">(</span><span class="n">rel_emb</span><span class="p">)</span>
+            <span class="n">ent_emb</span> <span class="o">=</span> <span class="n">ent_emb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">rel_emb</span> <span class="o">=</span> <span class="n">rel_emb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">edge_ent_emb</span> <span class="o">=</span> <span class="n">edge_layer</span><span class="p">(</span><span class="n">kg</span><span class="p">,</span> <span class="n">ent_emb</span><span class="p">,</span> <span class="n">rel_emb</span><span class="p">)</span>
+            <span class="n">node_ent_emb</span> <span class="o">=</span> <span class="n">node_layer</span><span class="p">(</span><span class="n">kg</span><span class="p">,</span> <span class="n">ent_emb</span><span class="p">)</span>
+            <span class="n">comp_ent_emb</span> <span class="o">=</span> <span class="n">comp_layer</span><span class="p">(</span><span class="n">kg</span><span class="p">,</span> <span class="n">ent_emb</span><span class="p">,</span> <span class="n">rel_emb</span><span class="p">)</span>
+            <span class="n">ent_emb</span> <span class="o">=</span> <span class="n">ent_emb</span> <span class="o">+</span> <span class="n">edge_ent_emb</span> <span class="o">+</span> <span class="n">node_ent_emb</span> <span class="o">+</span> <span class="n">comp_ent_emb</span>
+            <span class="n">rel_emb_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rel_emb</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">pred_rel_w</span><span class="p">:</span>
+            <span class="n">pred_rel_emb</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">rel_emb_list</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">pred_rel_emb</span> <span class="o">=</span> <span class="n">pred_rel_emb</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rel_w</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pred_rel_emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pred_rel_emb</span>
+
+        <span class="k">return</span> <span class="n">ent_emb</span><span class="p">,</span> <span class="n">pred_rel_emb</span></div></div>
+
+
+<div class="viewcode-block" id="CompLayer"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.SEGNN.CompLayer">[docs]</a><span class="k">class</span> <span class="nc">CompLayer</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">CompLayer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda:0&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">dataset_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_ent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_ent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_rel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_rel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">emb_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">emb_dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comp_op</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">comp_op</span>    <span class="c1">#&#39;mul&#39;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">comp_op</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;add&#39;</span><span class="p">,</span> <span class="s1">&#39;mul&#39;</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">neigh_w</span> <span class="o">=</span> <span class="n">get_param</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">emb_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">emb_dim</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">act</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">bn</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bn</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">emb_dim</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bn</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="CompLayer.forward"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.SEGNN.CompLayer.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kg</span><span class="p">,</span> <span class="n">ent_emb</span><span class="p">,</span> <span class="n">rel_emb</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">kg</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()</span> <span class="o">==</span> <span class="n">ent_emb</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">rel_emb</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_rel</span>
+        <span class="n">ent_emb</span> <span class="o">=</span> <span class="n">ent_emb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">rel_emb</span> <span class="o">=</span> <span class="n">rel_emb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">kg</span> <span class="o">=</span> <span class="n">kg</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">kg</span><span class="o">.</span><span class="n">local_scope</span><span class="p">():</span>
+            <span class="n">kg</span><span class="o">.</span><span class="n">ndata</span><span class="p">[</span><span class="s1">&#39;emb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ent_emb</span>
+            <span class="n">rel_id</span> <span class="o">=</span> <span class="n">kg</span><span class="o">.</span><span class="n">edata</span><span class="p">[</span><span class="s1">&#39;rel_id&#39;</span><span class="p">]</span>
+            <span class="n">kg</span><span class="o">.</span><span class="n">edata</span><span class="p">[</span><span class="s1">&#39;emb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rel_emb</span><span class="p">[</span><span class="n">rel_id</span><span class="p">]</span>
+            <span class="c1"># neihgbor entity and relation composition</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">comp_op</span> <span class="o">==</span> <span class="s1">&#39;add&#39;</span><span class="p">:</span>
+                <span class="n">kg</span><span class="o">.</span><span class="n">apply_edges</span><span class="p">(</span><span class="n">fn</span><span class="o">.</span><span class="n">u_add_e</span><span class="p">(</span><span class="s1">&#39;emb&#39;</span><span class="p">,</span> <span class="s1">&#39;emb&#39;</span><span class="p">,</span> <span class="s1">&#39;comp_emb&#39;</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">comp_op</span> <span class="o">==</span> <span class="s1">&#39;mul&#39;</span><span class="p">:</span>
+                <span class="n">kg</span><span class="o">.</span><span class="n">apply_edges</span><span class="p">(</span><span class="n">fn</span><span class="o">.</span><span class="n">u_mul_e</span><span class="p">(</span><span class="s1">&#39;emb&#39;</span><span class="p">,</span> <span class="s1">&#39;emb&#39;</span><span class="p">,</span> <span class="s1">&#39;comp_emb&#39;</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+            <span class="c1"># attention</span>
+            <span class="n">kg</span><span class="o">.</span><span class="n">apply_edges</span><span class="p">(</span><span class="n">fn</span><span class="o">.</span><span class="n">e_dot_v</span><span class="p">(</span><span class="s1">&#39;comp_emb&#39;</span><span class="p">,</span> <span class="s1">&#39;emb&#39;</span><span class="p">,</span> <span class="s1">&#39;norm&#39;</span><span class="p">))</span>  <span class="c1"># (n_edge, 1)</span>
+            <span class="n">kg</span><span class="o">.</span><span class="n">edata</span><span class="p">[</span><span class="s1">&#39;norm&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dgl</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">edge_softmax</span><span class="p">(</span><span class="n">kg</span><span class="p">,</span> <span class="n">kg</span><span class="o">.</span><span class="n">edata</span><span class="p">[</span><span class="s1">&#39;norm&#39;</span><span class="p">])</span>
+            <span class="c1"># agg</span>
+            <span class="n">kg</span><span class="o">.</span><span class="n">edata</span><span class="p">[</span><span class="s1">&#39;comp_emb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kg</span><span class="o">.</span><span class="n">edata</span><span class="p">[</span><span class="s1">&#39;comp_emb&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">kg</span><span class="o">.</span><span class="n">edata</span><span class="p">[</span><span class="s1">&#39;norm&#39;</span><span class="p">]</span>
+            <span class="n">kg</span><span class="o">.</span><span class="n">update_all</span><span class="p">(</span><span class="n">fn</span><span class="o">.</span><span class="n">copy_e</span><span class="p">(</span><span class="s1">&#39;comp_emb&#39;</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">),</span> <span class="n">fn</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="s1">&#39;neigh&#39;</span><span class="p">))</span>
+
+            <span class="n">neigh_ent_emb</span> <span class="o">=</span> <span class="n">kg</span><span class="o">.</span><span class="n">ndata</span><span class="p">[</span><span class="s1">&#39;neigh&#39;</span><span class="p">]</span>
+
+            <span class="n">neigh_ent_emb</span> <span class="o">=</span> <span class="n">neigh_ent_emb</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">neigh_w</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bn</span><span class="p">):</span>
+                <span class="n">neigh_ent_emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bn</span><span class="p">(</span><span class="n">neigh_ent_emb</span><span class="p">)</span>
+
+            <span class="n">neigh_ent_emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">act</span><span class="p">(</span><span class="n">neigh_ent_emb</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">neigh_ent_emb</span></div></div>
+
+
+<div class="viewcode-block" id="NodeLayer"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.SEGNN.NodeLayer">[docs]</a><span class="k">class</span> <span class="nc">NodeLayer</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">NodeLayer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda:0&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">dataset_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_ent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_ent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_rel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_rel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">emb_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">emb_dim</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">neigh_w</span> <span class="o">=</span> <span class="n">get_param</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">emb_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">emb_dim</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">act</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">bn</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bn</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">emb_dim</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bn</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="NodeLayer.forward"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.SEGNN.NodeLayer.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kg</span><span class="p">,</span> <span class="n">ent_emb</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">kg</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()</span> <span class="o">==</span> <span class="n">ent_emb</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">kg</span> <span class="o">=</span> <span class="n">kg</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">ent_emb</span> <span class="o">=</span> <span class="n">ent_emb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">kg</span><span class="o">.</span><span class="n">local_scope</span><span class="p">():</span>
+            <span class="n">kg</span><span class="o">.</span><span class="n">ndata</span><span class="p">[</span><span class="s1">&#39;emb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ent_emb</span>
+
+            <span class="c1"># attention</span>
+            <span class="n">kg</span><span class="o">.</span><span class="n">apply_edges</span><span class="p">(</span><span class="n">fn</span><span class="o">.</span><span class="n">u_dot_v</span><span class="p">(</span><span class="s1">&#39;emb&#39;</span><span class="p">,</span> <span class="s1">&#39;emb&#39;</span><span class="p">,</span> <span class="s1">&#39;norm&#39;</span><span class="p">))</span>  <span class="c1"># (n_edge, 1)</span>
+            <span class="n">kg</span><span class="o">.</span><span class="n">edata</span><span class="p">[</span><span class="s1">&#39;norm&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dgl</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">edge_softmax</span><span class="p">(</span><span class="n">kg</span><span class="p">,</span> <span class="n">kg</span><span class="o">.</span><span class="n">edata</span><span class="p">[</span><span class="s1">&#39;norm&#39;</span><span class="p">])</span>
+
+            <span class="c1"># agg</span>
+            <span class="n">kg</span><span class="o">.</span><span class="n">update_all</span><span class="p">(</span><span class="n">fn</span><span class="o">.</span><span class="n">u_mul_e</span><span class="p">(</span><span class="s1">&#39;emb&#39;</span><span class="p">,</span> <span class="s1">&#39;norm&#39;</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">),</span> <span class="n">fn</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="s1">&#39;neigh&#39;</span><span class="p">))</span>
+            <span class="n">neigh_ent_emb</span> <span class="o">=</span> <span class="n">kg</span><span class="o">.</span><span class="n">ndata</span><span class="p">[</span><span class="s1">&#39;neigh&#39;</span><span class="p">]</span>
+
+            <span class="n">neigh_ent_emb</span> <span class="o">=</span> <span class="n">neigh_ent_emb</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">neigh_w</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bn</span><span class="p">):</span>
+                <span class="n">neigh_ent_emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bn</span><span class="p">(</span><span class="n">neigh_ent_emb</span><span class="p">)</span>
+
+            <span class="n">neigh_ent_emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">act</span><span class="p">(</span><span class="n">neigh_ent_emb</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">neigh_ent_emb</span></div></div>
+
+
+<div class="viewcode-block" id="EdgeLayer"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.SEGNN.EdgeLayer">[docs]</a><span class="k">class</span> <span class="nc">EdgeLayer</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">EdgeLayer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda:0&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">dataset_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_ent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_ent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_rel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_rel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">emb_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">emb_dim</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">neigh_w</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">emb_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">emb_dim</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">act</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">bn</span><span class="p">:</span>   <span class="c1"># True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bn</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">emb_dim</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bn</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="EdgeLayer.forward"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.SEGNN.EdgeLayer.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kg</span><span class="p">,</span> <span class="n">ent_emb</span><span class="p">,</span> <span class="n">rel_emb</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">kg</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()</span> <span class="o">==</span> <span class="n">ent_emb</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">rel_emb</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_rel</span>
+        <span class="n">kg</span> <span class="o">=</span> <span class="n">kg</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">ent_emb</span> <span class="o">=</span> <span class="n">ent_emb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">rel_emb</span> <span class="o">=</span> <span class="n">rel_emb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">kg</span><span class="o">.</span><span class="n">local_scope</span><span class="p">():</span>
+            <span class="n">kg</span><span class="o">.</span><span class="n">ndata</span><span class="p">[</span><span class="s1">&#39;emb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ent_emb</span>
+            <span class="n">rel_id</span> <span class="o">=</span> <span class="n">kg</span><span class="o">.</span><span class="n">edata</span><span class="p">[</span><span class="s1">&#39;rel_id&#39;</span><span class="p">]</span>
+            <span class="n">kg</span><span class="o">.</span><span class="n">edata</span><span class="p">[</span><span class="s1">&#39;emb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rel_emb</span><span class="p">[</span><span class="n">rel_id</span><span class="p">]</span>
+
+            <span class="c1"># attention</span>
+            <span class="n">kg</span><span class="o">.</span><span class="n">apply_edges</span><span class="p">(</span><span class="n">fn</span><span class="o">.</span><span class="n">e_dot_v</span><span class="p">(</span><span class="s1">&#39;emb&#39;</span><span class="p">,</span> <span class="s1">&#39;emb&#39;</span><span class="p">,</span> <span class="s1">&#39;norm&#39;</span><span class="p">))</span>  <span class="c1"># (n_edge, 1)</span>
+            <span class="n">kg</span><span class="o">.</span><span class="n">edata</span><span class="p">[</span><span class="s1">&#39;norm&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dgl</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">edge_softmax</span><span class="p">(</span><span class="n">kg</span><span class="p">,</span> <span class="n">kg</span><span class="o">.</span><span class="n">edata</span><span class="p">[</span><span class="s1">&#39;norm&#39;</span><span class="p">])</span>
+
+            <span class="c1"># agg</span>
+            <span class="n">kg</span><span class="o">.</span><span class="n">edata</span><span class="p">[</span><span class="s1">&#39;emb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kg</span><span class="o">.</span><span class="n">edata</span><span class="p">[</span><span class="s1">&#39;emb&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">kg</span><span class="o">.</span><span class="n">edata</span><span class="p">[</span><span class="s1">&#39;norm&#39;</span><span class="p">]</span>
+            <span class="n">kg</span><span class="o">.</span><span class="n">update_all</span><span class="p">(</span><span class="n">fn</span><span class="o">.</span><span class="n">copy_e</span><span class="p">(</span><span class="s1">&#39;emb&#39;</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">),</span> <span class="n">fn</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="s1">&#39;neigh&#39;</span><span class="p">))</span>
+
+            <span class="n">neigh_ent_emb</span> <span class="o">=</span> <span class="n">kg</span><span class="o">.</span><span class="n">ndata</span><span class="p">[</span><span class="s1">&#39;neigh&#39;</span><span class="p">]</span>
+            
+            <span class="n">neigh_ent_emb</span> <span class="o">=</span> <span class="n">neigh_ent_emb</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">neigh_w</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bn</span><span class="p">):</span>
+                <span class="n">neigh_ent_emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bn</span><span class="p">(</span><span class="n">neigh_ent_emb</span><span class="p">)</span>
+
+            <span class="n">neigh_ent_emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">act</span><span class="p">(</span><span class="n">neigh_ent_emb</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">neigh_ent_emb</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, zjukg.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

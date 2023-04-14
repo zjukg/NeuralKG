@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>loss &mdash; NeuralKG-ind v1.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Model" href="neuralkg_ind.model.html" />
+    <link rel="prev" title="Lit_Model" href="neuralkg_ind.lit_model.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> NeuralKG-ind
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Experiment Result</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="result.html">Results</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="neuralkg_ind.html">NeuralKG-ind</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="neuralkg_ind.data.html">Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="neuralkg_ind.eval_task.html">Eval_Task</a></li>
+<li class="toctree-l2"><a class="reference internal" href="neuralkg_ind.lit_model.html">Lit_Model</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">loss</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-neuralkg_ind.loss.Adv_Loss">Adv_Loss</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#neuralkg_ind.loss.Adv_Loss.Adv_Loss"><code class="docutils literal notranslate"><span class="pre">Adv_Loss</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-neuralkg_ind.loss.ComplEx_NNE_AER_Loss">ComplEx_NNE_AER_Loss</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#neuralkg_ind.loss.ComplEx_NNE_AER_Loss.ComplEx_NNE_AER_Loss"><code class="docutils literal notranslate"><span class="pre">ComplEx_NNE_AER_Loss</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-neuralkg_ind.loss.CrossE_Loss">CrossE_Loss</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#neuralkg_ind.loss.CrossE_Loss.CrossE_Loss"><code class="docutils literal notranslate"><span class="pre">CrossE_Loss</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-neuralkg_ind.loss.Cross_Entropy_Loss">Cross_Entropy_Loss</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#neuralkg_ind.loss.Cross_Entropy_Loss.Cross_Entropy_Loss"><code class="docutils literal notranslate"><span class="pre">Cross_Entropy_Loss</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-neuralkg_ind.loss.KBAT_Loss">KBAT_Loss</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#neuralkg_ind.loss.KBAT_Loss.KBAT_Loss"><code class="docutils literal notranslate"><span class="pre">KBAT_Loss</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-neuralkg_ind.loss.Logsig_Loss">Logsig_Loss</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#neuralkg_ind.loss.Logsig_Loss.Logsig_Loss"><code class="docutils literal notranslate"><span class="pre">Logsig_Loss</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-neuralkg_ind.loss.Margin_Loss">Margin_Loss</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#neuralkg_ind.loss.Margin_Loss.Margin_Loss"><code class="docutils literal notranslate"><span class="pre">Margin_Loss</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-neuralkg_ind.loss.RGCN_Loss">RGCN_Loss</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#neuralkg_ind.loss.RGCN_Loss.RGCN_Loss"><code class="docutils literal notranslate"><span class="pre">RGCN_Loss</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-neuralkg_ind.loss.RugE_Loss">RugE_Loss</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#neuralkg_ind.loss.RugE_Loss.RugE_Loss"><code class="docutils literal notranslate"><span class="pre">RugE_Loss</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-neuralkg_ind.loss.SimplE_Loss">SimplE_Loss</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#neuralkg_ind.loss.SimplE_Loss.SimplE_Loss"><code class="docutils literal notranslate"><span class="pre">SimplE_Loss</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-neuralkg_ind.loss.Softplus_Loss">Softplus_Loss</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#neuralkg_ind.loss.Softplus_Loss.Softplus_Loss"><code class="docutils literal notranslate"><span class="pre">Softplus_Loss</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="neuralkg_ind.model.html">Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="neuralkg_ind.utils.html">Utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">NeuralKG-ind</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="neuralkg_ind.html">NeuralKG-ind</a> &raquo;</li>
+      <li>loss</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/zjukg/NeuralKG_ind/blob/main/docs/source/neuralkg_ind.loss.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="loss">
+<h1>loss<a class="headerlink" href="#loss" title="Permalink to this heading">¶</a></h1>
+<section id="module-neuralkg_ind.loss.Adv_Loss">
+<span id="adv-loss"></span><h2>Adv_Loss<a class="headerlink" href="#module-neuralkg_ind.loss.Adv_Loss" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg_ind.loss.Adv_Loss.Adv_Loss">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg_ind.loss.Adv_Loss.</span></span><span class="sig-name descname"><span class="pre">Adv_Loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/loss/Adv_Loss.html#Adv_Loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.loss.Adv_Loss.Adv_Loss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>Negative sampling loss with self-adversarial training.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.loss.Adv_Loss.Adv_Loss.args">
+<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#neuralkg_ind.loss.Adv_Loss.Adv_Loss.args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Some pre-set parameters, such as self-adversarial temperature, etc.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.loss.Adv_Loss.Adv_Loss.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#neuralkg_ind.loss.Adv_Loss.Adv_Loss.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>The KG model for training.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.loss.Adv_Loss.Adv_Loss.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos_score</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neg_score</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsampling_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/loss/Adv_Loss.html#Adv_Loss.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.loss.Adv_Loss.Adv_Loss.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Negative sampling loss with self-adversarial training. In math:</p>
+<blockquote>
+<div><p>L=-log sigmaleft(gamma-d_{r}(mathbf{h}, mathbf{t})</p>
+</div></blockquote>
+<p>ight)-sum_{i=1}^{n} pleft(h_{i}^{prime}, r, t_{i}^{prime}
+ight) log sigmaleft(d_{r}left(mathbf{h}_{i}^{prime}, mathbf{t}_{i}^{prime}
+ight)-gamma
+ight)</p>
+<blockquote>
+<div><dl class="simple">
+<dt>Args:</dt><dd><p>pos_score: The score of positive samples.
+neg_score: The score of negative samples.
+subsampling_weight: The weight for correcting pos_score and neg_score.</p>
+</dd>
+<dt>Returns:</dt><dd><p>loss: The training loss for back propagation.</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.loss.Adv_Loss.Adv_Loss.normalize">
+<span class="sig-name descname"><span class="pre">normalize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/loss/Adv_Loss.html#Adv_Loss.normalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.loss.Adv_Loss.Adv_Loss.normalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculating the regularization.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.loss.Adv_Loss.Adv_Loss.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><a class="headerlink" href="#neuralkg_ind.loss.Adv_Loss.Adv_Loss.training" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-neuralkg_ind.loss.ComplEx_NNE_AER_Loss">
+<span id="complex-nne-aer-loss"></span><h2>ComplEx_NNE_AER_Loss<a class="headerlink" href="#module-neuralkg_ind.loss.ComplEx_NNE_AER_Loss" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg_ind.loss.ComplEx_NNE_AER_Loss.ComplEx_NNE_AER_Loss">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg_ind.loss.ComplEx_NNE_AER_Loss.</span></span><span class="sig-name descname"><span class="pre">ComplEx_NNE_AER_Loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/loss/ComplEx_NNE_AER_Loss.html#ComplEx_NNE_AER_Loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.loss.ComplEx_NNE_AER_Loss.ComplEx_NNE_AER_Loss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.loss.ComplEx_NNE_AER_Loss.ComplEx_NNE_AER_Loss.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos_score</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neg_score</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/loss/ComplEx_NNE_AER_Loss.html#ComplEx_NNE_AER_Loss.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.loss.ComplEx_NNE_AER_Loss.ComplEx_NNE_AER_Loss.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.loss.ComplEx_NNE_AER_Loss.ComplEx_NNE_AER_Loss.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><a class="headerlink" href="#neuralkg_ind.loss.ComplEx_NNE_AER_Loss.ComplEx_NNE_AER_Loss.training" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-neuralkg_ind.loss.CrossE_Loss">
+<span id="crosse-loss"></span><h2>CrossE_Loss<a class="headerlink" href="#module-neuralkg_ind.loss.CrossE_Loss" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg_ind.loss.CrossE_Loss.CrossE_Loss">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg_ind.loss.CrossE_Loss.</span></span><span class="sig-name descname"><span class="pre">CrossE_Loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/loss/CrossE_Loss.html#CrossE_Loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.loss.CrossE_Loss.CrossE_Loss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.loss.CrossE_Loss.CrossE_Loss.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">score</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/loss/CrossE_Loss.html#CrossE_Loss.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.loss.CrossE_Loss.CrossE_Loss.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.loss.CrossE_Loss.CrossE_Loss.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><a class="headerlink" href="#neuralkg_ind.loss.CrossE_Loss.CrossE_Loss.training" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-neuralkg_ind.loss.Cross_Entropy_Loss">
+<span id="cross-entropy-loss"></span><h2>Cross_Entropy_Loss<a class="headerlink" href="#module-neuralkg_ind.loss.Cross_Entropy_Loss" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg_ind.loss.Cross_Entropy_Loss.Cross_Entropy_Loss">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg_ind.loss.Cross_Entropy_Loss.</span></span><span class="sig-name descname"><span class="pre">Cross_Entropy_Loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/loss/Cross_Entropy_Loss.html#Cross_Entropy_Loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.loss.Cross_Entropy_Loss.Cross_Entropy_Loss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.loss.Cross_Entropy_Loss.Cross_Entropy_Loss.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pred</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/loss/Cross_Entropy_Loss.html#Cross_Entropy_Loss.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.loss.Cross_Entropy_Loss.Cross_Entropy_Loss.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.loss.Cross_Entropy_Loss.Cross_Entropy_Loss.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><a class="headerlink" href="#neuralkg_ind.loss.Cross_Entropy_Loss.Cross_Entropy_Loss.training" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-neuralkg_ind.loss.KBAT_Loss">
+<span id="kbat-loss"></span><h2>KBAT_Loss<a class="headerlink" href="#module-neuralkg_ind.loss.KBAT_Loss" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg_ind.loss.KBAT_Loss.KBAT_Loss">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg_ind.loss.KBAT_Loss.</span></span><span class="sig-name descname"><span class="pre">KBAT_Loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/loss/KBAT_Loss.html#KBAT_Loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.loss.KBAT_Loss.KBAT_Loss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.loss.KBAT_Loss.KBAT_Loss.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">score</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neg_score</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/loss/KBAT_Loss.html#KBAT_Loss.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.loss.KBAT_Loss.KBAT_Loss.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.loss.KBAT_Loss.KBAT_Loss.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><a class="headerlink" href="#neuralkg_ind.loss.KBAT_Loss.KBAT_Loss.training" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-neuralkg_ind.loss.Logsig_Loss">
+<span id="logsig-loss"></span><h2>Logsig_Loss<a class="headerlink" href="#module-neuralkg_ind.loss.Logsig_Loss" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg_ind.loss.Logsig_Loss.Logsig_Loss">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg_ind.loss.Logsig_Loss.</span></span><span class="sig-name descname"><span class="pre">Logsig_Loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/loss/Logsig_Loss.html#Logsig_Loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.loss.Logsig_Loss.Logsig_Loss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.loss.Logsig_Loss.Logsig_Loss.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos_score</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neg_score</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/loss/Logsig_Loss.html#Logsig_Loss.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.loss.Logsig_Loss.Logsig_Loss.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.loss.Logsig_Loss.Logsig_Loss.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><a class="headerlink" href="#neuralkg_ind.loss.Logsig_Loss.Logsig_Loss.training" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-neuralkg_ind.loss.Margin_Loss">
+<span id="margin-loss"></span><h2>Margin_Loss<a class="headerlink" href="#module-neuralkg_ind.loss.Margin_Loss" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg_ind.loss.Margin_Loss.Margin_Loss">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg_ind.loss.Margin_Loss.</span></span><span class="sig-name descname"><span class="pre">Margin_Loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/loss/Margin_Loss.html#Margin_Loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.loss.Margin_Loss.Margin_Loss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.loss.Margin_Loss.Margin_Loss.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos_score</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neg_score</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/loss/Margin_Loss.html#Margin_Loss.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.loss.Margin_Loss.Margin_Loss.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.loss.Margin_Loss.Margin_Loss.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><a class="headerlink" href="#neuralkg_ind.loss.Margin_Loss.Margin_Loss.training" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-neuralkg_ind.loss.RGCN_Loss">
+<span id="rgcn-loss"></span><h2>RGCN_Loss<a class="headerlink" href="#module-neuralkg_ind.loss.RGCN_Loss" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg_ind.loss.RGCN_Loss.RGCN_Loss">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg_ind.loss.RGCN_Loss.</span></span><span class="sig-name descname"><span class="pre">RGCN_Loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/loss/RGCN_Loss.html#RGCN_Loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.loss.RGCN_Loss.RGCN_Loss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.loss.RGCN_Loss.RGCN_Loss.reg_loss">
+<span class="sig-name descname"><span class="pre">reg_loss</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/loss/RGCN_Loss.html#RGCN_Loss.reg_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.loss.RGCN_Loss.RGCN_Loss.reg_loss" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.loss.RGCN_Loss.RGCN_Loss.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">score</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/loss/RGCN_Loss.html#RGCN_Loss.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.loss.RGCN_Loss.RGCN_Loss.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.loss.RGCN_Loss.RGCN_Loss.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><a class="headerlink" href="#neuralkg_ind.loss.RGCN_Loss.RGCN_Loss.training" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-neuralkg_ind.loss.RugE_Loss">
+<span id="ruge-loss"></span><h2>RugE_Loss<a class="headerlink" href="#module-neuralkg_ind.loss.RugE_Loss" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg_ind.loss.RugE_Loss.RugE_Loss">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg_ind.loss.RugE_Loss.</span></span><span class="sig-name descname"><span class="pre">RugE_Loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/loss/RugE_Loss.html#RugE_Loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.loss.RugE_Loss.RugE_Loss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.loss.RugE_Loss.RugE_Loss.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos_score</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neg_score</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rule</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">confidence</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">triple_num</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_len</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/loss/RugE_Loss.html#RugE_Loss.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.loss.RugE_Loss.RugE_Loss.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.loss.RugE_Loss.RugE_Loss.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><a class="headerlink" href="#neuralkg_ind.loss.RugE_Loss.RugE_Loss.training" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-neuralkg_ind.loss.SimplE_Loss">
+<span id="simple-loss"></span><h2>SimplE_Loss<a class="headerlink" href="#module-neuralkg_ind.loss.SimplE_Loss" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg_ind.loss.SimplE_Loss.SimplE_Loss">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg_ind.loss.SimplE_Loss.</span></span><span class="sig-name descname"><span class="pre">SimplE_Loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/loss/SimplE_Loss.html#SimplE_Loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.loss.SimplE_Loss.SimplE_Loss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.loss.SimplE_Loss.SimplE_Loss.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos_score</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neg_score</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/loss/SimplE_Loss.html#SimplE_Loss.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.loss.SimplE_Loss.SimplE_Loss.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.loss.SimplE_Loss.SimplE_Loss.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><a class="headerlink" href="#neuralkg_ind.loss.SimplE_Loss.SimplE_Loss.training" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-neuralkg_ind.loss.Softplus_Loss">
+<span id="softplus-loss"></span><h2>Softplus_Loss<a class="headerlink" href="#module-neuralkg_ind.loss.Softplus_Loss" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="neuralkg_ind.loss.Softplus_Loss.Softplus_Loss">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neuralkg_ind.loss.Softplus_Loss.</span></span><span class="sig-name descname"><span class="pre">Softplus_Loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/loss/Softplus_Loss.html#Softplus_Loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.loss.Softplus_Loss.Softplus_Loss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>softplus loss.
+.. attribute:: args</p>
+<blockquote>
+<div><p>Some pre-set parameters, etc.</p>
+</div></blockquote>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.loss.Softplus_Loss.Softplus_Loss.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#neuralkg_ind.loss.Softplus_Loss.Softplus_Loss.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>The KG model for training.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neuralkg_ind.loss.Softplus_Loss.Softplus_Loss.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos_score</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neg_score</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsampling_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralkg_ind/loss/Softplus_Loss.html#Softplus_Loss.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neuralkg_ind.loss.Softplus_Loss.Softplus_Loss.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Negative sampling loss Softplus_Loss. In math:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>egin{aligned}</dt><dd><p>L(oldsymbol{Q}, oldsymbol{W})=&amp; sum_{r(h, t) in Omega cup Omega^{-}} log left(1+exp left(-Y_{h r t} phi(h, r, t)</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>ight)
+ight) </p>
+<blockquote>
+<div><blockquote>
+<div><p>&amp;+lambda_1|oldsymbol{Q}|_2^2+lambda_2|oldsymbol{W}|_2^2</p>
+</div></blockquote>
+<p>end{aligned}</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>pos_score: The score of positive samples (with regularization if DualE).
+neg_score: The score of negative samples (with regularization if DualE).</p>
+</dd>
+<dt>Returns:</dt><dd><p>loss: The training loss for back propagation.</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="neuralkg_ind.loss.Softplus_Loss.Softplus_Loss.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><a class="headerlink" href="#neuralkg_ind.loss.Softplus_Loss.Softplus_Loss.training" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="neuralkg_ind.lit_model.html" class="btn btn-neutral float-left" title="Lit_Model" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="neuralkg_ind.model.html" class="btn btn-neutral float-right" title="Model" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, zjukg.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

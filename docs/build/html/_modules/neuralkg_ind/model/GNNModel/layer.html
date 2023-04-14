@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>neuralkg_ind.model.GNNModel.layer &mdash; NeuralKG-ind v1.0 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> NeuralKG-ind
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../install.html">Install</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Experiment Result</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../result.html">Results</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../neuralkg_ind.html">NeuralKG-ind</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">NeuralKG-ind</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      <li>neuralkg_ind.model.GNNModel.layer</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for neuralkg_ind.model.GNNModel.layer</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">abc</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
+
+<div class="viewcode-block" id="GNNLayer"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.layer.GNNLayer">[docs]</a><span class="k">class</span> <span class="nc">GNNLayer</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+    
+<div class="viewcode-block" id="GNNLayer.message"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.layer.GNNLayer.message">[docs]</a>    <span class="k">def</span> <span class="nf">message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edges</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="GNNLayer.forward"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.layer.GNNLayer.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">feat</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+
+<div class="viewcode-block" id="Aggregator"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.layer.Aggregator">[docs]</a><span class="k">class</span> <span class="nc">Aggregator</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">emb_dim</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Aggregator</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Aggregator.forward"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.layer.Aggregator.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="n">curr_emb</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">mailbox</span><span class="p">[</span><span class="s1">&#39;curr_emb&#39;</span><span class="p">][:,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">nei_msg</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">bmm</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">mailbox</span><span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">node</span><span class="o">.</span><span class="n">mailbox</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">new_emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_embedding</span><span class="p">(</span><span class="n">curr_emb</span><span class="p">,</span> <span class="n">nei_msg</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;h&#39;</span><span class="p">:</span> <span class="n">new_emb</span><span class="p">}</span></div>
+
+<div class="viewcode-block" id="Aggregator.update_embedding"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.layer.Aggregator.update_embedding">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">update_embedding</span><span class="p">(</span><span class="n">curr_emb</span><span class="p">,</span> <span class="n">nei_msg</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+
+<div class="viewcode-block" id="SUMAggregator"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.layer.SUMAggregator">[docs]</a><span class="k">class</span> <span class="nc">SUMAggregator</span><span class="p">(</span><span class="n">Aggregator</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">emb_dim</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SUMAggregator</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">emb_dim</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SUMAggregator.update_embedding"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.layer.SUMAggregator.update_embedding">[docs]</a>    <span class="k">def</span> <span class="nf">update_embedding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">curr_emb</span><span class="p">,</span> <span class="n">nei_msg</span><span class="p">):</span>
+        <span class="n">new_emb</span> <span class="o">=</span> <span class="n">nei_msg</span> <span class="o">+</span> <span class="n">curr_emb</span>
+
+        <span class="k">return</span> <span class="n">new_emb</span></div></div>
+
+<div class="viewcode-block" id="MLPAggregator"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.layer.MLPAggregator">[docs]</a><span class="k">class</span> <span class="nc">MLPAggregator</span><span class="p">(</span><span class="n">Aggregator</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">emb_dim</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MLPAggregator</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">emb_dim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linear</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">emb_dim</span><span class="p">,</span> <span class="n">emb_dim</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MLPAggregator.update_embedding"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.layer.MLPAggregator.update_embedding">[docs]</a>    <span class="k">def</span> <span class="nf">update_embedding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">curr_emb</span><span class="p">,</span> <span class="n">nei_msg</span><span class="p">):</span>
+        <span class="n">inp</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">nei_msg</span><span class="p">,</span> <span class="n">curr_emb</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">new_emb</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">linear</span><span class="p">(</span><span class="n">inp</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">new_emb</span></div></div>
+
+<div class="viewcode-block" id="GRUAggregator"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.layer.GRUAggregator">[docs]</a><span class="k">class</span> <span class="nc">GRUAggregator</span><span class="p">(</span><span class="n">Aggregator</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">emb_dim</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GRUAggregator</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">emb_dim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gru</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">GRUCell</span><span class="p">(</span><span class="n">emb_dim</span><span class="p">,</span> <span class="n">emb_dim</span><span class="p">)</span>
+
+<div class="viewcode-block" id="GRUAggregator.update_embedding"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.layer.GRUAggregator.update_embedding">[docs]</a>    <span class="k">def</span> <span class="nf">update_embedding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">curr_emb</span><span class="p">,</span> <span class="n">nei_msg</span><span class="p">):</span>
+        <span class="n">new_emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gru</span><span class="p">(</span><span class="n">nei_msg</span><span class="p">,</span> <span class="n">curr_emb</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">new_emb</span></div></div>
+
+<div class="viewcode-block" id="BatchGRU"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.layer.BatchGRU">[docs]</a><span class="k">class</span> <span class="nc">BatchGRU</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hidden_size</span><span class="o">=</span><span class="mi">300</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BatchGRU</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hidden_size</span> <span class="o">=</span> <span class="n">hidden_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gru</span>  <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">GRU</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hidden_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hidden_size</span><span class="p">,</span> <span class="n">batch_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
+                           <span class="n">bidirectional</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bias</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hidden_size</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">uniform_</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hidden_size</span><span class="p">),</span> 
+                                <span class="mf">1.0</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hidden_size</span><span class="p">))</span>
+
+<div class="viewcode-block" id="BatchGRU.forward"><a class="viewcode-back" href="../../../../gnnmodel.html#neuralkg_ind.model.GNNModel.layer.BatchGRU.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">a_scope</span><span class="p">):</span>
+        <span class="n">hidden</span> <span class="o">=</span> <span class="n">node</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="n">node</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="p">)</span>
+        <span class="n">MAX_node_len</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">a_scope</span><span class="p">)</span>
+        <span class="c1"># padding</span>
+        <span class="n">message_lst</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">hidden_lst</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">a_start</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">a_scope</span><span class="p">:</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="mi">0</span>
+            <span class="n">cur_message</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">narrow</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">a_start</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+            <span class="n">cur_hidden</span> <span class="o">=</span> <span class="n">hidden</span><span class="o">.</span><span class="n">narrow</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">a_start</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+            <span class="n">hidden_lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cur_hidden</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+            <span class="n">a_start</span> <span class="o">+=</span> <span class="n">i</span>
+            <span class="n">cur_message</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ZeroPad2d</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">MAX_node_len</span><span class="o">-</span><span class="n">cur_message</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))(</span><span class="n">cur_message</span><span class="p">)</span>
+            <span class="n">message_lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cur_message</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+            
+        <span class="n">message_lst</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">message_lst</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">hidden_lst</span>  <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">hidden_lst</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">hidden_lst</span> <span class="o">=</span> <span class="n">hidden_lst</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">cur_message</span><span class="p">,</span> <span class="n">cur_hidden</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gru</span><span class="p">(</span><span class="n">message_lst</span><span class="p">,</span> <span class="n">hidden_lst</span><span class="p">)</span>
+        
+        <span class="n">cur_message_unpadding</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">kk</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">a_size</span> <span class="ow">in</span> <span class="n">a_scope</span><span class="p">:</span>
+            <span class="n">a_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">a_size</span><span class="p">)</span>
+            <span class="n">cur_message_unpadding</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cur_message</span><span class="p">[</span><span class="n">kk</span><span class="p">,</span> <span class="p">:</span><span class="n">a_size</span><span class="p">]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">hidden_size</span><span class="p">))</span>
+            <span class="n">kk</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">cur_message_unpadding</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">cur_message_unpadding</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    
+        <span class="k">return</span> <span class="n">cur_message_unpadding</span> </div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, zjukg.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
