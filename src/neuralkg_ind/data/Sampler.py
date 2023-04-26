@@ -1137,14 +1137,18 @@ class TestSampler_hit(object):
 
         test = data[0]
         head_neg_links = test['head'][0]
-        tail_neg_links = test['tail'][0]
-
+        if not self.args.ccks:
+            tail_neg_links = test['tail'][0]
+        if self.args.ccks:
+            batch_data['tails'] = head_neg_links
         batch_data['head_sample'] = self.get_subgraphs(head_neg_links, self.sampler.adj_list, \
                 self.sampler.dgl_adj_list, self.args.max_n_label, self.m_h2r, self.m_t2r)
-        batch_data['tail_sample'] = self.get_subgraphs(tail_neg_links, self.sampler.adj_list, \
-                self.sampler.dgl_adj_list, self.args.max_n_label, self.m_h2r, self.m_t2r)
+        if not self.args.ccks:
+            batch_data['tail_sample'] = self.get_subgraphs(tail_neg_links, self.sampler.adj_list, \
+                    self.sampler.dgl_adj_list, self.args.max_n_label, self.m_h2r, self.m_t2r)
         batch_data['head_target'] = test['head'][1]
-        batch_data['tail_target'] = test['tail'][1]
+        if not self.args.ccks:
+            batch_data['tail_target'] = test['tail'][1]
         return batch_data
 
     def get_sampling_keys(self):

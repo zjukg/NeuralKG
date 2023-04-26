@@ -166,14 +166,16 @@ def data2pkl(dataset_name):
     file.close()
 
     valid_tri = []
-    file = open('./dataset/{}/valid.txt'.format(dataset_name))
-    valid_tri.extend([l.strip().split() for l in file.readlines()])
-    file.close()
+    if os.path.exists('./dataset/{}/valid.txt'.format(dataset_name)):
+        file = open('./dataset/{}/valid.txt'.format(dataset_name))
+        valid_tri.extend([l.strip().split() for l in file.readlines()])
+        file.close()
 
     test_tri = []
-    file = open('./dataset/{}/test.txt'.format(dataset_name))
-    test_tri.extend([l.strip().split() for l in file.readlines()])
-    file.close()
+    if os.path.exists('./dataset/{}/test.txt'.format(dataset_name)):
+        file = open('./dataset/{}/test.txt'.format(dataset_name))
+        test_tri.extend([l.strip().split() for l in file.readlines()])
+        file.close()
 
     train_tri, fix_rel_reidx, ent_reidx = reidx(train_tri)
     valid_tri = reidx_withr_ande(valid_tri, fix_rel_reidx, ent_reidx)
@@ -183,13 +185,17 @@ def data2pkl(dataset_name):
     ind_train_tri = ([l.strip().split() for l in file.readlines()])
     file.close()
 
-    file = open('./dataset/{}_ind/valid.txt'.format(dataset_name))
-    ind_valid_tri = ([l.strip().split() for l in file.readlines()])
-    file.close()
+    ind_valid_tri = []
+    if os.path.exists('./dataset/{}_ind/valid.txt'.format(dataset_name)):
+        file = open('./dataset/{}_ind/valid.txt'.format(dataset_name))
+        ind_valid_tri = ([l.strip().split() for l in file.readlines()])
+        file.close()
 
-    file = open('./dataset/{}_ind/test.txt'.format(dataset_name))
-    ind_test_tri = ([l.strip().split() for l in file.readlines()])
-    file.close()
+    ind_test_tri = []
+    if os.path.exists('./dataset/{}_ind/test.txt'.format(dataset_name)):
+        file = open('./dataset/{}_ind/test.txt'.format(dataset_name))
+        ind_test_tri = ([l.strip().split() for l in file.readlines()])
+        file.close()
 
     test_train_tri, ent_reidx_ind = reidx_withr(ind_train_tri, fix_rel_reidx)
     test_valid_tri = reidx_withr_ande(ind_valid_tri, fix_rel_reidx, ent_reidx_ind)
@@ -250,7 +256,10 @@ def load_data_grail(args, add_traspose_rels=False):
 
     triplets = {}
     for split_name in splits:
-        triplets[split_name] = np.array(data['train_graph'][split_name])[:, [0, 2, 1]]
+        if len(data['train_graph'][split_name]):
+            triplets[split_name] = np.array(data['train_graph'][split_name])[:, [0, 2, 1]]
+        else:
+            triplets[split_name] = np.array(data['train_graph'][split_name])
 
     train_rel2idx = data['train_graph']['rel2idx']
     train_ent2idx = data['train_graph']['ent2idx']

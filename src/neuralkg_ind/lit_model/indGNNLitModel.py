@@ -84,11 +84,16 @@ class indGNNLitModel(BaseLitModel):
         """
         results = dict()
         if self.args.eval_task == 'link_prediction':
-            ranks = link_predict(batch, self.model, prediction='ind')
+            if self.args.ccks:
+                ranks, sorted_tails = link_predict(batch, self.model, prediction='ind')
+            else:
+                ranks = link_predict(batch, self.model, prediction='ind')
             results["count"] = torch.numel(ranks)
             results["mrr"] = torch.sum(1.0 / ranks).item()
             for k in self.args.calc_hits:
                 results['hits@{}'.format(k)] = torch.numel(ranks[ranks <= k])
+            if self.args.ccks:
+                results['sorted_tails'] = sorted_tails
 
         elif self.args.eval_task == 'triple_classification':
             score = classification(batch, self.model)

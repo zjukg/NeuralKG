@@ -1,6 +1,7 @@
 import os
 import dgl
 import lmdb
+import json
 import torch
 import struct
 import pickle
@@ -389,7 +390,10 @@ class GRData(Dataset):
         
         triplets = {}
         for split_name in splits:
-            triplets[split_name] = np.array(data['train_graph'][split_name])[:, [0, 2, 1]]
+            if len(data['train_graph'][split_name]): 
+                triplets[split_name] = np.array(data['train_graph'][split_name])[:, [0, 2, 1]]
+            else:
+                triplets[split_name] = np.array(data['train_graph'][split_name])
 
         train_rel2idx = data['train_graph']['rel2idx']
         train_ent2idx = data['train_graph']['ent2idx']
@@ -1123,7 +1127,19 @@ class BaseGraph(object):
             neg_triplets: Negative triplets.
         '''
         adj_list, dgl_adj_list, triplets, m_h2r, m_t2r = self.load_data_grail_ind()
-        neg_triplets = self.get_neg_samples_replacing_head_tail(triplets['test'], adj_list)
+        if not self.args.ccks:
+            neg_triplets = self.get_neg_samples_replacing_head_tail(triplets['test'], adj_list)
+        else:
+            with open('./dataset/{}_ind/test_query.json'.format(self.args.dataset_name), 'r') as load_f:
+                inp = json.load(load_f)
+            neg_triplets = []
+            for idx, value in inp.items():
+                neg_triplet = {'head': [[], 0]}
+                for tail in value['tails']:
+                    neg_triplet['head'][0].append([value['head_rel'][0], tail, value['head_rel'][1]])
+                
+                neg_triplet['head'][0] = np.array(neg_triplet['head'][0])
+                neg_triplets.append(neg_triplet)
         
         self.adj_list = adj_list
         self.dgl_adj_list = dgl_adj_list
@@ -1148,7 +1164,8 @@ class BaseGraph(object):
 
         triplets = {}
         for split_name in splits:
-            triplets[split_name] = np.array(data['ind_test_graph'][split_name])[:, [0, 2, 1]]
+            if len(data['ind_test_graph'][split_name]):
+                triplets[split_name] = np.array(data['ind_test_graph'][split_name])[:, [0, 2, 1]]
 
         self.rel2id = data['ind_test_graph']['rel2idx']
         self.ent2id = data['ind_test_graph']['ent2idx']

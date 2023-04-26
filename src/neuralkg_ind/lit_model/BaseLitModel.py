@@ -1,5 +1,6 @@
 import argparse
 import pytorch_lightning as pl
+import json
 import torch
 from collections import defaultdict as ddict
 from sklearn import metrics
@@ -64,8 +65,15 @@ class BaseLitModel(pl.LightningModule):
             dict: The final result of the epoch
         """
         outputs = ddict(float)
+        if self.args.ccks:
+            res = [t['sorted_tails'] for t in results]
+            save_data = {}
+            for i in range(len(res)):
+                save_data[int(i)] = res[i]
+            with open('userFile.json', 'w') as f:
+                json.dump(save_data, f)
         count = np.array([o["count"] for o in results]).sum()
-        for metric in list(results[0].keys())[1:]:
+        for metric in list(results[0].keys())[1:-1]:
             final_metric = "|".join([mode, metric])
             outputs[final_metric] = np.around(np.array([o[metric] for o in results]).sum() / count, decimals=3).item()
         return outputs

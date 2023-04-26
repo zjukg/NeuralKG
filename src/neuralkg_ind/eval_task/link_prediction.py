@@ -23,9 +23,14 @@ def link_predict(batch, model, prediction="all", model_name=None):
     elif prediction == "tail":
         ranks = tail_predict(batch, model)
     elif prediction == "ind":
-        ranks = ind_predict(batch, model)
-
-    return ranks.float()
+        if 'tail_sample' in batch.keys():
+            ranks = ind_predict(batch, model)
+        else:
+            ranks, sorted_tails = ind_predict(batch, model)
+    if 'tail_sample' in batch.keys():
+        return ranks.float()
+    else:
+        return ranks.float(), sorted_tails
 
 def ind_predict(batch, model):
     """Getting the ranking of positive samples in the other 50 negative samples.
@@ -39,18 +44,26 @@ def ind_predict(batch, model):
     """
     head_triple = batch["head_sample"]
     head_scores = model(head_triple).squeeze(1).detach().cpu().numpy()
+    if 'tail_sample' not in batch.keys():
+        tails = []
+        for tri in batch['tails']:
+            tails.append(int(tri[1]))
+        head_scores = model(head_triple).squeeze(1).detach().cpu().numpy()
+        t_s = head_scores.tolist()
+        sorted_tails = sorted(tails, key=lambda x: t_s[tails.index(x)], reverse=True)
     head_target = batch["head_target"]
     head_rank = np.argwhere(np.argsort(head_scores)[::-1] == head_target) + 1
     head_rank = torch.tensor(head_rank).squeeze(0)
 
+    if 'tail_sample' in batch.keys():
+        tail_triple = batch["tail_sample"]
+        tail_scores = model(tail_triple).squeeze(1).detach().cpu().numpy()
+        tail_target = batch["tail_target"]
+        tail_rank = np.argwhere(np.argsort(tail_scores)[::-1] == tail_target) + 1
+        tail_rank = torch.tensor(tail_rank).squeeze(0)
+        return torch.cat([head_rank, tail_rank])
 
-    tail_triple = batch["tail_sample"]
-    tail_scores = model(tail_triple).squeeze(1).detach().cpu().numpy()
-    tail_target = batch["tail_target"]
-    tail_rank = np.argwhere(np.argsort(tail_scores)[::-1] == tail_target) + 1
-    tail_rank = torch.tensor(tail_rank).squeeze(0)
-
-    return torch.cat([head_rank, tail_rank])
+    return head_rank, sorted_tails
 
 
 def head_predict(batch, model):

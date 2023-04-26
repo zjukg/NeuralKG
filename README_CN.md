@@ -1,6 +1,5 @@
-
 <p align="center">
-    <a href=""> <img src="pics/logo.png" width="400"/></a>
+    <a href=""> <img src="pics/logo-ind.png" width="400"/></a>
 <p>
 <p align="center">  
     <a href="https://pypi.org/project/neuralkg-ind/">
@@ -19,6 +18,7 @@
 <h1 align="center">
     <p>用于归纳式知识图谱表示学习的Python工具包</p>
 </h1>
+
 
 NeuralKG-ind是一个基于python的归纳知识图表示学习工具包，它包括**标准化过程**、**丰富的现有模型**、**解耦模块**和**综合评估指标**。我们为初学者提供了详细的[文档](https://zjukg.github.io/NeuralKG-ind/neuralkg_ind.model.html)。
 <br>

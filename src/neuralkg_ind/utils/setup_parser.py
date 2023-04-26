@@ -174,6 +174,8 @@ def setup_parser():
     parser.add_argument('--rw_0', default=10, type=int, help='the times of random walk')
     parser.add_argument('--rw_1', default=10, type=int, help='the number of paths')
     parser.add_argument('--rw_2', default=5, type=int, help='the length of random walk')
+    #CCKS
+    parser.add_argument('--ccks', default=False, action='store_true', help='Adapt to CCKS competition')
     # Get data, model, and LitModel specific arguments
     lit_model_group = parser.add_argument_group("LitModel Args")
     lit_model.BaseLitModel.add_to_argparse(lit_model_group)
