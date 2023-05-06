@@ -28,7 +28,6 @@ NUM_WORKERS=20
 DROPOUT=0
 CALC_HITS=1,5,10
 GPU=0
-CHECKPOINT_DIR=/home/hzw/NeuralKG/output/link_prediction/CCKS_train/Grail/epoch\=0-Eval\|auc\=0.500.ckpt
 
 python -u main.py \
     --model_name $MODEL_NAME \
@@ -53,7 +52,6 @@ python -u main.py \
     --num_neg $NUM_NEG \
     --margin $MARGIN \
     --lr $LR \
-    --check_per_epoch $CHECK_PER_EPOCH \
     --early_stop_patience $EARLY_STOP_PATIENCE \
     --num_workers $NUM_WORKERS \
     --dropout $DROPOUT \
@@ -61,5 +59,4 @@ python -u main.py \
     --checkpoint_dir $CHECKPOINT_DIR \
     --inductive \
     --ccks \
-    --test_only
 
