@@ -56,7 +56,6 @@ python -u main.py \
     --num_workers $NUM_WORKERS \
     --dropout $DROPOUT \
     --calc_hits $CALC_HITS \
-    --checkpoint_dir $CHECKPOINT_DIR \
     --inductive \
     --ccks \
 
