@@ -55,7 +55,7 @@ KGEs**. We provide [comprehensive documents](https://zjukg.github.io/NeuralKG/in
 <br>
 
 # 😃What's New
-* [Apr, 2023] We propose a [challenge](https://tianchi.aliyun.com/competition/entrance/532081/introduction) for inductive KGRL at [CCKS2023](https://sigkg.cn/ccks2023/en/). Baseline is buildt based on [NeuralKG-ind](https://github.com/zjukg/NeuralKG/tree/ind). Welcome to involve!
+* [Apr, 2023] We propose a [challenge](https://tianchi.aliyun.com/competition/entrance/532081/introduction) about inductive KGRL at [CCKS2023](https://sigkg.cn/ccks2023/en/). Baseline is built based on [NeuralKG-ind](https://github.com/zjukg/NeuralKG/tree/ind). Welcome to involve!
 * [Apr, 2023] We release [NeuralKG-ind](https://github.com/zjukg/NeuralKG/tree/ind) for inductive Knowledge Graph Representation Learning(KGRL). The [paper](https://arxiv.org/pdf/2304.14678.pdf) of NeuralKG-ind is accepted by SIGIR2023 in Demonstration Track. 
 * [Jan, 2023] We add the [SEGNN](https://arxiv.org/abs/2109.11800) model for our library
 * [Oct, 2022] We add the [DualE](https://ojs.aaai.org/index.php/AAAI/article/view/16850) model for our library
