@@ -1,6 +1,7 @@
 
 <p align="center">
-    <a href=""> <img src="pics/logo.png" width="400"/></a>
+    <a href="https://github.com/zjukg/NeuralKG/tree/main"> <img src="pics/logo.png" height="100"/></a>
+    <a href="https://github.com/zjukg/NeuralKG/tree/ind"> <img src="https://github.com/zjukg/NeuralKG/blob/ind/pics/logo-ind.png" height="100"/></a>
 <p>
 <p align="center">  
     <a href="http://neuralkg.zjukg.cn/">
