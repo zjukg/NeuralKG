@@ -29,7 +29,7 @@ DROPOUT=0
 CALC_HITS=1,5,10
 GPU=0
 
-python -u main.py \
+CUDA_VISIBLE_DEVICES=$GPU python -u main.py \
     --model_name $MODEL_NAME \
     --dataset_name $DATASET_NAME \
     --data_path $DATA_PATH \
